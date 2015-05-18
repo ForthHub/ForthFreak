@@ -1,0 +1,18 @@
+There are several FORTH Systems for ATARI b-Bit Computers around. Most of this FORTH are FigForth variants, but some are even supported and developed today.
+ 
+Implementations for ATARI 8Bit Computer (6502 CPU):
+
+* X-Forth -- still in development, will become ANSI compatible FORTH someday, file based (with DOS)
+* FigForth 1.0d -- old FORTH Version, disk-block based (without DOS)
+* FigForth 1.1 -- Enhanced FigForth, disk-block based (without DOS)
+* Learn-Forth -- Subset of FigForth from HOFACKER (Order No.7053), disk-block based (without DOS) as well on cassette
+* Power-Forth -- Extended FigForth from HOFACKER (Order No.7055), disk-block based (without DOS)
+* Antic Forth 1.4s -- very powerfull ANTIC Forth, disk-block based (without DOS)
+* QS-Forth 1.0 -- QS-Forth, disk-block based (without DOS)
+* Mesa FORTH -- Mesa FORTH
+* Graphic FORTH -- A ANTIC Forth 1.4s with special extensions, mostly in german language  
+* ES Forth -- English Software Company FORTH, file-based FORTH (with DOS)  
+* SNAUT -- A FORTH 83 comaptible Standard FORTH. The only trace of this FORTH is an advertising in a german magazin for now
+* Yet another Target Compiler -- Target Compiler for creating MAC/65 Source from FORTH
+
+See [http://atariwiki.strotmann.de/wiki/Wiki.jsp?page=Forth ABBUC Programmers Group FORTH Wiki-Page] for Downloads, Sourcecode and more Information about FORTH on Atari 8bit and other popular 8Bit Computer.

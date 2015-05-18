@@ -1,0 +1,28 @@
+ ( G: get one token, execute or compile it.  Stack effects depend on token executed)
+ : HANDLE-TOKEN ( S: i*x-- j*x ) 
+    INPUT-TOKEN DUP
+    \ T>NAME SPACE DUP
+    TOKEN>XT @ SWAP ~IMMEDIATE? STATE @ AND IF
+      COMPILE,
+    ELSE
+      EXECUTE
+    THEN ;
+
+ ( G: process N tokens )
+ : HANDLE-TOKENS ( S: n -- )
+    0 ?DO HANDLE-TOKEN LOOP ;
+
+ ( G: process tokens until stop signal )
+ VARIABLE STOP-READING
+ : HANDLE-TOKENS-TIL-STOP ( S: -- )
+     0 STOP-READING !
+     BEGIN
+       HANDLE-TOKEN STOP-READING @
+     UNTIL ;
+
+ \ This leaves it open which token would make the stop signal and when.
+ \ There could be a token which does nothing but signal stop, or a .( or
+ \ interpreted ." could do it if the string was exactly  " STOP-READING" etc.
+ \ We'd have to choose something and stick with it since tokenizers would have
+ \ to know what to send that token-compilers would understand, unless they make
+ \ a new version.

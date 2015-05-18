@@ -1,0 +1,89 @@
+*World's fastest Forth ring-buffer.*
+
+I actually can't promise this will be the fastest on your system. But it is plausible to me that it might to be, and I felt like being bombastic. If somebody proves me wrong I'll praise you for it.
+
+The ideas are based directly on code from Hans Bezemer and also from code that is probably by Ian Osgood.
+
+To make it so fast, we have to accept some tradeoffs. You get one ring-buffer of size 2^N -1. If you want another one you can compile all new code. Some space is wasted, up to 2^(N+1) -1 cells. If you care, you can salvage that memory for some other use.
+
+
+Here is most of the code. The rest is at the bottom.
+
+ 4 cells 
+ \ must be a power of 2.  4 gives you a 3-item ring. 8 gives you a 7 item ring
+
+ dup 1 cells 1- or invert constant ringmask
+ \ make a mask with bit N reset
+
+ dup 2* dup here 0 rot um/mod drop - allot
+ \ the above allotted data is not used. You can find a use for it if you care to.
+
+ here swap allot constant ring
+
+ 2variable tail
+ tail cell+ constant head
+
+ : empty! ( -- )
+    ring dup tail 2! ;
+
+ empty!
+
+ : next-addr ( addr -- addr' )
+    cell+ ringmask and ;
+
+ : get ( -- item )
+    head @ next-addr dup head ! @ ;
+
+ : put ( item -- )
+    tail @ next-addr dup tail ! ! ;
+
+ : empty? ( -- f )
+    tail 2@ = ;
+
+ : full? ( -- f )   \ doesn't this create a dependency on specific endianness?
+    tail 2@ next-addr = ;
+
+ \ in case the above full? causes an endianness-issue, this version might work:
+ \ : full? ( -- f ) head @ tail @ next-addr = ; 
+ \ However, there should be no endian issue because these are full cells.
+ \ 2@ is required to put the lower of the two cells on top of the stack. 
+ \ The lower cell is the tail, and so that will be on top and next-addr will act on it.
+
+*What makes it so fast?*
+
+One issue is to make sure that the buffer never overflows. Whenever it reaches the end we set it back to the beginning. We set the RING base address so the lower N+1 bits are all zero. CELL+ on an existing buffer address can set bit N but no higher bit. So if we use a mask to make sure bit N is zero, we will wrap around. I can't imagine a faster way to do that.
+
+We could make HEAD and TAIL hold offsets instead of addresses. Then every time we compute an address we could do RING OR . It would be a little slower. It would save the wasted space, except for one cell.
+
+We are limited to buffers that are size 2^N (and which actually hold one less item). We could make the buffers be any size by accepting a speed penalty.
+
+Instead of simply masking out the "overflow bit", we could check the size against a maximum value and then set it to the minimum value if it is too large. This is slower but more flexible. And it also saves all the wasted space except for one cell.
+
+ : next-addr ( addr -- addr' )
+    cell+ dup max-address <  ?exit drop ring ;
+
+*Is the buffer empty, full, or neither?*
+
+The buffer is empty when HEAD and TAIL hold the same address. Don't remove a value until you put one in.
+
+The buffer is claimed to be full when HEAD is one above TAIL . That can never happen when you remove items, unless you remove one item when the buffer is empty. Except for that it can only happen when you add items. There is room to add one more, but if you do add that last one then the code can't tell whether the buffer is full or empty. It's faster to waste one item than to keep closer track.
+
+Since adding or removing items can mess up the routines that tell whether it's empty or full, you really need to check each time, unless you already know.
+
+If the buffer is empty when you want something, it's likely no big deal. You check, then you switch to another task or you wait. When you want to put something in the buffer but the buffer is full, you have to choose what to do. Increment the HEAD pointer and put the new item at the end, losing an old item? Throw away the new item? Signal to the source not to provide any more until you can handle the backlog? You might as well check it yourself, ahead of time, rather than set up a CATCH to handle it and then see whether the actual PUT throws an error.
+
+However, if you first do FULL? and then do PUT , then NEXT-ADDR executes twice each turn. We could have a routine to execute NEXT-ADDR once and DUP the result. That should be faster than doing it twice. And if you use a variation where NEXT-ADDR is slower, the speed difference would be bigger.
+
+ \ faster version
+ : safe-put ( item -- item 0 | -1 )
+    tail 2@ next-addr tuck - if dup tail !  !  -1 exit then 0= ;
+
+ \ compact version
+ : safe-put'  ( item -- item 0 | -1 )
+    full? if 0 exit then put -1 ;
+
+*Conclusion*
+
+This ring-buffer is probably the fastest you can get, and for small buffers it may be OK. For a 3-item buffer you actually allot up to 11 items. For a 7-item buffer you allot up to 23 items. For a 15-item buffer you allot up to 47 items.
+
+You may balk at allotting 6K-1 items to get a 2K-1 buffer. In this case you can easily modify it to be a little slower and considerably more compact.

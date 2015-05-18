@@ -1,0 +1,10 @@
+mxForth is generated with the META program, which is a metacompiler written in Forth. The source code of mxForth is loosely based on Bill Muench's (BiMu@aol.com) bForth. mxForth comes for free with iForth.
+
+mxForth is an extremely efficient Forth compiler (presently there is no freely available Forth compiler generating faster code). It will generate applications in which the interpreter is still active. This is an option that costs real money (licensing!) in commercial compilers.
+The downside of mxForth is that it is real slow at compiling big programs, and intrinsic functions (FIND WORD CMOVE etc.) are not optimized. This can be a problem sometimes. (If it is, you probably should be using iForth). Of course, not everybody is a speed freak, some people really care about functionality, user interface building, library support... In this case you should look for a professional Forth package (eg. ProForth for Windows from MPE or SwiftForth from FORTH Inc.).
+
+There are presently versions of mxForth for Linux 2.0 and for Windows NT 4.0.
+
+http://home.iae.nl/users/mhx/mxforth.html
+
+ForthSystems

@@ -1,0 +1,15 @@
+* [Fibonacci]
+* HigherOrderFunctions
+* SieveOfEratosthenes
+* [Menus]
+* FunForth - Abstract data types and pattern matching based on [http://www.haskell.org Haskell]
+* DirectedAcyclicWordGraph (built using a hash table)
+* RunLengthEncoding
+* PiSpigot (a demo of arbitrary precision arithmetic)
+* MemoiZation (a way to handle quasi-constants)
+* ModuleScoping (manages namespace complexity in large programs)
+* RandomNumberGenerator
+* CurveInterpolation (High Accuracy Table Lookup)
+* RegExp Regular Expressions
+* BinarySearchofArray
+* ExecuteParsing

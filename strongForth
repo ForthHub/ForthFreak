@@ -1,0 +1,8 @@
+strongForth is a programming language that is very close to ANS Forth. One of the biggest differences is that it includes strong static type checking. ANS Forth itself is often called "typeless" or "untyped", which means that neither interpreter nor compiler do any type-checking when applying a function (a "word") to one or more operands. It is completely up to the programmer to chose the correct functions. In strongForth, the interpreter and the compiler check if a function matches the operands on the stack. This allows finding type errors already at compile time. Additionally, it is possible to overload operators by using the same name for different functions, as long as each function requires a different set of operands.
+
+Version 1.0 has been released on 2005-12-30
+http://home.vrweb.de/stephan.becher/forth/
+
+On 2008-09-29 Stephan released the first version of [http://home.vrweb.de/stephan.becher/strongforth.f/ StrongForth.f] a rewrite of the system in ANS Forth so that it can be run on top of any reasonably capable standard Forth system.
+
+ForthSystems

@@ -1,0 +1,4 @@
+The majority of Forth systems are Forth interpreters, referring to the interactive nature of the language. A Forth interpreter can parse input, and execute it on the fly (using its OuterInterpreter).
+Alternatively, execution is delayed by /compiling/ references to the parsed words into a list, which can be executed by the InnerInterpreter. Confusing, isn't it?
+
+In fact, the OuterInterpreter is used for both /interpreting source/ as well as /compiling source to object/. Often the very same piece of code is used for both tasks.

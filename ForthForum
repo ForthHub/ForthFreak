@@ -1,0 +1,29 @@
+Started on 2006Oct18, the [http://forum.forthfreak.net ForthFreak Forum] is meant to attach to the wiki, as a medium for easier talking.
+Sometimes wiki pages have been used to carry user correspondence. Those are not ideal - a forum fits that purpose probably better. 
+As individual articles can be added to the wiki, or wiki pages address from the forum, both wiki and forum have the potential to mesh. 
+
+[http://forum.forthfreak.net/viewtopic.php?t=1 test linking to a forum article]
+
+In addition does the forum offer facilities which the wiki doesn't:
+Polls, threads, instant messenging and chat, and some more to be discovered. The forum is meant to help the wiki to become a repository for less volatile information, while carrying the exchanges which require a higher amount of interactivity with other users.
+
+As examples: the [http://wiki.forthfreak.net wiki] pages dealing with M8C (M8cOverviewOfPages) and Forth Project Organizer (FPOOverviewOfPages) may be better candidates for the forum than for the wiki, as probably most more conceptual talks are.
+
+Please edit me.
+
+----
+
+/Unfortunately, as of 2006-11-02, I'm getting error messages such as:/
+
+"message_die() was called multiple times. This isn't supposed to happen. Was message_die() used in page_tail.php?"
+
+/and:/
+  phpBB : Critical Error
+  Could not open Fallen template config file
+  DEBUG MODE
+  Line : 503
+  File : functions.php
+
+/I hope this is just a temporary glitch./
+
+uh-oh ... looks like running multiple (supposedly seperate) boards went wrong. Those supposedly share the same database, with different table prefixes. They should, I mean. Evidently, they don't. This needs some serious fixing. For now, the forum is, as consequence, off-line, sorry.

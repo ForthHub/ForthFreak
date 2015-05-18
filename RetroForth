@@ -1,0 +1,43 @@
+!RetroForth is a small, open source implementation of Forth. The latest version was inspired by [cmForth], [colorForth], [eForth], and [Pygmy]. It also uses some of Chuck Moore's newer ideas.
+
+The source code is clean and elegant. It has a small core, with most of the functionality being provided by optional modules.
+
+Since 2008, RetroForth targets a portable virtual machine called Ngaro. Prior to this it was written specifically for 32-bit x86 systems.
+
+Quick Links:
+* [http://retroforth.org Homepage], Downloads, and Documentation
+* [https://code.launchpad.net/retro-language Bazaar Repository]
+* [https://github.com/crcx/retro-language Git Repository] (mirror of the bazaar)
+* [http://groups.google.com/group/retro-10 Mailing List]
+* [irc://irc.freenode.net#retro IRC channel]
+
+----
+Major Features:
+* Small: standard image is under 36k bytes (under 9k 32-bit memory cells)
+* Small core written using a custom machine-forth cross-compiler
+* Growing library of extensions providing new features and partial compatibility with other dialects of Forth
+* Direct threaded (dtc) with select inlining of Ngaro machine code
+* Actively developed and supported
+* Simple, understandable source code
+* It's released under a liberal license
+* Support via mailing list, forums, and IRC
+* VM implementations in x86 Assembly, C, C#, F#, ANS FORTH, Go, Java, JavaScript, Lua, Lisp, Perl, PHP, Python, RetroForth, Ruby, and Scheme
+
+----
+MultiPlatformForth tries to classify Forth implementations by the language they were written in.
+Retro Forth is a bit hard to classify there.
+From an narrow point of view, it is written in an assembly language -- the Ngaro VM, which has 30 instructions.
+From a wider point of view, since the Ngaro VM has several implementations including a C implementation and a JavaScript implementation
+( http://rx-core.org/pages/?NgaroImplementations ),
+one could say that Retro Forth is written in C or one of those other implementation languages.
+
+----
+Prior versions of !RetroForth have served as a base or inspiration for several other Forth systems:
+* [SEDForth], a Forth to assembly translator for Linux
+* [Reva]
+* HelFORTH has a !RetroForth emulation mode
+* FreeForth
+* See GameForth for Glypher and GiREF, Windows-based Forths focused on game development
+* [FXK] (now dead) was intended to be a RetroForth-based ExoKernel
+
+ForthSystems

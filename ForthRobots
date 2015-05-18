@@ -1,0 +1,13 @@
+==== Forth-controller robots ====
+
+* [http://www.angelusresearch.com Angelus Research Bugsy]
+* [http://ugweb.cs.ualberta.ca/~c412/f99/projects/bender/c412index.html Bender] dead link
+* [http://www.mrrobot.com/ Mr.Robot]
+* [http://www.forth.hccnet.nl/applic.html#geesink Geesink]
+* [http://www.cs.ualberta.ca/~kube/research.html Collective Robotic Intelligence Project (CRIP)]
+* The Ushi robot kit with building book from the Dutch FIG chapter
+** [http://www.forth.hccnet.nl/plaatjes/ushi.jpg An Ushi view from above]
+** [http://www.forth.hccnet.nl/downloads/ushiboek.pdf The Ushi building book (Dutch only for now).]
+* http://robo-forth.de Atmel MEGA32 MEGA128 board
+* [pbForth] for LEGO Mindstorms
+* The [http://www.willowgarage.com/pages/pr2/overview Willow Garage PR2] uses a Forth [http://www.excamera.com/sphinx/fpga-j1.html J1 CPU] in its cameras.

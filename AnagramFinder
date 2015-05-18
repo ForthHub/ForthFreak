@@ -1,0 +1,78 @@
+anagram generator, using a DirectedAcyclicWordGraph -- IanOsgood
+
+ \ ============= anagram.f ================
+
+ \ uses: ?c>let let>c Let EOW EOB Ind dawg-root dawg@i
+ include dawg.fs
+
+ \ letters + let is the number of each letter in the anagram
+ \ letters is the total count of letters (and spaces)
+ create letters 27 cells allot
+
+ : more-left?  letters @ ;
+ : remove-let ( let -- TF )
+   cells letters + dup @ dup if
+     1- swap !  -1 letters +!  TRUE
+   else nip ( 0 ) then ;
+ : replace-let ( let -- )
+   cells letters +  1 swap +!
+       1 letters +! ;
+
+ \ optional: each space increases words allowed in the anagram
+ variable max-words
+
+ : init-phrase ( addr len -- )
+   letters 27 cells erase
+   0 max-words ! \ optional
+   bounds do
+     I c@ ?c>let ?dup if replace-let else 1 max-words +! then
+   loop ;
+
+ variable num-found
+
+ variable result-len
+ create result 80 chars allot
+
+ : result+c ( c -- )
+   result result-len @ + c!  1 result-len +! ;
+
+ : solve ( block -- )
+   cell-
+   begin cell+
+     dup @ Let remove-let if
+       dup @ Let let>c result+c
+       more-left? if
+         dup @ EOW if
+           max-words @ if -1 max-words +! \ optional
+             bl result+c
+             dawg-root recurse
+             -1 result-len +!
+           1 max-words +! then \ optional
+         then
+         dup @ Ind ?dup if
+           dawg@i recurse
+         then
+       else
+         dup @ EOW if
+           1 num-found +!
+           cr result result-len @ type
+         then
+       then
+       -1 result-len +!
+       dup @ Let replace-let
+     then
+     dup @ EOB
+   until drop ;
+
+ : anagrams" ( blah blah" -- )
+   [char] " parse init-phrase
+   0 result-len !  0 num-found !
+   cr dawg-root solve
+   cr space num-found @ . ."  anagrams found"
+   cr ;
+
+ \ The following generates 67770 anagrams in 65 seconds
+ \  using gforth 0.5.0 on a G4-500.
+ load-dawg dawg.out
+ anagrams" forth is great"
+ bye

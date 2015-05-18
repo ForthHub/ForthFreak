@@ -1,0 +1,9 @@
+We'd have a hell of a time getting a standard approved. We couldn't possibly agree on a single set of tokens, much less a single multiplatform Forth to run them on.  And if we did agree on a set of tokens it would be a weak watered-down least-common-denominator Forth that no one would be happy with.
+
+Success for Forth scripts has to allow a large number of different tokenizer/token-compiler pairs.
+
+Typically a byte-code system defines the opcodes for a virtual machine. The result is more portable than real machine code and more compact than source code. But Forth byte-code systems will also be optimised for some range of tasks.  Optimised for booting hardware, or for debugging networks, or for banking applications, or for games on cell phones, etc.
+
+We cannot possibly insist on a single unchanging virtual machine.  Better to make it easy to develop specialised byte-codes for particular needs, and easy to acquire the token-compiler needed for any particular body of code.  We will have multiple incompatible byte-code systems whether we want to or not.  
+
+So we might as well plan for it.

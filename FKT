@@ -1,0 +1,20 @@
+An {wp:FKT_algorithm|FKT algorithm} library released under GPLv3 and hosted on sourceforge
+
+The {wp:FKT_algorithm|FKT algorithm}, named after Fisher, Kasteleyn, and Temperley, counts the number of perfect matchings in a planar graph in polynomial time.
+
+* [http://sourceforge.net/projects/fkt FKT project page on Sourceforge]
+* [http://sourceforge.net/p/fkt/code/2/tree/trunk Browse source code] (sourceforge seems to not know that "*.fs" is source code; need to manually click on 'display it' for source to be shown)
+
+This contains open source implementations of a number of sub-algorithms which are needed for FKT.
+ 
+* modular integer arithmetic ([http://sourceforge.net/p/fkt/code/2/tree/trunk/mod.fs?force=True mod.fs])
+* integer matrix determinant ([http://sourceforge.net/p/fkt/code/2/tree/trunk/rdet.fs?force=True rdet.fs])
+* handling of graphs, converting between different graph representations ([http://sourceforge.net/p/fkt/code/2/tree/trunk/graph.fs?force=True graph.fs])
+* spanning tree ([http://sourceforge.net/p/fkt/code/2/tree/trunk/spanning.fs?force=True spanning.fs])
+* find equivalence classes given equivalence relation ([http://sourceforge.net/p/fkt/code/2/tree/trunk/equiv.fs?force=True equiv.fs])
+* compute the dual of a graph ([http://sourceforge.net/p/fkt/code/2/tree/trunk/dual.fs?force=True dual.fs])
+* 2-D vector routines, using integer-math only ([http://sourceforge.net/p/fkt/code/2/tree/trunk/xy.fs?force=True xy.fs])
+** compute area of a (convex, concave) 2-D polygon
+** sort vectors counter clock-wise by angle (no trigonometry involved)
+** test for intersection of 2-D line segments
+* (almost) everything comes with a test-case

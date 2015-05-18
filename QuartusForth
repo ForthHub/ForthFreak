@@ -1,0 +1,11 @@
+Quartus Forth gives you a full-featured Forth development environment in the palm of your hand.
+Quartus Forth is written in hand-coded assembler for optimal performance.
+
+http://www.quartus.net/products/forth/
+
+Version 2.0 is now available with increased codespace, increased compilation speed, an ARM assembler, new language extensions, full error text for all PalmOS system error codes, and a built-in dictionary extension with 6200+ PalmOS API constants and named structure offsets.
+
+----
+See also the Quartus wiki for a lot of QuartusForth code and PalmOS knowledge. http://www.quartus.net/wiki
+
+ForthSystems

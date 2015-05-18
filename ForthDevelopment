@@ -1,0 +1,9 @@
+* [http://home.iae.nl/users/mhx/basic.html BASIC] interpreter
+* [http://www.forth.spb.su:8888 CinF] C compiler in Forth source code
+* CHForth 1.2.5. [http://www.forth.hccnet.nl/downloads/chf125m.zip metacompiler (zip)].
+* ForthForth, a non-completed [ForthInterpreter], written in Forth
+* MetaStic, a MetaCompiler running under MS-DOS
+* [RASM], the RetroForth Assembler
+* [http://retro.tunes.org/pub/RetroForth/old/tcn-retro/retro3.zip Retro3 MetaCompiler] written in GForth.
+* [Retrospect], a debugger written in RetroForth
+* [TypedTester], provides a modified HayesTester syntax to allow user-defined types.

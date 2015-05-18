@@ -1,0 +1,34 @@
+ForthOS is the name Andy Valencia uses for his Forth operating
+system running directly on the PC hardware.  Its home page
+is http://www.forthos.org
+
+[http://www.forthos.org/ ForthOS] started out as a port of [eForth] by Andy Valencia to the x86 architecture in 32-bit mode. More recently, this work was dusted off to adapt it to the Grand Unified Bootloader, also known as "GRUB". While this was easily done, the itch was irresistable to spruce up the environment a bit ... the result is
+[http://www.forthos.org/ ForthOS].
+
+http://www.forthos.org/
+
+Please note as of ForthOS 1.0, the system is entirely self
+hosted and metacompiled, with no C involved.
+
+TO-DO 12-2-2005 :: Ln1nY0
+
+There needs to be a writeup on how ForthOS can be installed on stand-alone Intel boxes or emulations thereof. supplied ISO image boots fine from CD, but how to get the install working? 
+
+The install doc only deals with a scenario where one is installing onto a separate disk device \dev\somethingorother in a *NIX environment. With the advent of QEMU, such instructions to install ForthOS will go a long way in giving people something to play with. 
+
+Thanks.
+
+ForthSystems
+
+
+Here is how I ran it in qemu:
+
+    qemu-img create -f raw forthos.raw 2G
+    sudo mount forthos.iso /media/iso
+    dd bs=4k skip=1 seek=1 if=/media/iso/ForthOS1 of=forthos.raw
+    dd bs=4k seek=100 if=/media/iso/ForthOS2 of=forthos.raw
+    dd bs=4k seek=10000 if=/media/iso/SrcFS10000 of=forthos.raw
+    qemu-img convert forthos.raw -O qcow forthos.qcow
+    qemu -hda forthos.qcow -cdrom forthos.iso -boot d
+
+Regards, [AndreasBWagner http://pointfree.net/]

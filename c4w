@@ -1,0 +1,8 @@
+c4w is an adaption of Charles Moore's [colorForth] that runs under Microsoft Windows. Since it is an experiment, a work in progress, is poorly documented, buggy, contains some really bad examples of  forth and assembler, and has only even been run on Windows2000, I am calling this release Pre-Alpha v0.001.
+
+"c4" is an abbreviation for colorForth, "w" is for windows. It is intended that c4w will have brothers or sisters such as c4s which like the original colorForth will run standalone on a Pentium, but in other ways will be like c4w.
+
+dead link, no other link found:
+http://homepages.paradise.net.nz/rscollins/c4/
+
+ForthSystems

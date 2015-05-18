@@ -1,0 +1,97 @@
+M8cForth for the Cypress M8C core used in many Cypress PSoC chips.
+
+* M8cStatus
+* M8cForthGoals
+* M8cForthDiscussion
+* M8cForthSource
+
+== source code ==
+
+Version: 2.01 of the source code is currently available at
+http://psocdeveloper.com/tools/misc-dev-tools.html
+.
+I would like to collaboratively improve it wiki-style.
+Is there a better wiki than forthfreak for hosting the source code?
+(WikiNode ?)
+
+David, should you need additional facilities for source code development, simply give it a shout. If it can be set up with reasonable effort, and is available for Unix (Linux runs here), it might be provided.
+
+/If someone changes a couple of words in a couple of lines, how can I find out what changed?/
+/I want something like this "diff" feature: [http://wikifeatures.wiki.taoriver.net/moin.fcg/DelayedCommits DelayedCommits(normal view)], and [http://wikifeatures.wiki.taoriver.net/moin.fcg/DelayedCommits?action=diff&rev2=18&rev1=11 DelayedCommits(revision 11 vs. 18)]./
+/I see that "Revision Diff Display" is already listed on the KwikiTodo; please bump it to a higher priority./
+/Many of the wiki listed at the/ http://wikimatrix.org/ /already include "Revision Diffs"./
+/Would it be quicker to install one of those wiki than to figure out how to get revision diffs into Kwiki?/
+/-- DavidCary/
+
+I'm afraid using different wiki software won't be quicker, as wiki markup is very likely to differ, and pages need to be checked/modified for the different markup.
+
+/I agree that (option#1) translating all the pages on this wiki to a different markup syntax would be a big hassle./
+/Adding "revision diffs" to the current Kwiki wiki (option#2) would be great, but I don't know how hard that is./
+/However, what if we (option#3) start up a more-or-less independent wiki just for "my" source code, and continue running this Kwiki wiki normally?/
+/Keeping 2 wiki (option#3) running is, of course, more work than keeping 1 wiki running -- but running 2 wiki might be less work than the previous 2 options./
+/Option#4: continue running Kwiki, and also install a [http://en.wikipedia.org/wiki/Svk SVK] server just for source code./
+/Option#5: continue running Kwiki, and also make a SourceForge project out of this M8cForth (or perhaps a more general "microcontroller Forth"), and use SourceForge's SVN server, bug tracker, etc./
+/With so many options in today's world, it's a wonder that anything ever gets done. :) /
+/-- DavidCary/
+
+
+
+----
+==== Seems that nobody has really pointed out... ====
+... that diffs can be displayed. that has been the case for quite a while now, and is stated in WhatIsNew.
+Links to display diffs can be constructed as well:
+[http://forthfreak.net/index.cgi?action=diff&page_name=M8cForth&revision_id=-1 show diffs between current and previous version of this page]
+----
+
+
+
+== decisions to make ==
+
+M8cForth is currently a StandAloneForth.
+
+I'm waffling between:
+* StandAloneForth. Cram everything on one chip. This is simpler from a hardware POV, and allows me to use any threading model. But I worry that the limited RAM space will force me to make too many sacrifices, resulting in a useless toy. Internal Flash is re-programmed every time we define a new word (CODE word or colon definition).
+* Virtual machine. Use external RAM and/or external Flash. Use the microcontroller to emulate a microprocessor. The internal RAM emulates the registers. The internal Flash emulates the microcode. For example, [http://img.cmpnet.com/edtn/ccellar/e023pdf1.pdf "Picaro: A Stamp-like Interpreted Controller"] article by Tom Napier 1998-04 in _Circuit Cellar Ink_. We could, for example, program a PIC or a PSoC or an AVR to emulate a P21 or an 8086 or the MMIX, then run some "standard" Forth (designed for the P21 or the 8086 or the MMIX), using any threading model, on it. (Unlike a real P21 or 8086, we can execute code in a tiny 8-pin serial memory). Once we define the virtual machine, internal Flash never changes.
+* Forth as virtual machine. Keep as much on one chip as possible, but use external RAM and/or external Flash for "overflow". This forces us to use indirect-threading (perhaps token-threading) for colon definitions in external Flash (because the microcontroller cannot directly execute code in external Flash). Keep the stacks in internal RAM, but when they overflow, spill to external RAM. Internal Flash is re-programmed every time we define a new CODE word.
+* Umbilical Forth. This seems similar to "Forth as virtual machine", except it uses a PC connected with a serial port to hold all the overflow.
+
+I suppose I should re-read more carefully
+* ThinkingForth http://thinking-forth.sourceforge.net/
+* Build Your Own Forth http://www.figuk.plus.com/byof.htm
+* "Moving Forth: a series on writing Forth kernels" http://zetetics.com/bj/papers/
+
+Anything else I really ought to know before launching into yet another Forth implementation? -- DavidCary
+
+/Is there a better page on/ ForthFreak /to list/ /the different styles/ /of Forth implementations ?/
+
+Perhaps ForthImplementation.
+
+== Possibilities ==
+
+Possibilities for supporting those goals:
+
+* support "runs on CY8C27143" To pack a lot of stuff on such a small processor (a command line interface, a compiler, and user code), I want the "compiler" to generate relatively compact code. [http://www.psocdeveloper.com/forums/viewtopic.php?t=156&postdays=0&postorder=asc&highlight=forth&start=40&sid=e57785772d12a45c409370b8323369b7 some discussion of compact code for the M8C]. (Would [http://en.wikipedia.org/wiki/Threaded_code "Huffman Threaded Code"] be appropriate for the PSoC ?).
+
+* to support "get it running /at all/, before we try to optimize for space": perhaps (if it's not too complex) allow some code (colon definitions) to live in an external serial flash ... some variables to live in exernal serial RAM ... (Ramtron FM32256 ?) ... but also allow single-chip systems ...
+
+* support "easy-to-understand, easy to modify": If wouldn't impact the other goals too badly, it would be cute if, quine-like, it can print out its own complete source code (stored as ordinary ASCII text in the external serial flash, with routines to edit it). Also, to make sure that source code is really what it is executing, it re-compiles the source code every (?) time it boots up.
+
+== more discussion ==
+
+See
+M8cForthDiscussion
+.
+
+Christopher Burns wrote PSoC Forth
+(see
+http://www.psocdeveloper.com/forums/viewtopic.php?t=167
+http://geocities.com/mwalimub/psoc_forth.html
+)
+for the Cypress M8C.
+DavidCary took over maintenance in 2006.
+
+Today (2006-06-26) I started this page on ForthFreak.
+I am interested in seeing how much I can squeeze onto a 8 pin Cypress PSoC microcontroller.
+-- DavidCary
+
+ForthSystems

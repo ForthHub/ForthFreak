@@ -1,0 +1,57 @@
+/At least one version of Forth has been written for just about every CPU ever produced, too many to list here. If you need to use a particular processor, type in your processor in the search bar at the top to find the versions of Forth that run on it./
+
+Forth had a strong influence on the design of many processors, including:
+* [http://www.holmea.demon.co.uk/Mk1/Architecture.htm Mark-I Forth Computer]
+* [http://www.holmea.demon.co.uk/Mk2/Photos.htm Mark-II Forth Computer]
+* [http://www.cse.cuhk.edu.hk/~phwl/mt/public/archives/old/msl16/msl16.html MSL16 CPU]
+* [http://www.tinyboot.com/cd16/index.htm CD16 CPU]
+* [http://www.tinyboot.com/E16.html E16 CPU]
+* [http://www.ultratechnology.com/f21.html#f21 F21 CPU]
+* [http://www.jwdt.com/~paysan/4stack.html 4Stack CPU]
+* [http://www.jwdt.com/~paysan/b16.html b16]
+* [http://www.forthfreak.net/misc/x18.html x18]
+* [http://www.colorforth.com/GA4.htm GreenArrays GA4] implements the colorForth instruction set
+* [http://www.intellasys.net/index.php?option=com_content&task=view&id=60&Itemid=75 SEAForth] Scalable Embedded Array Processor.
+** Legal future unsure. CharlesMoore left intellasys and founded [http://www.colorforth.com/GA.htm GreenArrays]
+* 25x is probably what was to become [http://www.intellasys.net/index.php?option=com_content&task=view&id=60&Itemid=75 Scalable Embedded Array Processor]
+** [http://www.forthfreak.net/misc/25x.html description from colorforth.com]
+** [http://www.forthfreak.net/misc/25x.pdf  pdf document from bournemouth.ac.uk]
+* [http://www.stringtuner.com/myron.plichota/steamer1.htm Steamer16]
+* [http://www.ece.cmu.edu/~koopman/stack_computers/sec4_5.html RTX2000, RTX2001]
+* Novix NC4016
+** http://www.ece.cmu.edu/~koopman/stack_computers/sec4_4.html
+** http://www.eforth.com.tw/academy-n/chips/Novix%20NC4000.htm
+* [http://www.kmlager.com/projects FCPU1 Novix clone]
+** [http://forthfreak.net/fcpu1.pdf Schematics] (44 pages pdf)
+* [http://www.eforth.com.tw/academy-n/chips/ShBoom.htm ShBoom II]
+* psc1000 (!ShBoom based "Java"-CPU, now licensed to AMD
+** [http://www.forthfreak.net/misc/psc1000.pdf psc1000 datasheet (pdf)]
+* F68HC11 [Don't you mean R65F11?]
+* 68F12 hardly any data on this 68xx with a ForthInterpreter in ROM anymore 
+* The [http://www.microcore.org/ MicroCore] project
+* [http://www.mpeforth.com/rtx.htm RTXcore, clean-room RTX implementation]
+* [http://www.ece.cmu.edu/~koopman/stack_computers/sec5_3.html RTX32P]
+* TechnoForth processors http://www.technoforth.ru/products.htm (Russian)
+** http://www.technoforth.ru/tf2216.htm TF-2216 (Russian)
+** http://www.technoforth.ru/plata.htm TF-2016 (Russian)
+* [http://www.excamera.com/sphinx/fpga-j1.html J1 Forth CPU (FPGA)]
+* http://www.robo-forth.de Atmel MEGA32 Roboter hardware + software
+----
+* http://www.arhs.net/Computers/Hardware/Components/Processors/Minimal/
+* [http://www.ultratechnology.com/chips.htm Website with links to Forth CPUs at UltraTechnology]
+* http://www.sandpipers.com/cpuclass.html
+* [http://www.holmea.demon.co.uk/Mk1/Architecture.htm FORTH computer in discrete TTL]
+* [http://www.holmea.demon.co.uk/Mk2/Architecture.htm FORTH computer in bitslice / PLD]
+* [http://www.ptsc.com/ 32 bit RISC FORTH processor / IGNITE]
+
+----
+*Other*
+* [http://www.compusmart.ab.ca/rc/Papers/8bitprocessor/index.html Rob Chapman and Steven Sutankayo 8-bit Stack Processor]
+* http://www.fpgacpu.org/links.html  (Not all of them are forthcpu's. Very interesting though.)
+* [http://www.opencores.org/ OpenCores CPU] (Huh ? which of the 18 microprocessor designs here are Forth-oriented ?] (g16/yoda, not there anymore)
+* [http://laughtonelectronics.com/arcana/BrideOfSonPg1.html 6502 with coprocessor features new stack addressing mode; Indirect-threaded NEXT in just 9 cycles]
+----
+See
+ForthBoards,
+ForthSystems,
+ForthOtherHardware

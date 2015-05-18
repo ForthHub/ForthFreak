@@ -1,0 +1,183 @@
+=== Chris Burns: ===
+TO answer Bill's question: At Psocdeveloper, under tools, there is a area for PSOC FORTH.  You will find the Source Code and a HEX file.  If you have a programmer, you can burn a 27443 with version 2.0. 1/6/08
+
+
+=== Chris Burns: ===
+Is anyone still interested in this?  I recently restarted some of the work I was doing on Psoc FORTH.  I have a working version for the 27x43 series (143, 443 and 643), the 26443 and a "working" version for the 29466.  Chris Burns aka mwalimu
+
+/Yes, I'm still interested. Please do post your newer versions, either here or at http://en.wikibooks.org/wiki/Forth/PSoC_Forth . -- DavidCary 2007-12-27/
+
+/I'm having a little trouble with the new PSOC designer versions.  The code I wrote three years ago doesn't work.  I think it has to do with the new BOOT.TPL versions and the memory models for the larger chips.  It will be slow going, though as I start back to work(my real job) tomorrow.  cburns 1/6/08
+
+=== Bill: ===
+Progress has been made with Forth running on a PSOC CY8C29466.  Go to http://nope9.com/projects-axxx/tiki-index.php?page=A337 for more details, or drop us an e-mail at PSOC@oh-god.com.  We have it up and running and are now looking at extending the code.
+-- /BillGoodrich/
+
+----
+
+=== Bill: ===
+I would be really psyched if someone ( David? ) could post some basic instructions on how to go about using the PSOC Forth download.  For those of us that know Forth, but not so much about PSOC, it would be fantastic.  For example, what specific chips will that version of Forth run on?  What would need to be changed in the Forth kernal to make it usable on, say, a 29466 ( The chip I'm interested in, to be wholly selfish )?  How would one need to prepare the PSOC to run the Forth?  I.e. instantiate a UART to communicate with it?  What is the process for saving words into flash?  How can words be erased?
+Thanks so much to David or anyone who can help us beginners.
+Cheers.
+-- /BillGoodrich/
+
+/Alas, I've been working on a non-PSOC, non-Forth project recently./
+/I hope that the next project after this can use the PSOC Forth./
+/I intend to write up a few things, when I get some more time./
+/-- DavidCary 2007-09-25/
+
+Until then, feel free to make improvements to the current version of psoc_forth at
+http://en.wikibooks.org/wiki/Forth/PSoC_Forth
+.
+-- DavidCary 2007-09-30
+
+----
+
+=== David: ===
+Is there some Forth that would be appropriate to port to this architecture, rather than starting from scratch?
+-- /DavidCary/
+----
+
+==== helpful person: ====
+David, if it is of any help, i implemented a kind of tethered Forth for the PIC 16x73 once - run time code was completely on the pic, using about 80 registers to compile to. but i couldn't fit the compiler itself - to that end, i used another controller in the same system, used to provide compilation services. 
+I'll watch this space.
+-- /helpful person/
+
+----
+==== David: ====
+Thanks.
+Yes, there are enough similarities between the PIC and the M8C that I considered trying to port some PicForth to the M8c.
+But the PIC Forths I've seen have all been some kind of CrossForth. They all throw away what I see as the biggest benefit of Forth over C -- being able to interactively test one subroutine at a time.
+
+Yes, some PICs can not re-program their own Flash. For them, you need some external processor to program new stuff (or else use the "virtual machine" mentioned in "decisions to make" below).
+But more recent PICs and this M8C *can* re-program their own Flash, so I was hoping I wouldn't need another processor.
+-- /DavidCary/
+----
+==== helpful person: ====
+Is a Forth for the 8 bit Hitachi controllers (H8/33x) a better candidate? These are not tiny controllers anymore.  IIRC, 16 kb of flash, looking from a programmers point of view a bit like a stripped down and downsized 68000. This is a complete Forth, not requiring any additional controller to help compiling.
+-- /helpful person/
+----
+==== David: ====
+It would be a candidate only if it was actually available.
+My
+[http://forthfreak.net/index.cgi?action=search&search=H8 search for H8] only gave me a 1 hit -- StandAloneForth -- which briefly mentions that the H8 version of MetaStic is not available.
+
+Are you implying that the forthfreak wiki is (gasp!) incomplete? :-)
+
+Yes, 16 KB /seems/ like plenty of storage for a complete Forth implementation.
+But the only way to store things in flash is to overwrite an entire flash "block". And we must turn off all interrupts while writing. Also, repeatedly writing to flash wears it out (after 50,000 cycles), so we want to avoid writing to it as much as possible. If we write to it only 1 time every 10 minutes, it will wear out in less than a year.
+
+We must use RAM for anything that might change more often -- the return stack RSP, the data/parameter stack PSP, VARIABLEs, a buffer the size of 1 flash block, the command-line buffer, etc.
+But most M8C and quite a few PIC microcontrollers only have 256 bytes of internal RAM. (The Atmel "attiny" microcontrollers have even less RAM.)
+Several people have written Forth dialects for the 68HC11, which has 512 bytes of RAM, and they seem to find it a tight squeeze.
+
+I think RAM is going to be the bottleneck.
+So I'm hedging my bets by adding some 32 KByte "8 pin serial RAM" chips to my parts order list. The 32 KByte is total overkill. But I'm betting that, assuming it's even possible to squeeze it all onto 1 chip, that having a little extra breathing room will allow me to get it working then iteratively pare it down until I've squeezed it into 1 chip, reaching that goal much faster and with less frustration than banging into the "out of memory" wall over and over again.
+
+(I vaguely remember some famous programmer saying something like: the reason prototype systems have more RAM than production systems is the same reason airplanes aren't assembled at 30,000 feet -- who said that?).
+
+-- DavidCary
+
+----
+==== helpful person: ====
+David, The H8 implementation I refer to hasn't been put online. It does compile directly to Flash, by never writing to a Flash address twice. If it helps, I'll contribute - it needs a bit of cleaning, because it uses awk as preprocessor, as it targets also another controller. awk is used to do the CPU specific translation from "virtual" source to H8 asm source. The reason why it hasn't been made available is partly that it is assembled with the IAR H8 assembler, which is, afaik, not free - it didn't seem to make much sense to publish source code of a system which requires additional non-free software. But as reference or even base for a different implementation, it may be quite suited.
+I may have to have a look at the M8C instruction set. Possible, one of he other interpreters I have implemented may be a closer match.
+
+The Forthfreak wiki is only as complete as contributors make it :)
+----
+==== David: ====
+/Sure, feel free to send me the source. I'll try to mine it for good ideas./
+/Please do note at the top whether you are releasing it to me as "public domain", "LGPL",/
+" http://wiki.creativecommons.org/ ",
+/BSD License,/
+/or what./
+
+/I'm still hoping that I'll find some/ MultiPlatformForth /that will be up and running after only a few lines of code on my part./
+ForthScripts /seems to have as a goal exactly what I want, but it doesn't seem quite implemented yet./
+/Unfortunately, most of the/ MultiPlatformForth /assume a "von Neumann architecture"./
+/The Cypress M8C and the 8051 and the Atmel AVR and the Microchip PIC all have "Harvard architecture"./
+/Other systems that look promising are/ ByteForth and [pbForth] and [Aha] and [Holon].
+ByteForth /might be exactly what I want, but I wish I could understand Dutch better./
+-- /DavidCary/
+
+----
+==== helpful person: ====
+As it happens, my Dutch is quite reasonable.
+
+
+/Is ByteForth merely a CrossForth, or can I interactively type one more subroutine and immediately run it?/
+/How hard would it be to tweak ByteForth so that it stored colon definitions in an external serial memory chip?/
+-- /DavidCary/
+
+----
+
+A Cypress PSoC M8C microcontroller is used in the
+"gainer module".
+See the "gainer wiki"
+http://gainer.cc/
+for details.
+
+----
+
+David Cary writes:
+I've written "NEXT" in all the different types of threading I know about, and here are the 2 fastest/shortest I've come up with so far:
+
+  NEXT: ; subroutine-threaded code
+    RET
+
+  ; byte-token threaded code.
+  ; limited to a maximum of 128 tokens.
+  NEXT:
+    MOV A,[_IP_hi]
+    MOV X,[_IP_lo]
+    ROMX ; fetch byte token from A:X into A
+    inc [_IP_lo] ; hope this doesn't overflow!
+    JACC (token_table) // PC <-- (PC+1)+k+A
+    // This allows a mixture of 2-byte and 3-byte jump instructions in the token table.
+    // if the token table is filled with 2-byte Jump instructions, it's limited to 128 possible tokens ...
+    // if the token table is filled with 3-byte Jump instructions, it's limited to 256/3 = 85 tokens.
+    // some very short, speed-critical words might even be embedded into the table, followed by JMP NEXT.
+
+Because the M8C is so very register-limited,
+Rodriguez (in "Moving Forth")
+seems to recommend using subroutine-threaded code.
+
+These 2 implementations of NEXT assume all colon definitions are located in internal Flash.
+
+I think I'd like to experiment with making even more compact colon definitions -- even if it makes NEXT a little longer and slower.
+
+Also, if I keep colon definitions in external memory, I suspect NEXT will be forced to be longer and slower.
+-- /DavidCary/
+
+----
+
+Should we try to work together with:
+
+M8C utilities (Open Source, Linux)
+http://m8cutils.sourceforge.net/ 
+http://psocdeveloper.com/forums/viewtopic.php?t=1744
+
+----
+== new PSOC core ? ==
+==== John Griessen: ====
+
+Some news on http://psocdeveloper.com is that Cypress is putting out  a 96MHz 8051 core for their low priced pSOCs instead of the M8C.  It could make all the work Werner of m8cutils obsolete if they abandon M8C production... but if you just like the hardware feature set of pSOCs combined with Forth, it could be a boon -- many of David's entries in this Wiki ask for ways to avoid wheel reinventing, so that is it -- use the new 8051 core pSOCs, and tweak an existing 8051 forth to run well on a pSOC.   I'm for the "get it to run at all" fast approach with standalone model, or Forth as VM.  Umbilical style forths leave off the interactive-modify or self-instrument-as-you-run  possibilities of forth.
+-- JohnGriessen
+
+Really? I looked at the http://cypress.com/ press releases, and I didn't see anything about switching to a different core.
+
+I briefly glanced through the http://psocdeveloper.com/ forums.
+The only thread I saw about switching cores was
+"ARM powered PSoC?"
+http://psocdeveloper.com/forums/viewtopic.php?t=2222
+. As of 24 Nov 2006, that thread seems to conclude that while Cypress is working on new chips with a different core, no one outside Cypress knows what that core is (8051 ? ARM ? both ?), or how many years(!) will pass before I can buy one, so we should consider these parts as vaporware, and the reports as merely rumors.
+
+-- DavidCary
+
+CypressMicro promises 96MHz 8051 core low end pSOCs will replace the M8C.  Could mean an eforth porting effort is worth while.  What other 8051 forths are good for porting to one of David's goal that uses external RAM and/or external Flash for "overflow"s? -- JohnGriessen
+
+----
+Somebody else
+
+
+Hi Could you release the full source code i assumed that the include files where in the cypress designer software but they don't seem to be .I assume that the cypress assembler was used to "compile" the code. Thanks

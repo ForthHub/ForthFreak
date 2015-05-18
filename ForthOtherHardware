@@ -1,0 +1,6 @@
+* [http://www.object-arts.co.uk/wiki/html/Lego-Robotics/FrontPage.htm LEGO robotics wiki], some robots have been programmed with [pbForth].
+* [http://www.eforth.com.tw/academy-n/library/Notebook2/Forth%20Systems/Forth%20System_6.htm VAX AS A 32 BIT FORTH MACHINE]: Ranking of different computers and !CPUs according their Forth-usability.
+* [http://iraf.noao.edu/iraf/web/ADASS/adass_proc/adass_95/marshallb/marshallb.html Telescope control at KPNO and WIYN]
+* [http://www.falvotech.com/content/kestrel/ ForthBox Kestrel Development Pages]
+* [http://thewikireader.com The WikiReader] [http://github.com/wikireader (firmware source)] uses a [http://github.com/wikireader/wikireader/tree/master/samo-lib/forth/ Forth interpreter] at its core
+* The [http://en.qi-hardware.com/wiki/Ben_NanoNote Ben NanoNote] has a [GForth] interpreter pre-installed in its latest (Open-WRT) firmware ([http://downloads.qi-hardware.com/software/images/NanoNote/Ben/2010-11-17/ Firmware 2010-11-17]) ([http://projects.qi-hardware.com/index.php/p/openwrt-packages/source/tree/master/gforth NanoNote gForth package])

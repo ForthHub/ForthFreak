@@ -1,0 +1,14 @@
+Actually, [ciforth] configured to run on Linux/x86.
+
+Features, present in the archive:
+* binary ; it works on all kernels at least since 1.2.
+* assembler source, GPL-ed.
+* indirect threaded Forth
+* 80386 assembler/disassembler based on the posit/fixup principle
+* savesystem and turnkey facility. Make a standalone 30 Kbyte programs, independant of any libraries, resident or not.
+* texinfo documentation. So you have info and PostScript.
+* html documentation with references between related words.
+
+http://home.hccnet.nl/a.w.m.van.der.horst/lina.html
+
+ForthSystems

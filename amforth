@@ -1,0 +1,9 @@
+amforth is a compact forth interpreter and compiler for the atmel avr atmega micro controller family. It is implemented in assembly language and forth itself. It is an interactive system running completely on the controller.
+
+amforth is published under the GNU Public License v2 (GPL).
+
+amforth implements an ans94 stylish indirect threading 16bit Forth with very few missing CORE words, some words from the extension word sets and a few own words, and has been influenced by [avrforth]
+
+http://amforth.sourceforge.net/
+
+ForthSystems

@@ -1,0 +1,116 @@
+Due to link spammers targetting this page frequently, it has been write protected now.
+
+[http://www.forthfreak.net/wiki/index.cgi/index.cgi?action=edit&page_id=KwikiQuickRef view page source]
+
+== This page describes the wiki markup language  ==
+----
+=== Headers ===
+
+= Level 1 Heading =
+ = Level 1 Heading =
+
+== Level 2 Heading ==
+ == Level 2 Heading ==
+
+=== Level 3 Heading  ===
+ === Level 3 Heading  ===
+
+==== Level 4 Heading ====
+ ==== Level 4 Heading ====
+
+===== Level 5 Heading =====
+ ===== Level 5 Heading =====
+
+====== Level 6 Heading ======
+ ====== Level 6 Heading ======
+----
+=== Layout ===
+ blank line for new paragraph.
+
+ ----  separator (the horizontal line below)
+----
+=== Attributes ===
+ *Bold text*
+*bold*
+ /italic text/
+/italic/
+ _underscore text_
+_underscore_
+ /*bold+italics*/
+/*bold italic*/
+ [=proportional font]
+[=proportional]
+
+indenting a line with one or more spaces shows it literally:
+  no /italics/, no WikiLinks, no http://links.neither
+
+
+----
+=== Links ===
+==== plain internal links: ====
+* the word WikiLink is a link.
+  the word WikiLink is a link.
+
+* words between [brackets] are links too 
+  words between [brackets] are links too 
+
+==== plain external links: ====
+* http://www.google.com is an external link
+  http://www.google.com is an external link
+
+* image links as in http://www.forthfreak.net/baustelle.gif display the picture
+  image links as in http://www.forthfreak.net/baustelle.gif display the picture.
+Some pictures available from this server are in ImageCollection.
+
+* Mailto links are just email addresses like foo@bar.com.
+
+==== named external links: ====
+* [http://www.forthfreak.net forthfreak homepage] is a named external link
+  [http://www.forthfreak.net forthfreak homepage] is a named external link
+
+==== prevention of links: ====
+* this is !NotALink
+  this is !NotALink
+* neither is !http://this.a.link
+  neither is !http://this.a.link
+
+----
+=== Lists ===
+* foo
+* bar
+** boom
+** bam
+* baz
+
+0 foo
+0 bar
+00 boom
+00 bam
+0 baz
+
+* foo
+* bar
+00 boom
+00 bam
+* baz
+
+ * foo
+ * bar
+ 00 boom
+ 00 bam
+ * baz
+
+----
+=== Tables ===
+Simple Tables:
+|temp|state|action|
+|0-25 |off|turn on|
+|25-60 |normal|yawn|
+|60-80 |critical|observe|
+|80-|overload|duck&cover|
+
+ |temp|state|action|
+ |0-25 |off|turn on|
+ |25-60 |normal|yawn|
+ |60-80 |critical|observe|
+ |80-|overload|duck&cover|

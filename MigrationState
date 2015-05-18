@@ -1,0 +1,23 @@
+*MIGRATION STATE:*
+* DONE:
+** pages moved
+** meta information regenerated
+** version archives presumably incompatible - removed
+** import support scripts
+** install periodic page generating and housekeeping scripts
+** fix revision history (or some other way to revert spam)
+*** to restore the previous revision:  Revisions, Edit, Save
+*** to restore any other revision: Revisions, Previous/Next, Edit, Save
+** increased contrast of links and body text
+** fixing wiki pages where markup differs. some weren't easy: PagesResistingEasyMigration.
+** factored out periodical (automatic) page generation. Pages describing ForthSystems can be added to ForthSystemsAlphabetical by adding the keyword ForthSystem to the page.
+** show diffs between revisions
+** updated the remaining DNS record http://forthfreak.net
+* BUSY WITH:
+* TO DO:
+** update KwikiQuickRef to reflect additional markup
+
+----
+a way to request page deletion exists: DeleteRequest. The [http://wiki.forthfreak.net/index.cgi?action=keyword_display;keyword=DeleteRequest  pages for which deletion has been requested] will have to be deleted manually, but at least they're listed, and available for peer review. The admin(s) won't rush deletion though.
+
+----

@@ -1,0 +1,5 @@
+yForth? was written by Luca Padovani to try out the emerging ANS Forth standard in ANSI C.  The terminal I/O originally depended on Turbo-C style conio.h.
+
+* http://git.gag.com/?p=debian/yforth;a=summary
+
+ForthSystems

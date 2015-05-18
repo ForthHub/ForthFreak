@@ -1,0 +1,84 @@
+== Basic Control-Flow Structures
+
+Forth has the same basic control-flow structures as most languages.  To start with, you can probably just use these forms.
+
+It has an IF and an IF/ELSE statement:
+
+* [=<condition> IF <true-action> THEN]
+* [=<condition> IF <true-action> ELSE <false-action> THEN]
+
+It has indefinite (conditional) loops with the condition at the top or the bottom:
+
+* [=BEGIN <condition> WHILE  ...  REPEAT]
+* [=BEGIN  ...  <condition> UNTIL]
+
+And it has a definite (counted) loop:
+
+* [=<limit> <start> ?DO ... LOOP] (count up from [=start] to [=limit-1]).
+* [=<high> <low> DO ...  <step> +LOOP] (count up from [=low] to [=high] by [=step], stopping *before* [=high]).
+* [=<low> <high> DO ...  -<step> +LOOP] (count down from [=high] to [=low] by step, stopping *after* [=low]).
+
+A couple of notes about the counted loop:
+
+* [=+LOOP] stops looping on the low side of the limit.  So if you're looping up, the limit is *not* included in the loop, but if you're looping down, then it *is*.  This is usually what you want when looping over addresses or 0-based array indices.  If you haven't used a low-level language before, just remember that the opposite of [=high low DO ... step +LOOP] is [=low high-step DO ... -step +LOOP] (you have to subtract step *before* you start looping.
+
+* [=?DO] is the same as [=DO], but includes a safety feature which only really makes sense with the basic [=LOOP]: if start and limit are the same, it skips the loop entirely ([=DO] would loop until the index wraps back around, probably 2^32 or 2^64 times).  You probably don't want to use [=?DO] with [=+LOOP] (especially with negative steps).
+
+
+And of course the usual rules will help you decide which kind of loop to use.
+
+Use an indefinite loop (BEGIN):
+
+* If you want to loop either *as long as* something is true or *until* an event occurs.
+* If you don't need to know how many times you've done it.
+
+Use a definite loop (DO):
+
+* If you know in advance how many times you want to repeat.
+* If you need access to the loop counter.
+* If you have a specific range of values you need to do stuff for.
+
+----
+
+== The Underlying Model
+
+Forth has an unconditional branch and a branch-if-false.  It also
+differentiates between forward and backward branches.  So we have six
+basic words to compile these branches, and three convenience words which
+combine the basic operations.  These words use a stack (usually *the* stack) at compile-time:
+
+
+=== Forward Branches
+
+
+* [=IF/AHEAD ( -- branch )] - Compile a forward (conditional?) branch, leaving a reference so we can point it to the right place later.
+
+* [=THEN ( branch -- )] - Resolve `branch` to jump here.
+
+* [=ELSE ( branch1 -- branch2 )  AHEAD SWAP THEN ; IMMEDIATE] - End the if-true section with an unconditional [=branch2] which skips over the if-false section, and resolve the branch-if-false from the IF (so that it jumps here to begin the if-false section.
+
+                         -------------------->
+        IF <true-action> ELSE <false-action> THEN`.
+        ---------------------->
+
+
+=== Backward Branches
+
+* [=BEGIN ( -- addr )] - Push a marker so that we can branch (loop) back to it.
+
+* [=UNTIL/AGAIN ( addr -- )] - Loop (conditially?) back to the most recent [=BEGIN].
+
+* [=WHILE ( addr -- branch addr )  IF SWAP ; IMMEDIATE] - Branch forward out of a loop (putting the branch *under* the [=BEGIN] addr).
+        
+                     --------------------->
+        BEGIN <test> WHILE <action> REPEAT
+            <-----------------------
+
+* [=: REPEAT ( branch addr -- )  AGAIN THEN ;  IMMEDIATE] - Loop back to the most recent BEGIN, then resolve the WHILE branch to jump just outside the loop.
+
+
+Then you can do crazy things like:
+
+        BEGIN <test1> WHILE <test2> WHILE
+                <action>
+        REPEAT <failed-test2> ELSE <failed-test1> THEN

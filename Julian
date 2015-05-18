@@ -1,0 +1,31 @@
+ \ date and weekday calculation
+
+ decimal
+ : julian               ( dd mm yyyy -- julian-day )
+     >r 3 - dup 0<
+     dup r> + >r 12 and +
+     306 *  5 +  10 / +
+     r@  1461 4 */  +  
+     dup 578053 >
+     if 3 +  
+        r@ 100 / -  
+        r@ 400 / +
+     then
+     rdrop
+     1721116 +  ;
+ 
+
+ \ day of week 
+ : dow  ( dd mm yyyy -- dow )  \ 0: monday 1: tuesday .... 6: sunday 
+    julian 7 mod  ;
+ 
+ 
+ : .weekday ( 0...6 -- )
+    7 mod 3 * s" MonTueWedThuFriSatSun" drop + 3 type  ;
+ 
+ \ outputs day of week
+ : .dow  ( dd mm yyyy -- )
+    dow .weekday ;
+
+ \ example:  24 12 1970  .dow   ( Thursday )
+ 

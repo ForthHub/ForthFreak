@@ -1,0 +1,5 @@
+This is a generic system running on GNU-Linux. It generates x86 Forths, e.g. for Linux, DOS and Windows. In a configuration file you can specify 16 or 32 bits, Dos/linux/windows I/O, memory size, what assembler etc. You then generate an assembly source file, which can be run through an assembler to create an executable.
+Other tools extract specific documentation from the source to combine with general documentation into documentation (ps,pdf,info,html) tailored to the Forth generated and tests for all words of the Forth generated. 
+http://home.hccnet.nl/a.w.m.van.der.horst/ciforth.html
+
+ForthSystems

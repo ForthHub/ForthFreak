@@ -1,0 +1,7 @@
+The term /Forth compiler/ is ambiguous, or at least easily misunderstood. Even a ForthInterpreter uses some compiling mode for words added.
+
+What is - in the Forth world - commonly referred to as /compiler/, is the part of the ForthInterpreter which compiles Forth source to ThreadedCode. From this point of view, /Forth interpreter/ and /Forth compiler/ are two (very similar) aspects of the same Forth system, and used almost as equivalents of each other.
+
+Less commonly does /Forth compiler/ describe a program which generates a stand-alone executable target program, though there do exist /Forth compilers/ which do exactly that. Those are often referred to as /target compilers/ or /native code code compilers/. Sometimes these compilers are not interactive Forth systems, and lack some characteristics required by misc ForthStandards, therefore some of them could, strictly speaking, not even be called ForthSystems.
+
+NativeCodeCompiler

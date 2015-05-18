@@ -1,0 +1,13 @@
+Samuel A. Falvo II is a software developer residing in Santa Clara county, California.  He has written software ranging from desktop applications to operating system kernels.  He has worked for Hifn, Google, and Attributor, Inc.  Currently unemployed due to the recession of 2008, he is attempting to create a new web application startup company called [http://www.rezurezu.com Rezurezu].
+
+His current Forth-related project is to release a home-made computer built around either the 65816 or Intellasys 40C18 chip, with a small dialect of FS/Forth for it in ROM.  Previous versions of FS/Forth (e.g., for Linux) have failed to materialize due largely to increasing complexity and scope.  Working on a totally new, homebrew computer is a return to simplicity.
+
+Previous versions of FS/Forth had some benefits, however.  To aid in the historical projects, he wrote a block editor for GForth called [VIBE].
+
+FS/Forth for Linux may yet appear.  The experiences I'm gaining working with the Kestrel will prove useful when transferring ideas to the Linux environment.
+
+Samuel currently owns, but currently does not operate, a software consultancy and website design company called [http://www.falvotech.com Falvo Technical Solutions].  This operation potentially will resume in the event of unemployment, or upon completing my Kestrel, to sell kits.
+
+Samuel is a 2nd kyu /Aikidoka/ -- that is, someone who studies the martial art of [http://www.aikidofaq.com Aikido].
+
+Samuel is an amateur radio operator.  His callsign is KC5TJA/6 (or just KC5TJA for short).  He is currently a technician licensee, though at some point in the future, he'd like to invest the time to upgrade his license to General.

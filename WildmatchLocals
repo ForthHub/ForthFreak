@@ -1,0 +1,31 @@
+ \ written quickly for a comp.lang.forth discussion by Marcel Hendrix on Oct 17, 2006
+
+ : >UPC ( c -- C )  dup [char] a [char] z char+ within if bl - then ;
+ : incr ( -- )  s" 1 chars +TO " evaluate ; immediate
+ : Ci  ( a n i -- c )  tuck > if chars + c@ else 2drop 0 then ;
+ : text[it]  ( -- C )  s" $text it Ci" evaluate ; immediate
+ : wild[iw]  ( -- C )  s" $wild iw Ci" evaluate ; immediate
+
+ : WILDCARD-MATCH  ( text nt wild nw -- flag )
+    0 0 0 0 locals| iw it pw pt | 
+    DLOCALS| $wild $text |
+    begin  text[it] andif wild[iw] '*' <> then
+    while  text[it] >UPC wild[iw] >UPC <> andif wild[iw] '?' <> then
+           if  false exit  then
+           incr it  incr iw
+    repeat
+    begin  text[it]
+    while  wild[iw] '*'
+           = if  incr iw
+                 wild[iw] 0= if  true exit  then
+                 iw to pw
+                 it char+ to pt
+           else  wild[iw] >UPC text[it] >UPC = orif wild[iw] '?' = then
+                   if  incr it  incr iw
+                 else  pw to iw
+                       pt to it incr pt
+                 then
+           then
+    repeat
+    begin  wild[iw] '*' =  while  incr iw  repeat
+    wild[iw] 0= ;

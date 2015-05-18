@@ -1,0 +1,71 @@
+The example code:
+ program" foo"   \ executable will be written to "foo"
+ : main  ( -- )
+     'Z 1+ 'A
+     do 
+        i emit
+     loop  
+     cr  
+ ;
+
+compiles to:   (the also generated ELF-header is not shown here)
+
+ 00000000  89E5              mov ebp,esp
+ 00000002  81EC00900100      sub esp,0x19000
+ 00000008  50                push eax
+ 00000009  89E7              mov edi,esp
+ 0000000B  81EC0078FEFF      sub esp,0xfffe7800
+ 00000011  E863000000        call init
+ 00000016  E809000000        call main
+ 0000001B  B300              mov bl,0x0
+ 0000001D  6631C0            xor ax,ax
+ 00000020  6640              inc ax
+ 00000022  CD80              int 0x80
+                       main:
+ 00000024  50                push eax
+ 00000025  31C0              xor eax,eax            ; 'Z
+ 00000027  B05A              mov al,0x5a
+ 00000029  40                inc eax                ; 1+           
+ 0000002A  50                push eax
+ 0000002B  31C0              xor eax,eax            ; 'A
+ 0000002D  B041              mov al,0x41
+ 0000002F  894D00            mov [ebp+0x0],ecx      ; do
+ 00000032  8D6DFC            lea ebp,[ebp-0x4]
+ 00000035  89C1              mov ecx,eax
+ 00000037  8F4500            pop dword [ebp+0x0]
+ 0000003A  58                pop eax
+ 0000003B  8D6DFC            lea ebp,[ebp-0x4]
+ 0000003E  50                push eax               ; i
+ 0000003F  89C8              mov eax,ecx
+ 00000041  E81D000000        call emit              ; emit
+ 00000046  41                inc ecx                ; loop
+ 00000047  3B4D04            cmp ecx,[ebp+0x4]
+ 0000004A  75F2              jnz 0x3e
+ 0000004C  8D6D08            lea ebp,[ebp+0x8]
+ 0000004F  8B4D00            mov ecx,[ebp+0x0]
+ 00000052  E801000000        call cr                ; cr
+ 00000057  C3                ret
+                     cr:
+ 00000058  50                push eax               ; $0a
+ 00000059  31C0              xor eax,eax
+ 0000005B  B00A              mov al,0xa
+ 0000005D  E801000000        call emit              ; emit
+ 00000062  C3                ret
+                     emit:
+ 00000063  5E                pop esi
+ 00000064  51                push ecx
+ 00000065  50                push eax
+ 00000066  89E1              mov ecx,esp
+ 00000068  31D2              xor edx,edx
+ 0000006A  42                inc edx
+ 0000006B  31C0              xor eax,eax
+ 0000006D  B004              mov al,0x4
+ 0000006F  31DB              xor ebx,ebx
+ 00000071  43                inc ebx
+ 00000072  CD80              int 0x80
+ 00000074  58                pop eax
+ 00000075  59                pop ecx
+ 00000076  58                pop eax
+ 00000077  FFE6              jmp esi
+                     init:
+ 00000079  C3                ret

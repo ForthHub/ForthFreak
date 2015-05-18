@@ -1,0 +1,31 @@
+\ Preamble words to aid portability
+
+ ( G: in place of COUNT for portability )
+ : C@+ ( S: c-addr -- c-addr+ char ) DUP CHAR+ SWAP C@ ;
+
+ ( G: NUMBER? detects only single-cell numbers in current base )
+ : NUMBER? ( S: c-addr len -- f )
+    OVER C@ [CHAR] - = IF 1 /STRING THEN
+    0 0 2SWAP >NUMBER 0= NIP NIP NIP ;
+
+ ( G: In case DEFER IS is not present, it's provided. )
+ : NOGOOD -1 ABORT" uninitialised DEFER" ;
+ : DEFER ( S: "name" -- )
+    CREATE ['] NOGOOD ,
+    DOES> @ EXECUTE ;
+ : (IS) ( S: "name" xt -- )
+    ' >BODY ! ;
+ : [IS] ( C: "name" -- ) ( S: xt addr -- )
+    ' >BODY POSTPONE LITERAL POSTPONE ! ; IMMEDIATE
+ \ : (IS) POSTPONE IS ;
+ \ : [IS] POSTPONE IS ; IMMEDIATE
+
+ ( G: do REFILL until there is a word available or REFILL fails )
+ : REFILL? ( S: -- 0|~0 )
+    BEGIN
+      >IN @ BL WORD SWAP >IN ! C@ DUP 0= WHILE
+        DROP REFILL DUP WHILE 
+          DROP
+      REPEAT
+    THEN ;
+ \ This will fail on systems that do ABORT as soon as WORD comes up empty.

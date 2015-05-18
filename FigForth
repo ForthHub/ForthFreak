@@ -1,0 +1,7 @@
+In 1978, some years after Chuck Moore discovered the Forth language, volunteers started to make public domain implementations available for all popular micro computers. This was the FigForth series of compilers. Most modern public domain Forths are descendants of these Forths. Even though Forth-vendors introduced the F79-"industrie standard" shortly after FigForth became available, FigForth remained the workhorse of the [http://forthfreak.net/index.cgi?ForthCommunities Forth Community] until the F83 standard started to replace FigForth.
+
+[http://forthfreak.net/figforth/glossary.txt glossary of FigForth words]
+
+[http://home.hccnet.nl/a.w.m.van.der.horst/figdoc.zip FigForth installation manual] (ZIP-file, download)
+
+ForthSystems

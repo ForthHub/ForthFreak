@@ -1,0 +1,28 @@
+Back to ForthSystems.
+
+* Freely redistributable
+** [Aztec] Forth
+** [SPForth]
+** [VWinForth] (Digital Smalltalk for Windows)
+** [Win32Forth]
+** [Win32Fx]
+** [c4w] colorForth for Windows (public domain)
+** Another colorforth for windows: http://www.geocities.com/eleks_76/
+** GameForth (public domain)
+
+* Commercial
+** [VFX] by MPE - also for OS X, Linux and DOS [http://www.mpeforth.com]
+** [SwiftForth] cross-compiler
+** WinForth LMI ~Project ABANDONED !~
+** [dsForth] also !WinCE
+** [http://arcaneincantations.mvps.org/quest32.htm] Quest32 (Beta version)
+
+* Unknown
+** [TF32]
+
+* Dead
+** [http://www.amresearch.com/v4 umbilical Forth on top of Win32Forth] dead link. asresearch out of business?
+** [http://www.amresearch.com/v6/windows umbilical Forth using GForth with optional TCL GUI] dead link. asresearch out of business?
+** BB4WForth - hosted system over the top of BBC Basic For Windows runtime
+
+Check out MultiPlatformForth for more systems which run under Windows.

@@ -1,0 +1,7 @@
+IndirectThreadedCodeSlideshow5 IndirectThreadedCodeSlideshow7
+
+http://www.forthfreak.net/slides/slide14.jpg
+
+executing last instruction of PRIM, which is either a
+JUMP to NEXT, or an inlined NEXT. Therefore, host CPU
+will now proceed to execute NEXT.

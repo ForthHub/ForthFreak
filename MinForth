@@ -1,0 +1,23 @@
+A free C-written Forth interpreter, with these design goals:
+* KISS (keep it simple, student) had been the strongest motto in the development of MinForth. The simpler a thing is, the easier you can adapt it to your needs - and the easier you can mend it if it is broken.
+* The most obvious simplification over traditional Forth systems is that MinForth has no assembler. Its language for creating low-level words and system functions is C, for some strong reasons:
+** Processors and assemblers change so often that it is completely uneconomic to maintain assembler software sources.
+** ANSI-C is the "lingua franca" in the world of system programming since long. It is relatively easy to port C programs from one machine to the next. It is difficult and often impossible to port assembler programs.
+** Practically every manufacturer of programmable electronic equipment, e.g. controller boards, delivers C libraries for system programming of his products.
+** Compiler makers are no idiots. They will probably have spent much more effort to understand the machine architecture than you will ever like to spend, and their code will probably be very efficient. Why shouldn't we rely on their work? We'll test our compiled functions thoroughly later anyhow.
+
+* MinForth has few low-level words (primitives). Most words are defined in Forth. Once you have made your primitives work on your machine, the rest will function automatically.
+
+* The core program (mf or mf.exe) loads and interprets image files that contain 32-bit-wide execution tokens and data. One can exchange image files directly between different machines (they must use the same token numbers, of course). With 32-bit addresses one does also not have to fight with memory address calculations (C does this ugly job for us).
+
+* MinForth has a weak link to terminals. It uses ANSI-like character terminals, e.g. as provided by the ANSI.SYS device driver in DOS systems. That makes the porting job relatively easy. (One could think of using the wide-spread ncurses library though, but ...)
+
+[http://home.arcor.de/a.s.kochenburger/minforth.html MinForth home page]
+
+http://forthfreak.net/minforth.gif
+
+MinForth downloads:
+* [http://home.arcor.de/a.s.kochenburger/downloads/mfdoswin.zip Windows]
+* [http://home.arcor.de/a.s.kochenburger/downloads/mflinux.tar.gz Linux]
+
+ForthSystems

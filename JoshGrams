@@ -1,0 +1,13 @@
+JoshGrams likes to muck around with Forth, but hasn't really done anything substantial with it.  Author of TypedTester.  Also contributed a bit to the [http://shootout.alioth.debian.org/gp4/benchmark.php?test=meteor〈=bigforth meteor-contest] on the [http://shootout.alioth.debian.org/ Computer Language Benchmarks Game], and literatized IanOsgood's [http://en.literateprograms.org/Eight_queens_puzzle_%28Forth%29 Eight Queens Puzzle].
+
+----
+
+I was introduced to Forth by JasonWoofenden in 2001.  Back in 1992 when I was first learning to program, I had started to design a language based on similar principles, so it felt very familiar and I spent a lot of time fiddling around writing minimal variant Forth systems.
+
+Eventually (2006 or so) I started realizing that implementing Forth doesn't teach you much about /using/ Forth, and started writing actual Forth code.  I still haven't written anything much; mostly just quickie programs to automate one-time jobs.  But I think I finally have a pretty good feel for the strengths, weaknesses, and philosophy of the language.
+
+== Thoughts on Forth Philosophy ==
+
+Forth code tends to look very simplistic, amateurish, and clunky to me.  Almost all of what is freely available is single-purpose code that is very non-portable and needs rewriting to work for anything other than its original purpose.  But one day it dawned on me that, to some extent, Forth is /supposed/ to be like that.  The theory is that if you write very simplistic, limited, special-purpose code that doesn't worry about portability or flexibility or anything that you don't absolutely need right this minute, that simplifies things so much that the code is extremely quick to write and easy to debug.  So much so, in fact, that you can afford to rewrite it every time you need it to serve a different purpose.
+
+I'm not convinced that there is much (any?) freely-available source code that actually exemplifies this principle, rather than just being sloppy code.  But it is an interesting point, and goes some way towards explaining why there aren't really any well-polished Forth libraries out there.  I think that [http://groups.google.com/group/comp.lang.forth/msg/3e61b2eb1a223fb3 this comp.lang.forth post] by Elizabeth Rather was the final nudge that triggered this realization.

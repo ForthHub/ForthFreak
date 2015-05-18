@@ -1,0 +1,7 @@
+!HerkForth is a colored Forth for Linux/PPC that is being rewritten as [http://fronds.org/ fronds]. It's built around a block editor, and has a lot of interesting functionality. The "kernel" portion is just a couple of hundred bytes, and it metacompiles itself on startup. If you have a PPC Mac, and run Linux on it, be sure to take a good look at this. If you have Linux on x86, you can run herkforth under qemu. (qemu is an emulator that (among other things) lets you run linux programs compiled for other architectures. See: http://fabrice.bellard.free.fr/qemu/)
+
+* Home: http://jasonwoof.org/herkforth
+
+* Source: http://jasonwoof.com/downloads/herkforth-0.7.1.tar.bz2
+
+ForthSystems

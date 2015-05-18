@@ -1,0 +1,46 @@
+Forth is a "hands-on" interactive language.
+Consider going through a short ForthTutorials first,
+then these books will make more sense.
+
+== Recent Stuff ==
+
+(Even these include some of what I believe to be irrelevant and distracting implementation details, but YMMV. --JoshGrams)
+
+* [http://forth.com/forth/forth-books.html Dead-tree books] from Forth, Inc.  _Forth Application Techniques_ is an introductory book, and _Forth Programmer's Handbook_ is more of a reference.
+* [http://www.mpeforth.com/arena.htm#papers Programming Forth] by Stephen Pelc of MPE Ltd.
+* [http://wiki.laptop.org/go/Forth_Lessons Forth Lessons] for OpenFirmware, but much of it is generally relevant.  I suppose it's really more of a tutorial, but well written and long enough that it sort of counts as a book.
+
+
+== Older Stuff ==
+
+* [http://wiki.forthfreak.net/index.cgi/?StartingForth "Starting Forth" by Leo Brodie] is an excellent introduction to Forth
+* [http://www.forthfreak.net/thinking-forth.pdf Thinking Forth (pdf) by Leo Brodie - local copy, gets updated from time to time]. Written by [http://home.earthlink.net/~lbrodie/forth.html Leo Brodie] in 1984.
+* [http://prdownloads.sourceforge.net/thinking-forth/thinking-forth-color.pdf?download Thinking Forth (pdf) by Leo Brodie] - copy on [http://thinking-forth.sourceforge.net/ source forge], may be more up to date] 
+* [http://en.wikibooks.org/wiki/Forth Wikibooks: Forth programming language manual]
+* [http://www.ece.cmu.edu/~koopman/stack_computers/contents.html "Stack Computers: The new wave" by Philip J. Koopman]
+**   [http://www.ece.cmu.edu/~koopman/stack_computers/contents.html read online].
+** [http://www.ece.cmu.edu/~koopman/stack_computers/stack_computers_book.pdf Download it] (as a 12MB PDF)
+** [http://theforthsource.com/ purchase a copy]
+* [http://www.embeddedforth.de/ "Embedded - Zeitschrift fuer Forth und Controller"] (German)
+* [http://www.taygeta.com/forthlit.html Real Time Forth] by Tim Hendtlass, also other texts.
+
+----
+[http://www.eforth.com.tw/academy-n/library.htm Many books on Ting's eForth site.] (English and Chinese.)
+
+Among them:
+* [http://www.eforth.com.tw/academy-n/library/eForth%20and%20Zen.htm "eForth and Zen"]
+* [http://www.eforth.com.tw/academy-n/library/fpcusermanual.htm "F-PC Users' Manual"]
+* [http://www.eforth.com.tw/academy-n/library/F-PC.htm "F-PC Technical Reference Manual"]
+* [http://www.eforth.com.tw/academy-n/library/Inside%20F83.htm "Inside F83"] (Perry-Laxen F83)
+* [http://www.eforth.com.tw/academy-n/library/System%20Guide.htm "Systems Guide to figForth"] (figForth)
+
+----
+
+== Journals and Newsletters ==
+
+With the exception of the Euroforth conference, I think these are all now defunct.  But if nothing else, they make for interesting historical reading.
+
+* [http://www.complang.tuwien.ac.at/anton/euroforth/ Euroforth] (yearly conference, many of the articles are available online)
+* [http://dec.bournemouth.ac.uk/forth/jfar/index.html "The Journal of Forth Application and Research"] (JFAR)
+* [http://www.forth.org/fd/contents.html Forth Dimensions] -- scanned versions of the FIG newsletter
+* [http://www.forth-ev.de/filemgmt/viewcat.php?cid=2 Vierte Dimensions] -- the newsletter of the German FIG.

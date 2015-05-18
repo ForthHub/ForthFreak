@@ -1,0 +1,112 @@
+\ Parsing words from bytecode
+
+ ( G: helper-word, put char in string , 1 /STRING the string, save the char )
+ : DUP-SC! ( S: n addr char -- n+1 addr' char )
+    DUP >R SC! R> ; 
+
+ ( G: put tokens into string until terminating token, return length )
+ : PARSE-TOKENS ( S: addr len char -- newlen )
+    >R BEGIN
+      INPUT-TOKEN DUP-SC! R@ =
+    UNTIL
+    R> DROP NIP ;
+
+ ( G: allow 8-char operator and 255 chars from byte-code to evaluate )
+ CREATE TOKEN-BUFFER 264 CHARS ALLOT
+ \ We must evaluate some embedded strings from the byte-code.
+ \ We copy the parsing command and the string into a buffer and then EXECUTE it.
+
+
+
+ ( G: LLIT precedes numbers whether compiling or not. )
+ : LLIT ( S: "number" -- )
+    TOKEN-BUFFER DUP 0 BL PARSE-TOKENS EVALUATE ; IMMEDIATE
+
+ : LCHAR ( S: "char" -- char )
+    INPUT-TOKEN ;
+ : L[CHAR] ( S: "char" -- )
+    INPUT-TOKEN POSTPONE LITERAL ; IMMEDIATE
+
+ : LS" ( C: "text" -- ) ( E: -- c-addr len ) ( I: "text" -- c-addr len )
+    TOKEN-BUFFER DUP 0 [CHAR] S DUP-SC!
+    [CHAR] " DUP-SC! BL DUP-SC!
+    [CHAR] " PARSE-TOKENS EVALUATE ; IMMEDIATE
+
+ : LABORT" ( C: "text" -- ) ( E: f -- )
+    TOKEN-BUFFER
+    S" ABORT" TOKEN-BUFFER SWAP CHARS MOVE TOKEN-BUFFER 0 5 /STRING
+    [CHAR] " DUP-SC! BL DUP-SC!
+    [CHAR] " PARSE-TOKENS EVALUATE ; IMMEDIATE
+
+ : L." ( C: "text" -- ) ( E: -- )
+    TOKEN-BUFFER DUP [CHAR] . DUP-SC! [CHAR] " DUP-SC! BL DUP-SC!
+    [CHAR] " PARSE-TOKENS EVALUATE ; IMMEDIATE
+
+ : L.( ( S: "text" -- )
+    TOKEN-BUFFER
+    S" .( " TOKEN-BUFFER SWAP CHARS MOVE
+    DUP 0 3 /STRING [CHAR] ) PARSE-TOKENS EVALUATE ; IMMEDIATE
+
+ ( G: : or ' a name )
+ CREATE NAME-BUFFER 34 CHARS ALLOT
+ \ We may want to save a routine name from the time it's introduced 
+ \ until after the definition has compiled.  So it needs a separate
+ \ buffer from the one that might get a 255-char S" string.
+
+
+
+ ( G: L' gets the xt for the next token in the input stream. )
+ : L' ( S: -- xt )
+    INPUT-TOKEN TOKEN>XT @ ;
+
+ ( G: L['] gets the xt and compiles it as a literal. )
+ : L['] ( S: -- )
+    L' POSTPONE LITERAL ; IMMEDIATE
+
+ ( G: Variables allot space, CREATEs don't. )
+ : LCREATE ( S: -- )
+    HERE DUP ['] NOOP , 0 , >R
+    :NONAME R> POSTPONE LITERAL POSTPONE 2@ POSTPONE EXECUTE POSTPONE ;
+    NEW-TOKEN HERE SWAP CELL+ ! ;
+
+ : LVARIABLE ( S: -- )
+    LCREATE 1 CELLS ALLOT ;
+
+ ( G: Constants each compile a scrap of code that returns the value.
+ ( There are more efficient ways but this works for now. )
+ : LCONSTANT ( S: n -- )
+    >R :NONAME R> POSTPONE LITERAL POSTPONE ; NEW-TOKEN ;
+
+ ( 3 kinds of colon defining words.
+ ( G: :NONAME returns an xt,
+ ( G: LEAD: gets an xt and creates a new token. )
+ ( G: L: creates a new name and a new token both.)
+ ( G: DOES> would be used for lead compiling words with user children )
+
+ ( The 3 types get handled at ; when the xt's are available.
+ ( So ;LEAD finds out from LEADCOMPILE which it was. )
+
+ VARIABLE LEADCOMPILE
+
+ : ;L ( S: 0|xt colon-sys -- xt|nothing )
+    POSTPONE ;
+    LEADCOMPILE @ IF
+      LEADCOMPILE @ -2 = IF
+        DROP [CHAR] ' NAME-BUFFER C! NAME-BUFFER 34 EVALUATE
+      THEN
+      NEW-TOKEN
+    THEN ;
+ IMMEDIATE
+
+ : LNONAME: ( S: -- xt colon-sys )
+    0 LEADCOMPILE ! :NONAME ;
+ ( G: LEAD: gets an xt for a token. )
+ : L: ( S: -- xt colon-sys )
+    -1 LEADCOMPILE ! :NONAME ;
+ ( G: L: creates a word that keeps its name.  It gets a token too. )
+ : LNAME:  ( S: "name" -- 0 colon-sys )
+    NAME-BUFFER 34 BL FILL
+    NAME-BUFFER DUP 0 [CHAR] : SC! BL SC!
+    -2 LEADCOMPILE !
+    BL PARSE-TOKENS EVALUATE ;
+ : ALL-DONE ( S: -- ) ;

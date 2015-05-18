@@ -1,0 +1,13 @@
+bigFORTH is a native code Forth written by BerndPaysan. It is available for Linux and Windows 95/98/NT under GPL. The most striking feature is the graphical user interface MINOS and the form editor Theseus (MINOS and Theseus are still beta).
+
+More about bigFORTH can be found at http://www.jwdt.com/~paysan/bigforth.html
+
+Some samples of the graphical features provided by MINOS:
+
+http://www.jwdt.com/~paysan/xmas-tree.jpg
+http://www.jwdt.com/~paysan/dragon/dragon-fly.gif
+
+The Theseus form editor:
+http://www.jwdt.com/~paysan/theseus.png
+
+ForthSystems

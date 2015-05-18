@@ -1,0 +1,21 @@
+  ATS-board hardware features
+* Processor 80c535
+* Program memory 27c256 (EPROM 32K)
+* Workspace 43c256 (RAM 32K)
+* Clockspeed 12 MHz
+* RS232 at 9600 Baud
+* 8 databits, 1 stopbit, no parity
+* A total of 7 ports (free ports 4,5)
+* Number of timers/counters 3
+* Power supply 9..12 Volt at 200 mA.
+* Backup battery 2.4 .. 3.6 Volt Ni-Cad 
+
+
+ Software
+The ATS-board is supplied with an 8052-ANS-Forth in EPROM.
+
+
+ Manuals
+Standard with the ATS-board an english language manual is supplied which also contains a crash course 8052-ANS-Forth and all system details.
+
+http://www.forth.hccnet.nl/plaatjes/atsgroot.gif

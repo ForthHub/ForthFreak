@@ -1,0 +1,13 @@
+It would be good to have a more-or-less-automatic system to synchronise files between host and developer systems.
+
+Developers will compose and test their code on their own systems, and then update the changes on the host.
+
+They must upload not only the files but also the links among these files and to other files. If, like a wiki, those links are embedded in the files, that isn't an extra step.
+
+They will download primarily stuff that other people have done that they want to look at. Either specific things they've found and want to keep, or possibly all updates.
+
+Upload: Developer codes and tests in a sandbox, and marks things golden when he's ready. The uploader compresses the golden files together that have been modified since the last upload, and sends them to the host.
+
+The host makes new versions of each file that has changed, and adds new files.
+
+Download: Developer uses any of a variety of methods (TBD) to find things of interest that others have done. (Obvious methods -- look at the sections of the spec that interest you and see what code is linked to them. Look at code that was yours which others have modified. Look at code that you've modified and see who else has modified it. Look at people who use your code unmodified and see what they're doing with it.) Whatever looks interesting can be amrked golden to be downloaded. When you're ready to download, the host compresses the golden files together and downloads them to you.

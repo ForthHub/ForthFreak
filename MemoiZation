@@ -1,0 +1,77 @@
+= Memoizing functions =
+
+Often a few key values that rarely change cascade into a tree of
+calculated parameters. Accessing one of these functions is
+much slower than accessing a constant because of all of the redundant
+calculations. One way to speed things up is to cache these parameters
+and then do an update only after a function upon which they depend
+changes.
+----
+ 1 constant simple                       \ which kind of syntax to demonstrate
+
+ variable memos 0 memos !                \ list of memoized functions
+ variable memo> 0 memo> !                \ forward link
+
+ \ list:  >link--\      >link 'p xt
+ \ memos ---^     \-------^
+ \ memo> -----------------^
+
+ \ The slightly more wordy syntax: :NONAME width height * ; MEMO area
+ \ This syntax is easier to implement and doesn't need EVALUATE.
+
+
+ : MEMO  ( xt <name> - )                 \ create a memoized function
+    create dup execute here >r ,
+    memo> @ if here memo> @ !            \ resolve forward link
+    else here memos !
+    then here memo> ! 0 ,                \ mark next forward link
+    , r> ,  does> @ ;                    \ data: xt 'param
+
+ simple [IF]
+
+ \ The simple syntax:  MEMO: area  width height * ;
+ \ This syntax requires the semantics of ; to be appended, which is usually
+ \ not an issue.
+
+ create memoevs char M c, char E c, char M c, char O c, bl c,
+ here 64 chars allot constant memoname   \ evaluation string: "MEMO xxxxx"
+ variable memolen 0 memolen !            \ length of eval string
+
+ : MEMO: ( <name> - )
+    bl word count >r memoname r@ move r> 5 + memolen !
+    :noname ;
+
+ : ;     ( - )
+    postpone ; memolen @ ?dup if
+       memoevs swap evaluate
+       0 memolen !
+    then ; immediate
+
+ [THEN]
+
+ : MEMO-UPDATE ( - )                     \ update memoized functions
+    memos @ begin dup while
+    dup cell+ 2@ execute swap ! @ repeat drop ;
+----
+*example*
+
+ 1 value one
+ 2 value two
+
+ simple [IF]
+  MEMO: three  one two + ;
+  MEMO: four   three 1+ ;
+  MEMO: width  three 2* ;
+  MEMO: height four two + ;
+  MEMO: area   width height * ;
+ [ELSE]
+  :noname one two + ; MEMO three
+  :noname three 1+ ;  MEMO four
+ [THEN]
+ cr .( Should be 4: ) four .
+
+ 3 to one                                \ change some primary values
+ 4 to two
+ memo-update                             \ update all memo functions
+
+ cr .( Should be 8: ) four .

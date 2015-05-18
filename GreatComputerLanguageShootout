@@ -1,0 +1,14 @@
+The Great Computer Language Shootout compares a variety of free programming languages against each other on a dozen or so benchmarks.
+
+* http://shootout.alioth.debian.org/
+* http://c2.com/cgi/wiki?GreatComputerLanguageShootout
+
+The Forth language is represented by [GForth] and [bigFORTH].
+
+* http://shootout.alioth.debian.org/debian/forth.php
+* http://shootout.alioth.debian.org/gp4/benchmark.php?test=all〈=bigforth
+
+A few of the benchmarks were developed on this wiki:
+
+* PiSpigot
+* MeteorPuzzle

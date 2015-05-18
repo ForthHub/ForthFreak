@@ -1,0 +1,430 @@
+ \ ############################################################################
+ \ ### small oops. binds (late) pretty fast, but classes use much memory.   ###
+ \ ### would need work to name instance variables. currently, instance data ###
+ \ ### is referred by address of first byte of instance data                ###
+ \ ############################################################################
+ \
+ \ this code has been placed and released under the LGPL by its author
+ \ some Gforth specific words have been used:
+ \ name>string  ( for getting method names )
+ \ .name        (for outputting class and object names)
+ \ additionally, i'm not sure whether input buffer rewinding, by
+ \ fetching from and storing to >in (as in "peek") complies with ANS 
+ \
+ \
+ \ --- version history ---
+
+ \ 2004Dec09 ls v0.02c method search slightly speeded up
+ \ 2004Dec07 ls v0.02b added method finalize to superclass 
+ \ 2004Dec07 ls v0.02a link through all classes added, allowing .classes
+ \ 2004Dec07 ls v0.02  instances of one class are linked to each other, anchor is in class
+ \                     this allows for method "alike" or forth word "instances"
+ \ 2004Dec06 ls v0.01c improved examples
+ \ 2004Dec06 ls v0.01b improved examples
+ \ 2004Dec05 ls v0.01a improved examples
+ \ 2004Dec05 ls v0.01  initial version. functional.
+ \
+ \ how to crash (or at least confuse) this (conditions not tested for):
+ \
+ \    subclass or instantiate a class, then add instance data to class (grow),
+ \    and add methods to class, writing to added instance data.
+ \    Reason: new methods are inherited to subclass, but changes
+ \    to the amount of instance data aren't.
+ \
+
+
+
+ \ ----------------------------------------------------------------------------
+ \ ---                           general purpose                            --- 
+ \ ----------------------------------------------------------------------------
+ 
+ : allot0 ( n -- )    here swap dup allot erase  ; 
+ : .header ( a -- )   body> >name .name ;
+ : peek  ( c -- a n ) >in @ >r  word count  r> >in !  ;
+ : skim  ( a1 -- a2 x )  cell+ dup cell - @ ; 
+ : pluck ( x1 x2 x3 -- x1 x2 x3 x1 )  2 pick ; 
+ : exchange ( x1 a -- x2 ) dup @ -rot !  ;
+ 
+
+
+ 
+ \ ----------------------------------------------------------------------------
+ \ ---                      access, helpers, glue                           --- 
+ \ ----------------------------------------------------------------------------
+ 
+ 256 constant maxmethods   
+ 0 value activeclass    
+ 0 value self
+ 0 value #methods
+
+ create classlink 0 , 
+ create methodnames  maxmethods cells allot0
+
+ : >instancelink ( a1 -- a2 )     cell+          ;            \ class: instance link anchor
+                                                              \ object: link to sibling
+ : >classlink ( a1 -- a2 )        2 cells +      ;            \ class: subclass link anchor
+                                                              \ object: unused
+ : >instancedata ( a1 -- a2 )     3 cells +      ;            \ class: address of instance data size
+                                                              \ object: instance data
+ : >methods ( class -- methods )  4 cells +      ;            \ class to method table
+
+ : instancedata ( -- a )    self  >instancedata  ;            \ instance data of self         
+ : method  ( class n -- method )   cells + >methods  ;        \ address of nth method in class
+ : .class  ( class -- )            ?dup if .header then ;     \ output class name
+ : .object ( object -- )           .header ;                  \ output object/instance name
+ : methodname ( n -- a n )                                    \ method number to method name
+         cells methodnames + @ 
+         ?dup if  name>string  
+         else s" " then ;
+ : .method ( n -- )                methodname type space ;    \ output method name from message token
+ : nomethod ( a n -- f )                                      \ string search method, true if non-existent
+         true 
+         #methods 0 ?do
+            drop 2dup i methodname compare
+            dup 0= ?leave
+         loop nip nip  ;
+ 
+
+
+
+
+ 
+ \ ----------------------------------------------------------------------------
+ \ ---                                oo core                               ---
+ \ ----------------------------------------------------------------------------
+ 
+ : class:
+    create ( -- )
+       activeclass here dup to activeclass over ,             \ pointer to parent class (or 0)
+       0 ,                                                    \ anchor of link through instances
+       classlink exchange ,
+       >instancedata @ ,                                      \ instance data size
+       maxmethods cells allot0                                \ method table
+    does> to activeclass ;    
+ 
+ 
+ : new:
+    create ( -- )
+       activeclass  here dup to self  over ,                  \ pointer to class
+       over >instancelink exchange ,                          \ link through instances
+       0 ,                                                    \ unused (for similiar object- and class layout)
+       >instancedata @ allot0                                 \ allocate instance data
+    does> to self  ;
+ 
+ 
+ : newmethod
+    create ( -- )
+       last @                                                 \ method name
+       #methods dup 1+ to #methods cells dup ,                \ method token (offset into method table)
+       methodnames + !                                        \ put method name in table of method names
+    does>  ( -- )
+       @ >methods self                                        \ msg obj
+       begin @ dup while                                      \ while parent class
+          2dup + @ ?dup if                                    \ method available ?
+             nip nip execute exit                             \ yes, execute and be done
+          then
+       repeat
+       -21 throw ;                                            \ "unsupported operation" = no method found
+
+ 
+ : {  ( -- a1 a2 )                                            \ start defining a method
+    bl peek nomethod if                                       \ new method name:  
+       >in @ >r
+       newmethod                                              \ create new method name
+       r> >in !
+    then
+    activeclass >methods  ' >body @ +                         \ pointer to method code 
+    :noname ;                                                 \ start compilation
+ 
+ : }  ( a1 a2 -- )  postpone ;  swap ! ; immediate            \ end compilation, store method address
+ 
+ : grow ( bytes -- )        activeclass >instancedata +!  ;   \ allocate additional <bytes> instance data
+ 
+
+
+
+
+ 
+ 
+ 
+ \ ----------------------------------------------------------------------------
+ \ ---                              demo + test                             ---
+ \ ----------------------------------------------------------------------------
+ 
+ 
+ \ ------------------------- syntax -------------------------
+ \ creating classes/subclasses:
+ \     parentclass class: newclass
+ \  parent class is optional, if not specified, the "active class" is used as parent class.
+ \  upon creation of a new class, the new class becomes "active class"
+ 
+ \ creating instances:
+ \     parentclass new: instance
+ \  parent class is optional, if not specified, the "active class" is used as parent class.
+ 
+ \ adding methods:
+ \     parentclass  { methodname   code } 
+ \ parent class is optional, if not specified, method is added to "active class"
+ 
+ 
+ \ method invocation:
+ \    instance method
+ \ instance is optional, if omitted, the "self" object is used, which is the most recently invoked object 
+ 
+ 
+ 
+ \ -------------------------- example -----------------------
+
+
+ pad to activeclass                                           \ create a temporary class lookalike
+ activeclass 4 cells erase                                    \ serving as superclass parent class
+ class: superclass                                            \ the mother of all classes
+ 0 activeclass !                                              \ zero out parent class pointer of superclass
+
+                                                              \ superclass is now the active class
+ class: model                                                 \ model is subclass of superclass
+ 
+ class: vehicle                                               \ vehicle is subclass of model,
+ cell grow                                                    \ one cell is alloted for instance data
+ 
+ \ --- methods to vehicle class
+ { speed      ( -- a )  instancedata @ }                      \ method "speed" returns instance data
+ { accelerate ( n -- )  instancedata +! }                     \ method for speed change
+ { stop       ( -- )    speed negate accelerate }             \ method to zero speed
+ { show       ( -- )    ." km/h: " speed . }                  \ method for speed output
+ 
+ class: car   { dynamic ( -- n ) 10 }                         \ class "car is a subclass of vehicle,
+                                                              \ the method dynamic returns the acceleration rate
+ new: ford                                                    \ ford is an instance of class car
+ 
+                                                              \ active class is still car, but the next
+                                                              \ methods should be introduced to vehicle:
+ vehicle
+ { faster       dynamic        accelerate show  }             \ vehicle method to increase speed
+ { slower       dynamic negate accelerate show  }             \ vehicle method to reduce speed
+ 
+ 
+ \ try:
+ \   ford faster faster
+ \        slower
+ \         show
+ \        speed .
+ 
+ 
+ 
+ vehicle class: boat class: yacht   { dynamic ( -- n ) 5 }    \ boat is subclass of vehicle,
+                                                              \ yacht is subclass of boat,
+                boat class: trawler { dynamic ( -- n ) 2 }    \ trawler is a subclass of "boat"
+ 
+ yacht   new: akira                                           \ create an instance of "yacht"  
+ trawler new: hermes                                          \ create an instance of "trawler"
+ 
+ 
+ 
+ 
+ \ ---------------------------------------------------------------
+ \ ---  add some debug- and diagnostic methods to superclass   ---
+ \ ---     these methods will be available to all objects      ---
+ \ ---------------------------------------------------------------
+
+ 
+ superclass
+ { class   ( -- a )   self @ }                                \ returns object's class
+ 
+ { objectsize  ( -- n )                                       \ return size of instance data
+         class                                                \ object's class
+         >instancedata                                        \ point to size of instance data
+         @                                                    \ read size of instance data
+ }        
+ 
+ { hierarchy ( -- )                                           \ outputs class hierarchy of object
+         self begin @                                         \ read parent class (superclass returns 0)
+         ?dup while dup .class                                \ output parent class
+         repeat
+ }
+ 
+ 
+ { provider ( method -- class )                               \ which class provides method to object ?
+         >r                                                   \ method 
+         false                                                \ assume no provider
+         self                                                 \ object
+         begin
+            @                                                 \ get parent class (superclass returns 0)
+            2dup 
+            0= or 0=                                          \ loop as long as   method not found  and  parent class exists
+         while
+            dup r@ method @                                   \ read method address
+            if or dup then                                    \ indicate "method found", by returning class
+         repeat r> 2drop
+ }
+ 
+ 
+ { examine ( -- )                                             \ diagnostic aid: show information about object
+         cr cr ." --- OVERVIEW ---"
+         cr ." object " self .object
+         ." is instance of class " class .class  
+         ." with " objectsize . ." bytes instance data"
+ 
+         cr cr ." --- CLASS HIERARCHY ---"
+         cr hierarchy
+ 
+         cr cr ." --- METHOD PROVIDERS ---"
+         #methods 0 do
+            i provider
+            ?dup if
+               cr i .method  ." provided by " .class
+            then
+          loop 
+ 
+        cr cr ." --- INSTANCE DATA ---"
+         instancedata objectsize dump
+
+         cr cr ." --- OBJECT DATA ---"
+         cr show
+ }
+ 
+ { methods ( -- )   #methods 0 do i provider if i .method then loop }           \ outputs all methods available to object
+ { alike   ( -- )   class begin >instancelink @ ?dup while dup .object repeat }   \ use: object alike
+
+ { finalize ( -- )                                            \ finalizing a class involves collecting
+        class                                                 \ all methods provided by parent classes,
+        #methods 0 do                                         \ and introduce them into object's class
+           i provider                                         \ resulting in quicker binding. Inheriting
+           ?dup if                                            \ new methods from parent classes still works,
+              2dup <> if                                      \ but replaced methods won't get inherited. 
+                2dup
+                i method @
+                swap i method !
+              then drop
+           then
+        loop drop }
+
+ 
+ \ ----------------------------------------------------------------------------
+ \ ---                      some container classes                          ---
+ \ ----------------------------------------------------------------------------
+ 
+ 
+ superclass class: container
+ class: fixedsizecontainer
+ class: cellsizecontainer  cell grow
+  { store  instancedata ! }
+  { fetch  instancedata @ }
+  { show   fetch . }
+ 
+ class: var
+ 
+ fixedsizecontainer class: 2cellsizecontainer  2 cells grow
+  { store  instancedata 2! }
+  { fetch  instancedata 2@ }
+  { show   fetch d. }
+ 
+ class: 2var
+
+ container class: variablesizecontainer 2 cells grow   ( size, pointer to data )
+  { data    ( -- a )    instancedata cell+ @ }
+  { size    ( -- n )    instancedata @ }               \ re
+  { delete  ( -- )      0 instancedata 2dup ! cell+ exchange ?dup if free throw then }
+  { reserve ( n -- )    instancedata   2dup ! cell+ dup >r @ ?dup if swap resize else allocate then throw r> ! }  
+  { fetch   ( -- a n )  data size }
+  { store   ( a n -- )  dup reserve data swap move }
+  { show    ( -- )      fetch dump }
+ 
+ class: string
+  { append ( a1 n1 -- ) size 2dup + reserve data + swap move }
+ 
+ class: textstring
+  { show    ( -- )      instancedata skim >r @ r> type  }
+ 
+
+ 
+ variablesizecontainer class: list ( of cell size elements )
+  { elementsize ( -- n ) cell  }
+  { elements ( -- n )  size elementsize / }
+  { locate ( n -- a )  elementsize * dup size u< 0= if dup elementsize + reserve then data + }
+  { show   ( -- )      data size dump  }
+  { fetch  ( n -- x )  locate @ }
+  { store  ( x n -- )  locate ! }
+  { append   ( x -- )  elements store }
+ \ { remove ( n -- )    ... }
+ \ { insert ( x n -- )  ... }
+
+
+
+ list class: array
+
+ list class: 2array
+  { elementsize ( -- n ) 2 cells }
+  { fetch  ( n -- x )  locate 2@ }
+  { store  ( x n -- )  locate 2! }
+
+
+
+
+
+ \ ----------------------------------------------------------------------------------
+ \ ----------------------------------------------------------------------------------
+ \ ----------------------------------------------------------------------------------
+ \                          transient testing stuff - cut here
+ \ ----------------------------------------------------------------------------------
+ \ ----------------------------------------------------------------------------------
+ \ ----------------------------------------------------------------------------------
+
+
+
+ var        new: foo1
+ 2var       new: foo2
+ textstring new: foo3
+ list       new: foo4 
+ array      new: a1
+ 2array     new: a2
+
+
+
+
+ : time ( -- secs )   time&date drop drop drop 60 * + 60 * +  ;
+ : home   ( -- )      0 0 at-xy  ;
+
+
+
+
+ \ takes 15 microseconds on my 1700 MHz Athlon, 11 microseconds if finalized
+ : appendtest1 ( -- )
+        foo3
+        s" test"       store
+        s"  appending" append
+        s"  to"        append
+        s"  instance"  append
+        s"  of"        append
+        s"  string"    append
+        s"  class"     append
+ ;
+
+
+ \ list of all methods 
+ : .methods  ( -- )  #methods 0 ?do  cr i dup . .method loop  ;
+
+ : .instances ( -- )  activeclass begin >instancelink @ ?dup while dup .object repeat ;
+
+ : .classes  ( -- )
+      classlink
+      begin @ ?dup while
+         cr dup .class
+            dup begin >instancelink @ ?dup while 
+            cr 3 spaces dup .object repeat
+         >classlink
+      repeat  ;
+
+ : startwatch ( -- u ) time begin time tuck <> until  ;
+ : stopwatch  ( u1 -- u2 ) time swap -  ;
+ : bench1     ( -- secs )  startwatch 1000000 0 do appendtest1 loop delete  stopwatch ;
+
+
+ : benchmark  
+        appendtest1 fetch
+        s" test appending to instance of string class" compare
+        abort" unexpected appendtest1 result"  delete
+        cr ." Running    ... "       bench1 u. ." microsecs" 
+        cr ." Finalizing ... "  foo3 finalize  ." ok"
+        cr ." Rerunning  ... "       bench1 u. ." microsecs"
+ ;

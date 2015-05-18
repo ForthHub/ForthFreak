@@ -1,0 +1,21 @@
+=== Specs for ForthProjectOrganiser tools. ===
+
+FPORegisterUsers  If nobody can modify your stuff but you, the system has to identify you.
+
+FPOVersionControl Keeping track of specs, code, tests, and bug reports.
+
+FPOCompressionAlgorithm  Clearly useful
+
+FPOTreeStructures  More complex than Wiki because others will keep pointing to old versions.
+
+FPOUserInterface  Making it easy to use.
+
+FPOUploadDownload  Move files and whole versions from computer to computer seamlessly
+
+FPOPortableDevelopmentEnvironment  The wiki structure and load files etc should work locally on developers' systems.
+
+FPODataMining  How can you find out what other people are doing without eyeballing it all?
+
+FPOPortableFileSystem  How do you handle folder/directory trees etc on multiple operating systems, portably?
+
+FPODefinedInterfaces It's important to have all the seams carefully described, so that someone who doesn't like a feature can easily replace it with something he likes better.

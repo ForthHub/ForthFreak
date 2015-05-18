@@ -1,0 +1,26 @@
+In addition to Marcel's version linked to below, ForthInc has posted an [http://forth.com/starting-forth/ online edition of Starting Forth] which AFAICT has the original images.
+
+--JoshGrams
+
+==== Comments on the Web Edition ====
+/Starting Forth, First Edition is from 1981. These web pages were entered from memory in 2003, when it became apparent that SF might never be re-issued by the copyright holder. A small supply of about 500 books is all that was available in April 2003. When you can get hold of the original, do so./
+
+/This transcript is inaccurate. Forth code has been converted to the ANSI standard. Where necessary, statements that were valid in 1981 have been exchanged with statements more appropriate for 2003./
+
+/Starting Forth is full of very difficult to reproduce graphics. These enormously enhance the text's mnemonic value, and are invaluable for a first-time Forth user. I have therefore added "substitute" graphic elements, roughly at the same spot where they are in the original. The original graphics are, of course, much better./
+
+-- MarcelHendrix
+----
+* [http://home.iae.nl/users/mhx/sf0/sf0.html Starting Forth First Edition, Introductions].
+* [http://home.iae.nl/users/mhx/sf1/sf1.html Chapter 1 Fundamental Forth]
+* [http://home.iae.nl/users/mhx/sf2/sf2.html Chapter 2 How to Get Results]
+* [http://home.iae.nl/users/mhx/sf3/sf3.html Chapter 3 The Editor (and Staff)]
+* [http://home.iae.nl/users/mhx/sf4/sf4.html Chapter 4 Decision, Decisions, ...]
+* [http://home.iae.nl/users/mhx/sf5/sf5.html Chapter 5 The Philosophy of Fixed Point]
+* [http://home.iae.nl/users/mhx/sf6/sf6.html Chapter 6 Throw it for a Loop]
+* [http://home.iae.nl/users/mhx/sf7/sf7.html Chapter 7 A Number of Kinds of Numbers]
+* [http://home.iae.nl/users/mhx/sf8/sf8.html Chapter 8 Variables, Constants, and Arrays]
+* [http://home.iae.nl/users/mhx/sf9/sf9.html Chapter 9 Under the Hood]
+* [http://home.iae.nl/users/mhx/sf10/sf10.html Chapter 10 I/O and You]
+* [http://home.iae.nl/users/mhx/sf11/sf11.html Chapter 11 Extending the Compiler]
+* [http://home.iae.nl/users/mhx/sf12/sf12.html Chapter 12 Three Examples]

@@ -1,0 +1,9 @@
+Since we have a list of names of token primitives, we can start with token code and replace each primitive with a name. Then we have nameless functions built of primitives, and nameless functions built of primitives and other nameless functions and so on. We have numbered addresses that were named in the original source.
+
+We can go a little further. The commands that have special behaviors can be displayed according to those behaviors. ." can result in a display of ." followed by the string it would compile. The detokenizer needs a routine for every special word, and I see no way to automate this.
+
+It would be possible to let the user add names whenever he thinks of a good name for a nameless routine or base address, and add comments to say whatever he sees that's worth saying about them, and of course stack comments. A reader who starts with only tokens and builds his own comments is likely to make code that's more readable than the original.  (And possibly debugged better.)
+
+We could build a detokenizer for sample systems, and that would reduce the work for making them for new systems.  But it's very unlikely that can be automated away completely.
+
+DecoderSource

@@ -1,0 +1,7 @@
+IndirectThreadedCodeSlideshow16 IndirectThreadedCodeSlideshow18
+
+http://www.forthfreak.net/slides/slide25.jpg
+
+The end of HILEVEL2 is reached, and we need to return to the
+former execution context (from where HILEVEL2 was called).
+UNNEST at the end of HILELVEL2 will take care of this.

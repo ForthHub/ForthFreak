@@ -1,0 +1,39 @@
+What we need from a version control system is
+
+* archive all current and old files/pages.
+* protect each user's files. When you modify somebody else's file you get a new file of your own instead; a branch.
+* support tools to make it easier to see what's going on and merge branches.
+
+The FPO should be designed to allow users to use version control with a minimum of fuss. It should take what you give it, and give you what you ask for.
+
+----
+Albert van der Horst suggested that a source control system must be absolutely mature, bug-free, and simple. Good idea. Do that part in Forth and there might be bugs, scalability issues, and very slow acceptance.
+----
+* Albert suggested that [http://ximbiot.com/cvs/ CVS] fits that and [http://www.gnu.org/software/rcs/rcs.html RCS] even more so.
+* Charles Turner suggested [http://abridgegame.org/darcs/ darcs].
+* Paul Bennett seconded RCS.
+* Andrea Kochenburger and John Passaniti suggested [http://subversion.tigris.org/ Subversion].
+* Trey Boudreau and John Passaniti suggested [http://trac.edgewall.org/ Trac].
+* Ian Osgood suggested [http://git.or.cz/ git].
+* Mark Humphries suggested [http://aegis.sourceforge.net/ Aegis], which combines version control and testing.
+
+Subversion is not mature. It has a lot of features. It may have overcome some limitations of CVS.
+
+Darcs is less than 2 years old. It is organised along precisely the lines I want. It might be considered a competitor in some ways.
+
+Trac does many of the things FPO ought to do. It's a competitor with a head start.
+
+RCS is considerably simpler than CVS. Its latest version is 11 years old. Since 2000 there have been a handful of bugs reported in the Unix version:
+
+* problem with more than two locks on one file.
+* possible problem with locks on multiple files with the same name.
+* possible problems from end-of-line from mixed DOS and Unix files.
+* problem with symbolic links, RCS destroys the link when it should destry the file.
+* occasional segmentation faults when deleting version 1.1 of a file.
+* there's an error that sometimes runs diff even when the file contents are identical. There's a patch for that one.
+
+Under Windows there's a report that occasionally important lines are truncated and merged.  
+
+Most of the Unix problems look avoidable. The segfault problem leaves behind a couple of files that must be deleted before RCS will run.
+
+These appear to be rare problems, but if we use RCS in a way that's unusual we may run into problems that nobody else has reported. And there's the issue of Windows RCS.

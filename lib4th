@@ -1,0 +1,7 @@
+http://www.lxhp.in-berlin.de/lhpf8.html
+
+lib4th is a self contained Forth shared library for k6/i568(+) PC Linux, designed after the ANS-Forth standard, with a native code subroutine threaded compiler and interpreter, independent of any external code (particularly, no "libc") but the linux/ELF program interpreter.
+
+It was programmed in Intel style assembler language, NOT designed for portability (though it may be possible), but run-time efficiency, for the most widespread type of "personal computers".
+
+ForthSystems

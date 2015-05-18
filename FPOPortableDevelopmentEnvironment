@@ -1,0 +1,3 @@
+Since they will do most of the work on their own machines, the wiki-type software to display stuff should also have a local version. So we want a portable development environment, that developers can customise at will provided they don't break the interface.
+
+Developers who choose to use some other development environment should find it easy to add their specs, code, tests, and links among those three to the wiki and check that it all looks right and tests right before uploading to the host.

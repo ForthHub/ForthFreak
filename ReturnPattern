@@ -1,0 +1,123 @@
+== Intent ==
+
+Simplifies control flow, while improving code readability.
+
+== Also Known As ==
+
+Early Out Algorithm
+
+== Motivation ==
+
+In any program that maintains a database of some kind, there will often be a need to search through that database for specific record instances.  To find a match for a record in the database, two or more fields must match a set of search criteria.
+
+The traditional way of thinking about searching through a database might be something like this:
+
+  : matches?  field1 data1 = field2 data2 = and field3 data3 = and if ... ;
+
+The disadvantage of this method is that all the relavent fields are tested, thus wasting time if we know for certain that we don't need to check other fields if even one mismatch disqualifies the current record.  We can solve this particular problem by using nested IF statements, like this:
+
+  : matches?
+    field1 data1 = if
+      field2 data2 = if
+        field3 data3 = if
+          YES exit
+        then
+      then
+    then
+    NO ;
+
+For non-trivial database queries, however, this can yield code which is unwieldly.  This is especially true for Forth source stored in blocks instead of files.
+
+We can kill two birds with one stone by exploiting the visibility of Forth's return stack to implement an early-out algorithm of data matching.  In particular, each field test is factored out, thus allowing it to be more easily re-used.  In addition, definitions are kept short -- often fitting on a single line, which is a significant advantage for block-based source representations.  Secondly, we can change the more passive reading code to a more active voice, which enables greater comprehension by keeping the code imperative, rather than mixing imperative and declarative constructs in the same definition.
+
+  : f1? field1 data1 <> if r> drop then ;
+  : f2? field2 data2 <> if r> drop then ;
+  : f3? field3 data3 <> if r> drop then ;
+  : ?match f1? f2? f3? YES ;
+  : foobar ... ?match NO ... ;
+
+A more concrete example from FS/Forth for Linux's target compiler is as follows:
+
+   Screen 24
+   0 ( FS/Forth::Vocabulary::Forth::Search )                         
+   1                                                                 
+   2 : entry1 cells table1 + ;                                       
+   3 : entry2 cells 2* 2* table2 + ;                                 
+   4 : <> = 0= ;                                                     
+   5 : length? dup entry1 h@ here @ <> if r> drop then ;             
+   6 : bump 4 + swap 4 + swap ;                                      
+   7 : eq? 2dup @ swap h@ <> if 2drop r> r> 2drop exit then bump ;   
+   8 : name? dup entry2 here 4 + eq? eq? eq? 2drop ;                 
+   9 : check length? name? r> drop ;                                 
+  10 : fw? begin dup 0< if exit then check 1- again ;                
+  11 : forthword? >r >r 0 r> r> image fwli @ 1- fw? ;                
+  12 : cfa@ entry2 12 + h@ ;                                         
+  13                                                                 
+  14                                                                 
+  15
+
+   Screen 25 (shadow comments)   
+   0                                                                 
+   1 entry1,2 n-a Returns HOST address for row 'n' in vocab tables   
+   2 check n-n Checks vocab entry 'n' to see if word matches image.  
+   3   If it does, it doubly-returns.  Otherwise, it just returns.   
+   4 forthword? au-r Table row for word (a u).  If none found, -1.   
+   5 cfa@ r-a Returns CFA bound to word identified by row r.         
+   6 fwli -a Variable: Forth Word List Index                                                             
+   7                                                                 
+   8                                                                 
+   9                                                                 
+  10                                                                 
+  11                                                                 
+  12                                                                 
+  13                                                                 
+  14                                                                 
+  15
+
+The main entrypoint to this code is *forthword?*.  It returns a table row ID for a word in the FS/Forth "forth" vocabulary, given its name in standard (caddr u) format on the data stack.  It is used to look for a word in the target Forth dictionary, and if found, acquire its code field address using the *cfa@* word.
+
+After creating an image of what to look for at HERE (the *image* word builds said image), it enters a BEGIN/AGAIN loop looking for the word, found in *fw?*.  Note how the loop handles the /specific/ case of a failed match only -- the case of a successful match doesn't distract the reader, thus allowing easier comprehension of the /intent/ of the code.  The code, therefore, becomes self-documenting.
+
+Note that *eq?* uses a double instance of the Return Pattern.  In this case, it's a match-word that is itself invoked by a match-word (*name?*); hence, to early-out of this situation, two levels of subroutine contexts must be cleaned off the return stack.
+
+== Applicability ==
+
+Use the Return Pattern when
+
+* Multiple nested-IF constructs or other control flow structures get unwieldly.
+
+* Source code legibility is compromised by traditional control flow logic.
+
+* When Early-Out techniques can provide marked performance improvements when scanning through large data sets.
+
+== Participants ==
+
+== Collaborations ==
+
+* The match-word often handles the case of a match, usually by acting /directly/ on the data in some desired manner.  Alternatively, the match-word may return a success flag.  *check* in the FS/Forth example simply returns a flag, for example.
+
+* The word /invoking/ the match word handles the case where a match does not occur.
+
+== Consequences ==
+
+This pattern can easily be abused.  Use of this pattern incorrectly can yield software which is harder to maintain, harder to debug, and with poor performance.
+
+== Implementation ==
+
+Using *r> drop* causes the previous execution context to be discarded without affecting other task state, including the data stack.  The resulting "quick return" enables the invoking word to concentrate /strictly/ on the cases that the invoked word doesn't.
+
+In the event multiple conditions can cause an early-out condition, it might be helpful to define a text substitution macro.  For example, in GForth:
+
+  : next s" r> drop" evaluate ; immediate
+  : f1 field1 data1 <> if next then ;
+  : f2 field2 data2 <> if next then ;
+  ..etc..
+
+This might yield increased readability if the *r> drop* phrase appears often.
+
+== Known Uses ==
+
+* FS/Forth for DOS and [Pygmy] use it to break out of its compiler loop when executing ; or [.
+* FS/Forth for Linux uses it for early-out detection when scanning the Forth and Compiler wordlists, as well as breaking out of its compiler loop.
+
+== Related Patterns ==

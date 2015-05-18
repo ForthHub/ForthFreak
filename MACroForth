@@ -1,0 +1,13 @@
+= !MACroForth - A Minimum ARM Cross Forth Compiler =
+
+A simple ARM cross Forth compiler, hosted by GForth, implementing the draft [http://www.forth.com/downloads/ANS/XCtext5.pdf Standard Cross Compiler Wordset]
+
+Sources available via SVN ([http://mosquito.dyndns.tv/freesvn/trunk/macroforth/ browse]):
+
+ svn co http://mosquito.dyndns.tv/freesvn/trunk/macroforth/
+
+See also the accompanying [http://mosquito.dyndns.tv/freesvn/trunk/macroforth/README.txt README file].
+
+License: GPL, with an excemption to not clarify that resulting cross-compiled firmware images are freed from any GPL obligations.
+
+ForthSystems

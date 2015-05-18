@@ -1,0 +1,59 @@
+
+ S" SENDCOMPATIBLE.F"   INCLUDED
+ S" SENDBYTECODE.F"     INCLUDED
+ S" SENDWORDLIST.F"     INCLUDED
+ S" SENDTOKENS.F"       INCLUDED
+ S" SENDCOMPILER.F"     INCLUDED
+ S" SENDSIMPLETOKENS.F" INCLUDED
+ S" SIMPLEWORDS.F"      INCLUDED
+
+ S" SENDCOMPLEXWORDS.F" INCLUDED
+
+ ' . (IS) OUTPUT-CHAR
+ TOKEN-WORD
+ : TEST(
+    CR POSTPONE .( S"  -> " TYPE ;
+ NONTOKEN-WORD
+
+ T|
+ TEST( Each use of CREATE outputs a token C ) CREATE TESTING
+ TEST( Each use of a CREATE child outputs 2 tokens A i ) TESTING
+ TEST( CREATE again C ) CREATE MORE-TESTING
+ TEST( Next CREATE, A i+1 ) MORE-TESTING
+ TEST( )
+ TEST( Each use of VARIABLE outputs a lit zero, an address token, and a , ) VARIABLE TESTINGV
+ TEST( The zero may be wrong because printing tokens may interfere. )
+ TEST( Each use of a variable outputs 2 tokens A i ) TESTINGV
+ TEST( VARIABLE again N ) VARIABLE MORE-TESTINGV
+ TEST( Next variable, A i+1 ) MORE-TESTINGV
+ TEST( )
+ TEST( Each use of CONSTANT outputs 2 tokens K , ) CONSTANT TESTINGC
+ TEST( Each use of a CONSTANT outputs 3 tokens A i @ ) TESTINGC
+ TEST( CONSTANT again K , ) CONSTANT MORE-TESTINGC
+ TEST( Next CONSTANT, A i+1 @ ) MORE-TESTINGC
+ TEST( )
+ TEST( numbers give token count char char char ) 123
+ TEST( )
+ TEST( \ still discards everything ) \ LITTOKEN 555 VARIABLE TEST
+ TEST( ( still discards everything ) ( LITTOKEN 555 VARIABLE TEST )
+ TEST( )
+ TEST( .( sends the string, this time HELLO ) .( HELLO)
+ TEST( )
+ TEST( : ; send bracketing tokens and contents, no name ) : MYNAME ;
+ TEST( new : word gets new token ) MYNAME
+ TEST( S" outputs counted string, as do ABORT" and ." )  S" ABC"
+ TEST( CHAR sends one token and one char   ascii B )  CHAR BROOKLYN
+\ TEST( ' sends the token for the next word ) ' ,
+ TEST( : TEST ;  should give 2 tokens ) : TEST ;
+ TEST( TEST should give 1 token ) TEST
+ TEST( : TEST1 @ ; should give 3 tokens ) : TEST1 @ ;
+ TEST( TEST1 should give 1 token ) TEST1
+\ TEST( : TEST2 ['] @ ; should give 4 tokens ) : TEST2 ['] @ ;
+\ TEST( TEST2 should give 1 token ) TEST2
+ TEST( : TEST3 [CHAR] !@#$ ; should give 4 tokens ) : TEST3 [CHAR] !@#$ ;
+ TEST( TEST3 should give 1 token ) TEST3
+ TEST( : TEST4 [ TEST1 ] ; should give 5 tokens ) : TEST4 [ TEST1 ] ;
+ TEST( :NONAME ;  should give 2 tokens ) :NONAME ;
+ TEST( N: TEST6 ; should give 2 tokens with a counted string ) N: TEST6 ;
+
+ |T

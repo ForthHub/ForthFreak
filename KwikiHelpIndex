@@ -1,0 +1,16 @@
+WikiRelated: The ForthFreak wiki (currently) runs a Kwiki.
+
+Practice editing in the SandBox.
+See the KwikiQuickRef if you need some tips.
+
+There are a few other Kwiki-oriented pages here, such as
+
+* KwikiFormattingRules
+* KwikiNavigation
+* KwikiMorePages
+* KwikiTodo
+
+CGI::Kwiki is simple yet powerful Wiki environment written in Perl as a CPAN module distribribution. It was written by BrianIngerson.
+For more detailed information about Kwiki, see
+* an introduction to [http://www.perl.com/pub/a/2003/05/14/kwiki.html "CGI::Kwiki"] by Brian Ingerson 2003.
+* http://kwiki.org/ , the official Kwiki home page.

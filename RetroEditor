@@ -1,0 +1,31 @@
+The !RetroEditor is a line oriented block editor orginally written for use with RetroForth. It's a major part of the development environment in !RetroForth, and is reasonably portable. See [RetroEditorPorts] for implementations for various Forth systems. 
+
+
+==== Screenshot (with optional syntax highlighting enabled)
+http://retroforth.org/test.png
+
+Please note that in !RetroForth, blocks are 8x64, rather than 16x64. This allows blocks to map directly to physical sectors in the native version, and doesn't hinder programming under a host OS. In fact, it's easy to use one block for code and the other as "shadow" block for comments.
+
+==== Editing commands
+
+  block#  s                 Select new block
+  line#   i ...             Insert ... onto line#
+  column#  line#  ia ...    Insert ... onto line# at column#
+  x                         Delete the current block
+  line#   d                 Delete line# from the current block
+  p                         Select previous block
+  n                         Select next block
+  v                         View the current block
+  e                         Evaluate the current block
+
+==== Commands for loading/saving blockfiles in RetroForth
+
+  #blocks  blocks           Set the number of blocks to load/save
+  use filename              Set the filename to load/save
+  load filename             Set the filename, and load it for editing
+  reload                    Read the file to memory
+  save                      Write the file to disk
+
+==== Notes
+
+While editing on a line by line basis can be tedious at times, it's certainly doable, and makes extending the editor very, very simple. (See RetroEditorExtensions for some of these)

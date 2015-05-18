@@ -1,0 +1,18 @@
+*Due next release*.
+
+Sister Sites is a way of providing accidental linking between your Kwiki and other wiki sites of your choosing.
+
+See http://c2.com/cgi/wiki?AboutSisterSites for more info.
+
+Proposed sister sites for Forthfreak:
+
+* [http://wiki.forth.org.ru RuFIG Wiki]
+* [http://c2.com/cgi/wiki the original wiki: the Portland Pattern Repository] (which already has a few sister sites)
+* [http://communitywiki.org/odd/SoftwareBazaar/HomePage the Software Bazaar]
+* [http://www.codepedia.com/1/Forth Codepedia]
+* [http://jasonwoof.org/ yet another Forth wiki]
+* [http://tunes.org/wiki/Forth_OSes the TUNES wiki sometimes mentions Forth]
+
+Fine, but there may be a technical issue: kwiki (this wiki) uses YAML for sisters. would these other sites be compatible with YAML ? -- [Speuler]
+
+Meanwhile, until the Sister Sites software is set up, you may be interested in our WikiNode.

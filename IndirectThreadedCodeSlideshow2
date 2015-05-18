@@ -1,0 +1,7 @@
+IndirectThreadedCodeSlideshow IndirectThreadedCodeSlideshow3
+
+http://www.forthfreak.net/slides/slide10.jpg
+
+host CPU starts executing NEXT, which will transfer the contents of memory
+where IP points to to W, and increment IP. Program counter is also
+incremented, to point to the next CPU instruction.

@@ -1,0 +1,37 @@
+= Examples of shortcut use =
+----
+=== google: ===
+ google for {google:foo}
+google for {google:foo}
+----
+=== wp: ===
+ wikipedia lookup {wp:foo}
+wikipedia lookup {wp:foo}
+----
+=== dict: ===
+ dict lookup {dict:foo}
+dict lookup {dict:foo}
+----
+=== wordnet: ===
+ wordnet lookup {wn:Forth}
+wordnet lookup {wn:Forth}
+----
+=== x86: ===
+ x86 instructions: {x86:xadd}
+x86 instructions: {x86:xadd}
+
+ replacement: {x86:sbb|Intel sbb instruction}
+replacement: {x86:sbb|Intel sbb instruction}
+----
+=== datasheet: ===
+ {datasheet:LM350}
+{datasheet:LM350}
+----
+=== rfc: ===
+ {rfc:1918|RFC 1918}
+{rfc:1918|RFC 1918}
+----
+=== dpans: ===
+ consulting DPANS94 sections: {dpans:6.1.0380|2dup}
+consulting DPANS94 sections: {dpans:6.1.0380|2dup}
+----

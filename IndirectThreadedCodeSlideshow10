@@ -1,0 +1,9 @@
+IndirectThreadedCodeSlideshow9 IndirectThreadedCodeSlideshow11
+
+http://www.forthfreak.net/slides/slide18.jpg
+
+That has happened now. the top return stack element is now identical to IP,
+and points into HILEVEL1, into which IP was pointing to all the time.
+Now that IP has been saved, it can be changed without danger to not find
+back. By transferring the contents of W to IP, IP will point to the colon
+word which we are preparing to execute in a moment.

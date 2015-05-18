@@ -1,0 +1,124 @@
+\ Parsing words from bytecode
+
+ ( G: allow 8-char operator and 255 chars from byte-code to evaluate )
+ CREATE TOKEN-BUFFER 264 CHARS ALLOT
+
+ ( G: LLIT precedes numbers whether compiling or not. )
+ : LLIT ( S: "number" -- )
+    TOKEN-BUFFER 0 TOKENS>STRING EVALUATE ; IMMEDIATE
+
+ CREATE ADDRESSES 256 CELLS ALLOT
+ VARIABLE LAST-ADDRESS -1 LAST-ADDRESS !
+
+ : NEW-ADDRESS ( S: -- )
+    HERE LAST-ADDRESS NEW-ITEM CELLS ADDRESSES + ! ;
+
+ : GET-ADDRESS ( S: -- addr )
+    INPUT-TOKEN CELLS ADDRESSES + @ ;
+
+ ( G: like CHAR but use next token for the char )
+ : LCHAR ( S: "char" -- char )
+    INPUT-TOKEN ;
+ ( G: like [CHAR] but from token )
+ : L[CHAR] ( S: "char" -- )
+    INPUT-TOKEN POSTPONE LITERAL ; IMMEDIATE
+
+ ( G: like S" but text from tokens )
+ : LS" ( C: "text" -- ) ( E: -- c-addr len ) ( I: "text" -- c-addr len )
+    TOKEN-BUFFER 0 [CHAR] S SC!
+    [CHAR] " SC! BL SC! TOKENS>STRING
+    [CHAR] " SC! EVALUATE ; IMMEDIATE
+
+ ( G: like ABORT" but from tokens )
+ : LABORT" ( C: "text" -- ) ( E: f -- )
+    S" ABORT" TOKEN-BUFFER SWAP CHARS MOVE TOKEN-BUFFER 5  [CHAR] " SC! BL SC!
+    TOKENS>STRING [CHAR] " SC! EVALUATE ; IMMEDIATE
+
+ ( G: like ." but text from tokens )
+ : L." ( C: "text" -- ) ( E: -- )
+    TOKEN-BUFFER 0 [CHAR] . SC! [CHAR] " SC! BL SC! TOKENS>STRING
+    [CHAR] " SC! EVALUATE ; IMMEDIATE
+ ( G: like token .( )
+ : L.( ( S: "text" -- )
+    TOKEN-BUFFER 0 [CHAR] . SC! [CHAR] ( SC! BL SC! TOKENS>STRING [CHAR] ) SC!
+    EVALUATE ; IMMEDIATE
+
+ ( G: : or ' a name )
+ CREATE NAME-BUFFER 34 CHARS ALLOT
+
+ \ ( G: L' gets the xt for the next token in the input stream. )
+ \ : L' ( S: -- xt )
+ \    INPUT-TOKEN TOKEN>XT @ ;
+
+ \ ( G: L['] gets the xt and compiles it as a literal. )
+ \ : L['] ( S: -- )
+ \    L' POSTPONE LITERAL ; IMMEDIATE
+
+  ( 3 kinds of colon defining words.
+ ( G: L:NONAME returns an xt, doesn't get a token.
+ ( G: L: gets a token but no xt or name.
+ ( G: LNAME: creates a new name and a new token both.)
+
+ ( The 3 types get handled at ; when the xt's are available.
+ ( So ;LEAD finds out from LEADCOMPILE which it was. )
+
+ VARIABLE TOKENCOMPILE
+
+ : ;L ( S: 0|xt colon-sys -- xt|nothing )
+    POSTPONE ;
+    TOKENCOMPILE @ IF
+      TOKENCOMPILE @ -2 = IF
+        DROP [CHAR] ' NAME-BUFFER C! NAME-BUFFER 34 EVALUATE
+      THEN
+      NEW-TOKEN
+    THEN ;
+ IMMEDIATE
+
+ : L:NONAME ( S: -- xt colon-sys )
+    0 TOKENCOMPILE ! :NONAME ;
+ ( G: LEAD: gets an xt for a token. )
+ : L: ( S: -- xt colon-sys )
+   -1 TOKENCOMPILE ! :NONAME ;
+ ( G: L: creates a word that keeps its name.  It gets a token too. )
+ : LNAME:  ( S: "name" -- 0 colon-sys )
+    0 NAME-BUFFER 34 BL FILL
+    NAME-BUFFER 0 [CHAR] : SC! BL SC!
+    -2 TOKENCOMPILE !
+    TOKENS>STRING EVALUATE ;
+ \ would it be easier to make it deferred?  Then we could assign the token
+ \ immediately.  we'd have to put the xt in the deferred spot later instead of
+ \ finding the xt later and putting it in the token spot.
+
+
+ \ There's an issue about parsing commands that might get used both on bytecode
+ \ and on later text.  There could be a place for bytecode-created commands that
+ \ later parse text.  There's definitely a place for bytecode that parses bytecode.
+ \ How can we have it both ways?  If we use different tokens to do both then we
+ \ use up more tokens and also we get routines that do one or the other that can
+ \ get confused.  So we defer the commands that might go either way, and redirect
+ \ them according to the current source.
+
+ \ But immediate words aren't an issue unless they get postponed, and we can
+ \ handle those with POSTPONE (which isn't implemented yet).  We just don't have
+ \ many words that it's a problem with, yet.
+
+ DEFER PCHAR
+ DEFER P:NONAME
+ DEFER P:
+
+ \ LNAME: has no corresponding text form and doesn't need to be switched.
+
+ ( G: set up parsing words for tokens )
+ : TOPARSETOKENS ( S: -- )
+    ['] LCHAR            [IS] PCHAR
+ \    ['] L'               [IS] P'
+    ['] L:               [IS] P:
+    ['] L:NONAME         [IS] P:NONAME ;
+
+ ( G: set up parsing words for text )
+ : TOPARSETEXT ( S: -- )
+    ['] CHAR             [IS] PCHAR
+ \    ['] '                [IS] P'
+ \    ['] [']              [IS] P[']
+    ['] :                [IS] P:
+    ['] :NONAME          [IS] P:NONAME ;

@@ -1,0 +1,27 @@
+ByteSieveBenchmarkResults
+
+ \ ( BYTE magazine benchmark )   
+
+ decimal
+ 8190 constant size
+ : do-prime ( -- )
+     here size 1 fill
+     0 size 0 do    
+        here i + c@ 
+        if        
+           i 2* 3 + dup i + here +
+           begin                 
+              dup size here + u< 
+           while                
+              0 over c! over +  
+           repeat            
+           2drop 1+          
+        then      
+     loop         
+ \   dup u. ." PRIMES" cr
+     drop   ;
+    
+ : main  ( -- )
+     10000 0 do    
+        do-prime    
+     loop ;    

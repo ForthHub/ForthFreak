@@ -1,0 +1,7 @@
+IndirectThreadedCodeSlideshow7 IndirectThreadedCodeSlideshow9
+
+http://www.forthfreak.net/slides/slide16.jpg
+
+the interpreter is about to start executing the colon definition HILEVEL2.
+Its first memory location points to NEST. and that address will be
+transferred to the program counter.

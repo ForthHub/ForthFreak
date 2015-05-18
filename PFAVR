@@ -1,0 +1,5 @@
+PFAVR is a port of [pForth] to the Atmel AVR architecture. Specifically, the !ATmega64 and !ATmega128 devices are supported on systems with at least 32K of external RAM. This is an interactive, interpreted Forth (not a native code compiler, not umbilical, not a CrossForth).
+
+http://claymore.engineer.gvsu.edu/~steriana/Software
+
+ForthSystems

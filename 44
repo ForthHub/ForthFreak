@@ -1,0 +1,10 @@
+44 is a small, rather loosely characterized version of forth. It has a number of standard words, such as @, !, emit, key, etc., but does not even come close to implementing the core wordset for an ANS-type forth. It includes a small extension to the language that the author considers nice, but it will doubtlessly annoy savants at large.
+
+44 was written for emedded !PowerPC use. It can act as a monitor or be used to develop !ROMable applications.
+
+* ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/44.txt
+* ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/44.tar.gz
+
+44 is a predecessor to !PPCForth: http://ppcforth.sourceforge.net/
+
+ForthSystems

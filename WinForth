@@ -1,0 +1,33 @@
+Features are:-
+The full range of Windows operations can be controlled from !WinForth including the creation of windows, graphics, colours, fonts, text, buttons and user interfacing via dialogues, keyboard and the mouse.
+
+* Windows, Menus and dialogues can be created directly in Forth or loaded from resources in the .EXE.
+* Windows API fully accessible.
+* Optimiser will create machine code for fast execution.
+* KEY & EMIT in resizable console window.
+* Extensive (800K) help file.
+* 34 demonstration programs to show windows programming.
+* Block and File source access.
+* Relocatable binary overlays.
+* Round-robin multi tasker.
+* Assembler.
+* 80X87 support.
+* Turnkey applications can be created.
+* 500 page manual.
+
+(not available anymore?)
+
+
+
+----
+WinForth (including shipping) - 155 GBP
+The professional version includes source of utilities and allows creation of and linkage to !DLLs.
+
+WinForth Professional - 375 GBP
+
+Source code - 650 GBP
+(Requires Professional version, non-disclosure agreement and Borland C++ 3.1).
+
+WinForth to Pro upgrade - 255 GBP
+
+ForthSystems

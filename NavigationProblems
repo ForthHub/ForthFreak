@@ -1,0 +1,24 @@
+=== Open, acute, unsolved or current Problems:
+Please do not remove text from this page, instead, append your text below. When done, press the SAVE button on the left.
+----
+I've got strange problems when moving along links in IE 5.0.
+When I move forward with TAB, pages are scrolled opposite direction.
+I've no idea why.
+----
+I have rebuilt the rcs archive, as consequence all pages appear to have been modified recently. The file page modification date show in the list of updated pages is correct, though.
+
+=== Fixed:
+----
+Due to a new webserver, and configuration change of it, some file privileges are wrong. This shows as "Software error" when attempting to save a page. Pressing the back button, and saving again, usually helps in that case.
+----
+Under the latest (0.8) release of Firefox the "Activity" page renders improperly with some lines overtop other ones.
+
+right. columns are too close together. it disappears with a smaller font. maybe a style sheet issue, haven't figured it out yet. There's the ctrl and - key combination to resize fonts with firefox.
+----
+In "Display.css", remove the 
+
+ table-layout: fixed;
+
+line from the table.changes entry. It corrects the columns on my systems, using both Mozilla & FireFox & IE 5.5 & IE 6.0. The last column has a different font than the others though.
+
+yes, that did the trick. much easier on the eye now. thank you!

@@ -1,0 +1,67 @@
+Forth is a computer programming environment developed by ChuckMoore then at the US National Radio Astronomy Observatory (NRAO) during the 1960s, and later formalized as a programming language in 1977, and standardized by ANSI in 1994.  It features both interactive execution of commands (making it suitable as a shell for systems that lack a more formal operating system), as well as the ability to compile sequences of commands into threaded code for later execution.  Its name is derived from Mr. Moore's belief that it was a "fourth-generation computer language" on a computer whose file system allowed only five-letter identifiers.
+
+Forth offers a stand-alone programming environment, consisting of a stack oriented interactive incremental interpreter/compiler. Programming is done by extending the language with 'words' (the term used for forth subroutines), which become part of the language once defined.  Forth is usually implemented with an inner interpreter tracing indirectly threaded machine code, which yields extremely compact and fast high level code which can be compiled rapidly.  A character oriented screen/block mechanism and standard editor written in Forth, provide a file mechanism for creating and storing Forth source code.  There is no concept of 'object code' (pre-compiled definitions) in Forth: definitions that are required are compiled on the spot.
+
+Due to the simplicity to add and use small machine code definitions to the language and use those in an interactive high level programming environment, the Forth language has been popular as a development language for embedded systems and as a vehicle for instrument control.  The structure of the inner interpreter is similar to modern RISC processors and processors that use Forth as machine language have been produced.  Due to the modular extensible nature of Forth, which allows, e.g., for object oriented programming, also many high level applications, such as CAD systems were written in Forth.
+
+== Forth from a programmer's perspective ==
+
+Forth relies heavily on explicit use of the stack data structure and Reverse Polish Notation (or RPN, also used on advanced calculators from Hewlett-Packard).  This notation is also called postfix notation because the operator comes after its operands, as opposed to the more common infix notation where the operator comes between its operands.
+
+The rationale for postfix notation is that it is closer to the machine language the computer will eventually use, and should therefore be faster to execute.  For example, one could get the result of a mathematical expression this way:
+
+ 25 10 * 50 + .
+ 300
+
+This command line first puts the numbers 25 and 10 on the implied stack; the "*" command multiplies the two numbers on the top of the stack and replaces them with their product; then the number 50 is placed on the stack, and the "+" command adds it to the previous product; finally, the "." command prints the result to the user's terminal.  Even the language's structural features are stack-based.  For example:
+
+ : FLOOR5 DUP 5 < IF DROP 5 ELSE 1 - THEN ;
+
+This code defines a new word (again 'word' is the term used for a subroutine) called "FLOOR5" using the following commands: "DUP" simply duplicates the number on the stack; "<" compares the two numbers on the stack and replaces them with a true-or-false value; "IF" takes a true-or-false value and chooses to execute commands immediately after it or to skip to the "ELSE"; "DROP" discards the value on the stack; and "THEN" ends the conditional.  The net result is a function that performs similarly to this function (written in the C programming language):
+
+ int floor5(int v) { if (v < 5) return 5; else return v - 1; }
+
+Forth became very popular in the 1980s because it was well suited to the small microcomputers of that time, being very efficient in its use of memory and easy to implement on a new machine.  At least one home computer, the British Jupiter Ace, had Forth in its ROM-resident OS.  The language is still used in many small computerized devices (called embedded systems) today for efficiency  reasons.
+
+Forth is also infamous as being one of the first, and simplest extensible languages.  That is, programmers can easily adapt the features of the language to the problem. Unfortunately, extensibility also helps poor programmers to write incomprehensible code.  The language never achieved wide commercial use, perhaps because it acquired a reputation as a "write only" language after several companies had product failures caused when a crucial programmer left.
+
+Responsible companies using the language, such as FORTH Inc, had become aware of the problem and addressed it with internal cultures that stressed code reviews.
+
+== Facilities of a FORTH system ==
+
+Most Forth systems include a specialized assembler that produces executable words.  Assembly language words usually end in a macro called "NEXT" which indexes the address interpreter to the next word, and executes it.
+
+Classic Forth systems use no operating system.  Instead of storing code in files, they store it as source-code in disk blocks written to physical disk addresses.  This is more convenient than it sounds, because the numbers come to be familiar.  Also, Forth programmers come to be intimately familiar with their disks' data structures, just by editing the disk.  Forth systems use a single word "BLOCK" to translate the number of a 1K block of disk space into the address of a buffer containing the data.  The Forth system automatically manages the buffers.
+
+Classic Forth systems are also multitasking.  They use a special word, "PAUSE" to save all the important registers to the current stack, locate the next task, and restore all the registers.  Tasks are organized as a scratchpad, an area for variables used by the task, and the stacks for that task.  The customary way to search for an executable task is to jump to the schedule, which is a linked list consisting of jump instructions.  When a software interrupt instruction replaces the jump, the task begins to run.  This system is remarkably efficient.  In a Forth programming class, ten users have been supported on an 8MHz PDP-11, with each user operating out of less than 4K of RAM and sharing a single floppy disk.  In a telephone system, a thousand tasks (one per phone) were supported on a small NOVA minicomputer.
+
+== Structure of the language ==
+
+The basic data structure of FORTH is a "dictionary," that maps "words" to executable code or other named data structures.
+
+The general structure of the dictionary entry consists of a head and tail.  The head contains the name, the indexing data, a flag byte, a pointer to the code associated with the word, and sometimes another, optional pointer to the data associated with the word.  The tail has data.
+
+The flag byte in the head of the dictionary entry distinguishes words with "compile time" behavior.  Most simple words execute the same code whether they are typed on a command line, or embedded in code.  Compile-time words have special meanings inside Forth code.  The classic examples of compile time words are the control-structures.  All of Forth's control structures, and almost all of its compiler are implemented as compile-time words.
+
+When a word is purely executable, the code pointer simply points at the code.  When a word is a variable, or other data structure, the code pointer points at code shared with other variables of that type, and a data pointer points at the data area for that specific type of variable.
+
+== Computer programs in FORTH ==
+
+Words written in Forth usually compile into lists of addresses of other words, which saves very large amounts of space.  The code executed by these words is an "address interpreter."  The address interpreter does just enough work to be able to execute the lowest level of words, which are written in assembly language.  
+
+== Implementation of a FORTH System ==
+
+Forth uses two stacks for each executing task.  The stacks are the same width as the index register of the computer, so that they can be used to fetch and store addresses.  One stack is the parameter stack, used to pass data to words.  The other stack is the linkage stack, used to nest words, and store local variables.  There are standard words to move data between the stacks, and access variables.
+
+A Forth interpreter looks up words one at a time in the dictionary, and executes their code.  The basic algorithm is to search a line of characters for a non-blank, non-control-character string.  If this string is in the dictionary, and it is not a compile-time word (marked in the flag byte), the code is executed.  If it is not in the dictionary, it may be a number.  If it converts to a number, the number is pushed onto the parameter stack.  If it does not convert, then the interpreter prints the string, followed by a question mark, and throws away the rest of the line of text.
+
+A Forth compiler produces dictionary entries.  Other than that, it tries to simulate the same effect that would be produced by typing the text into the interpreter.
+
+The great secret to implementing Forth is natively compiling it, so that it compiles itself.  The basic scheme is to have the compiler defined in terms of a few words that access a code area.  Then, one definition of the words compiles to the normal area of memory.  Another definition compiles to disk, or to some special memory area.  How does one adapt the compiler?  One recompiles it with the new definitions.  Some systems have even defined the low-level words to communicate with a debugger on a different computer, building up the Forth system in a different computer.
+
+/Taken from/ http://www.wikipedia.org
+----
+A programming language unlike most you have seen. Forth uses one to three stacks, depending on the ForthImplementation. Each stack is fully accessible to the programmer. This is both a blessing and curse. Though it's easier to forget about the stack at times, you can perform some useful tricks by managing the stacks by hand. Forth also uses /reverse polish/ or /postfix/ notation. In this format, to add [=1 + 1], you have to do [=1 1 +]. While a little confusing at first, it becomes second nature after a while. For more information about Forth, check out the ForthTutorials and [http://www.faqs.org/faqs/computer-lang/forth-faq/ Forth FAQs]
+
+* ForthInterpreter
+* ForthCompiler

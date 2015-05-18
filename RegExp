@@ -1,0 +1,10 @@
+Here are links to a couple of idiosyncratic regexp packages in Forth.
+* http://www.forth.org.ru/~mlg/Misc/match.fs.thread.txt
+* http://www.forth-ev.de/repos/bigforth/regexp.fs
+* http://home.hccnet.nl/a.w.m.van.der.horst/refilter.zip
+
+I'm sure there are others.
+
+Here is code for a simple search with only ? and * .
+* WildmatchLocals
+* WildmatchStack

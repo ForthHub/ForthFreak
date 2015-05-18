@@ -1,0 +1,26 @@
+PicForth, a Forth compiler, generates code for the Microchip PIC 16F87x and 16F88x microcontroller families.
+It is hosted on Unix (or Linux) using GForth 0.6.x.
+It includes two kinds of cooperative schedulers.
+You can download PicForth 1.2.5 from
+http://www.rfc1149.net/devel/picforth .
+PicForth is available under the GPL free software license.
+
+In the distribution, you will find some examples: a model railroad booster, a DCC signal generator, some code for silver card smartcards.
+
+Be sure to check out the tutorial at http://tutor.al-williams.com
+
+PicForth had its own ForthWiki:
+!http://wiki.enst.fr/bin/view/Picforth
+(see the
+[http://web.archive.org/web/20050514010317/http://wiki.enst.fr/bin/view/Picforth last version retrieved] 
+by archive.org).
+
+ML: http://dir.gmane.org/gmane.comp.lang.forth.picforth
+
+For some more comments + examples see http://tinymicros.com/wiki/PICForth.
+
+See also [rforth] by the same author.
+
+(For the the PIC 18F and dsPIC 30F processors, see FlashForth).
+
+ForthSystems

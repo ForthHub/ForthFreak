@@ -1,0 +1,42 @@
+Binary search on an array of cell-sized items. "find" and "insert" could be the basis of an insertion sort or an array of unique items kept sorted incrementally.  Examples of the search routine are given with and without using locals.
+
+ create ar20 20 cells allot
+
+ ar20 value ar
+    0 value sz
+
+ defer [compare]  ( item1 item2 --  <=> )
+ ' - is [compare]    \ default to numbers, but could be pointers
+
+ \ with locals
+ : binary-search  0 { item upper lower -- index found? }
+   begin  upper lower >
+   while  upper lower + 2/  ( mid )
+          dup cells ar + @ item [compare]
+          dup 0= if drop true exit then
+          0< if 1+ to lower else to upper then
+   repeat upper lower max false ;
+
+ \ without locals
+ : new-bounds ( upper lower mid item<mid? -- upper' lower' )
+   0< if  1+ swap drop ( upper mid+1 )
+   else   rot drop swap  ( mid lower )
+   then ;
+ : binary-search ( item size -- index found? )
+   swap >r 0 ( upper lower r: item )
+   begin
+     2dup >
+   while
+     2dup + 2/ ( upper lower mid )
+     dup cells ar + @ r@ [compare]
+     dup 0= if r> 2drop >r 2drop r> true exit then
+     new-bounds
+   repeat r> drop max false ;
+
+ : insert ( item -- )
+   dup sz binary-search if 2drop exit then   \ already there
+   ( item insert-index )
+   sz over - cells >r
+   cells ar +
+     dup dup cell+ r> move
+   !  sz 1+ to sz ;

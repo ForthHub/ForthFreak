@@ -1,0 +1,23 @@
+Portable Forth Environment
+
+The Portable Forth Environment (PFE) is based on the ANSI Standard for Forth. The PFE has been created by Dirk-Uwe Zoller and had been maintained up to the 0.9.x versions (1993-1995). Tektronix has adopted the PFE package in 1998 and made a number of extensions. It is now fully multithreaded and it features a module system. You can load additional C objects at runtime to extend the Forth dictionary. It is best targeted for embedded environments since you can easily exchange the terminal driver and the initilization routines. 
+
+http://pfe.sourceforge.net/
+
+----
+
+For desktop use, however, PFE has a lot of rough edges.  It is not fully standard; if you go poking around in the corners you'll find several cases where it doesn't work quite right.  For instance:
+
+* Line numbers in error reports are zero based, whereas most editors that I know of use a one-based system.
+* It only takes one filename on the command line, and that file is not treated the same as if you !INCLUDEd a file from the keyboard (you can't use BYE, and it resets the search order and other system state before dropping into interactive mode).
+* ORDER doesn't display a value for unnamed wordlists (just <???>), so you can't tell them apart.
+* .S displays the stack in a vertical format, with both hex and decimal, which is sometimes nice, but generally takes up much more screen real-estate than necessary.
+* You can't use DOES> or RECURSE in a :NONAME definition.
+* On a segfault, it doesn't restore my terminal state.
+* etc...
+
+Obviously none of these are all that bad, but the little annoyances add up...
+
+--JoshGrams
+
+ForthSystems

@@ -1,0 +1,41 @@
+Quicksort from WilBaden.  This works on cell arrays.
+
+ \ Example compare function.  Could also dereference pointers to more
+ \  complex comparable objects.
+ : lessthan ( a@ b@ -- ? ) postpone < ; immediate
+
+ : mid ( l r -- mid ) over - 2/ -1 cells and + ;
+ : exch ( addr1 addr2 -- ) dup @ >r over @ swap ! r> swap ! ;
+ : part ( l r -- l r r2 l2 )
+   2dup mid @ >r ( r: pivot )
+   2dup begin
+     swap begin dup @  r@ lessthan while cell+ repeat
+     swap begin r@ over @ lessthan while cell- repeat
+     2dup <= if 2dup exch >r cell+ r> cell- then
+   2dup > until  r> drop ;
+ : qsort ( l r -- )
+   part swap rot \ 2over 2over - + < if 2swap then
+   2dup < if recurse else 2drop then
+   2dup < if recurse else 2drop then ;
+
+And here is a different implementation from AntonErtl.
+
+ : partition ( first last -- middle )
+    \ partition array addr1 u1 into all elements less than pivot and all
+    \ others, first middle-cell and middle+cell last are the two partitions.
+    \ lessthan ( elemptr1 elemptr2 -- f ) compares the two elements
+    over @ >r  ( r: pivot )
+    begin ( i j ) 2dup u<
+    while  begin  r@ over @ lessthan while cell- repeat
+           swap over @ over !
+           begin ( j i ) 2dup u>
+           while  dup @ r@ lessthan while cell+ repeat then
+           swap over @ over !
+    repeat
+    drop  r> over ! ;
+ : sort1 ( first last -- ) recursive
+    begin 2dup u<
+    while 2dup partition ( first last middle )
+          rot over cell- sort1
+          cell+ swap
+    repeat 2drop ;

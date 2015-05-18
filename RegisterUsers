@@ -1,0 +1,23 @@
+Specs for a ForthProjectOrganiser version management system
+
+Each developer needs his own pages that others can't modify. If you try to modify a page that belongs to someone else then you get a new page that belongs to you. Their page is not affected.
+
+Each developer has his own latest pages.
+
+That requires that each developer have a list of pages that are his, He sees his latest versions of his own pages. 
+
+When somebody else links to one of your pages then the link should point to the version they linked to, and not to a later version. If they use your code and you change the code, it's good for them to find out that you changed it and why, but it's bad for the code they use to get changed without telling them.
+
+But when you browse through other people's stuff you see their latest, unless you want to look at the history. We need a way to choose to update the link to a newer version.
+
+Looking this over, it seems simpler if you just copy other people's pages. Then your latest copy is yours and you don't worry about pointing to theirs and their updating and such.
+
+If you can't modify their pages then you lose the essential wiki quality although you'll use most of the same code. When they put a link on your page to their new page, it's simple. You can put a link on your page to their existing page. And they can see who's linking to them.
+
+How about this. Two parts to the identifier, the page name and the user name. When you edit somebody else's page you don't get to update their page, you get your own page with your name. 
+
+The history would have a tree of revisions. At present each page has a linear list of revisions, but it would become a tree. One of the tools developers would want is an easy way to look at parts of that tree. An estimate of how closely related things are in terms of revisions leading back to a common ancestor.
+
+Perhaps that tool might show a tree where each developer's name is given by a 3-letter link. Click the link to see the page. That might be done simply and often be clear enough.
+
+Load screens would each have a list of files to load. The filenames on the load screens might as well be the page names of the wiki, maybe with some sort of version number. Maybe there should be some easy way to pick up that info from a page, and put it at the right place in your load screen.

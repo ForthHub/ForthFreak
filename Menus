@@ -1,0 +1,104 @@
+= Menus =
+== Submitted by Jet Thomas, February 1996 ==
+
+Some months ago Paul Gammell presented a superbly flexible menu system to MFIG. Menus didn't need to be nested hierarchically; you could let any menu call any other menu. The problem with the most obvious way to do this is that a user might nest more and more menus until the return stack overflows. That can be fixed by pushing the menu action onto the return stack with >R before the program exits, so the next action (which may be another menu) runs _after_ the present menu is gone.
+
+But an ANS standard program can't do this. Some systems won't execute an execution token left on the return stack. This program uses a similar trick that _does_ work for standard programs.
+
+The rest of the menu system is sketched out without much detail, and is much less flexible than Paul Gammell's code. All the menu data is stored in the dictionary; the source code must be a text file (due to REFILL). The menu keystrokes must be written out as numbers, eg 27 for escape. (This is tedious but does allow function keys. More work for me, to display the menu to the designer who then pushes the same keys a user would.)
+
+I found it easier to put the menus into block files. You get WYSIWYG menus to edit with a block editor and display with LIST. They take much less space in memory, although more in storage. But the text files aren't all that hard to use.
+
+Jet Thomas
+
+Public domain: Anyone may freely use this code for any purpose. It does what I say it does, but I accept no legal liability.
+
+*Environmental dependencies:*
+|Core Extension Wordset|2>R 2R@ 2R> PARSE|
+|Facility Wordset|PAGE|
+|Facility Extension Wordset|EKEY|
+|File Extension Wordset|REFILL|
+
+ DECIMAL
+ 
+ : GET-MENU-LINE ( -- ) ( reads in a line, saves it to print later )
+ ( )         [CHAR] } PARSE DUP C, CHARS >R
+ ( ca )      HERE R@ ALLOT
+ ( ca ca')   R> MOVE ;
+ 
+ : GET-ACTION ( -- xt ) ( gets an xt to do when menu line is chosen)
+    BL WORD DUP COUNT TYPE FIND 0= IF
+     -1 ABORT" menu action not a word" THEN ;
+ 
+ : y|N ( -- f ) ( gets char which says whether action is another menu)
+     ."  y|N " CHAR 32 OR [CHAR] y = ;
+ : GET-KEYSTROKE ( -- u ) ( gets keystroke that selects menu line)
+              0 0 BL WORD COUNT
+ ( 0 0 ca u ) >NUMBER DROP 2DROP ;
+ 
+ : MAKE-MENU-DISPLAY ( aa n -- ) ( sets up menu)
+ ( aa n )   0 DO REFILL DROP GET-MENU-LINE >R
+ ( )         GET-ACTION y|N GET-KEYSTROKE
+ ( xt f u )  R@ ! R@ CELL+ 2! R> 3 CELLS + LOOP DROP ;
+ 
+ : DISPLAY-MENU ( ca n -- ) ( shows menu)
+ ( ca n )  PAGE 0 DO
+ ( ca )     DUP COUNT TYPE CR
+ ( ca )     COUNT CHARS + LOOP DROP ;
+ 
+ : CHECK-KEY ( x ca n -- xt f -1 | 0 ) ( finds keystroke on list)
+ ( x ca n )       0 DO 2DUP @ = IF
+ ( x ca )           NIP CELL+ 2@ -1 UNLOOP EXIT THEN
+ ( x ca )          3 CELLS + LOOP 2DROP 0 ;
+ 
+ : ACCEPT-CHOICE ( aa n -- xt f ) ( waits for keystroke on list)
+ ( ca n )        2>R BEGIN EKEY 2R@ CHECK-KEY UNTIL
+ ( xt f )        2R> 2DROP ;
+ 
+ ( mostly stack thrashing)
+ : SPACE-FOR-RESULTS ( n -- aa n ) HERE SWAP DUP 3 * CELLS ALLOT ;
+ : GET-#LINES ( aa -- aa+ n ) DUP CELL+ SWAP @ ;
+ : FIND-DISPLAY ( aa n -- aa n aa' n ) 2DUP 3 * CELLS + OVER ;
+ 
+ : MENU: ( n -- ) ( make a new menu.  n is # of lines)
+    CREATE DUP , SPACE-FOR-RESULTS MAKE-MENU-DISPLAY
+        DOES> GET-#LINES
+ ( aa n )  FIND-DISPLAY DISPLAY-MENU
+ ( aa n )  ACCEPT-CHOICE
+ ( xt f ) ;
+ 
+ : DO-MENU ( xt -- *i ) ( start 1st menu)
+ ( xt )    BEGIN EXECUTE 0= UNTIL EXECUTE ;
+ 
+ : ACTION-ADDR ( n xt ) ( get address of nth action in menu xt)
+ ( n xt)  >BODY CELL+
+ ( n aa ) SWAP 3 * CELLS + 2 CELLS + ;
+ 
+ ( example )
+ : NOOP ; ( does nothing )
+ : BEEP 7 EMIT ; ( system-dependent, used in example )
+ : BANG PAGE ." Bang!" CR ; ( silly menu item )
+ 
+ 4 MENU: SAMPLEA
+ B      look at menu B } NOOP Y 66
+ C      look at menu C } NOOP Y 67
+ cntlG  beep }           BEEP N 7
+ esc    quit }           QUIT n 27
+ 
+ 4 MENU: SAMPLEB
+ A      look at menu A } SAMPLEA Y 65
+ C      look at menu C } NOOP y 67
+ P      clear screen }   PAGE N 80
+ esc    quit }           QUIT n 27
+ 
+ 4 MENU: SAMPLEC
+ A      look at menu A } SAMPLEA y 65
+ B      look at menu B } SAMPLEB Y 66
+ !      bang }           BANG n 33
+ esc    quit }           QUIT N 27
+ 
+ ' SAMPLEB 0 ' SAMPLEA ACTION-ADDR !
+ ' SAMPLEC 1 ' SAMPLEA ACTION-ADDR !
+ ' SAMPLEC 1 ' SAMPLEB ACTION-ADDR !
+ 
+ ' SAMPLEA DO-MENU

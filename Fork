@@ -1,0 +1,12 @@
+Fork is a Forth interpreter written using an intermediate language for a custom virtual machine.
+
+Features:
+* The core is written in a custom language for a virtual machine, with 24 primitive opcodes. This permit the compiled image of the base system to be machine-independent.
+* Implemented vocabulary follows DPANS CORE, but some words are not fully compatible to the above standard, this due to my personal need.
+* 64 x 16 Block editor.
+* Big part of hi-level forth words defined inside the blocks and available to the user.
+* The low level virtual machine instructions can be mixed and used together with forth.
+
+http://sourceforge.net/projects/fork001/
+
+ForthSystems

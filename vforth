@@ -1,0 +1,5 @@
+ftp://ftp.forth.org/pub/Forth/Compilers/native/misc/vax/vax-forth.tar-z
+
+vforth is a 32-bit forth based on the FIG model, but it deviates where necessity or religion demanded.  It will run on a VAX running 4.2, and tends to use the UNIX system calls in only the most generic of ways (i.e.: it should move to 4.1 without problems).  vforth uses subroutine threading and inline code generation to increase performance.
+
+ForthSystems

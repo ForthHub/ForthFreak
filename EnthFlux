@@ -1,0 +1,13 @@
+Enth is an experimental Forth written as a stand alone system for the 80386 PC or above. It has had some testing on various Pentiums and Athlons, desktops and laptops. Enth is currently based on the ANS Forth wordset and design though it is not guaranteed to be completely ANS complient. Enth's Bootcode is written in the Netwide Asembler or NASM version 0.98, a public domain 80x86 assembler. The kernel is written in SASM, a Forth coded assembler of my own included with the system. 
+
+The name Enth is a bastardization of /The n'th Forth/
+
+The reasons for Enth are threefold. First, because it really interesting writing a stand alone Forth! Second, to begin to escape from the existing Operating Systems. And Third, to act as a companion to the experimental Flux system based on Color Forth . The current incarnations of Flux and Enth are very closely related to the extent that Flux is running on Enth. Hopefully the two systems, one traditional and one colored, will allow people to the two types of Forth in context. 
+
+Phil Howlett has begun a [http://users.bigpond.net.au/phowlett/introduction.htm Guide for Newbies].
+----
+* Website: http://mythago.net/enthflux.html
+* Developer: SeanPringle
+* Also see: [Map]
+
+ForthSystems

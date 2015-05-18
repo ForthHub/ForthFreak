@@ -1,0 +1,25 @@
+http://christophe.lavarenne.free.fr/ff/
+
+A minimal and unconventional forth with a small kernel in assembler.
+
+FreeForth is a context-free implementation of the Forth language:
+
+* no interpret/compile STATE variable, but instead anonymous definitions
+* no prefix compiler-overriders, but instead backquoted macros
+* no input conversion BASE variable, but instead literal base markers 
+
+Moreover, FreeForth generates efficient "subroutine-threaded" native code:
+
+* with primitives implemented as macros generating i386 code inline
+* almost SWAP-free thanks to compile-time renaming of the two registers caching the top two !DATAstack cells
+* with optimized tail-recursion, compiling short jumps where possible
+* with a highly flexible literal compiler accepting binary-op suffixes
+* with variables and constants generated inline as literals
+
+FreeForth is intended to be the base for interactive umbilical incremental cross-compilers for microcontrollers (such as 8051, PIC, and MSP430) and digital signal processors (such as ADSP-218x and ADSP-BF53x).
+
+Currently FreeForth runs on top of Windows and Linux hosts,
+with the initial boot code in Forth on a small i386 assembly language core with the fasm assembler.
+A FreeForth umbilical development environment for MSP430 microcontrollers is available.
+
+ForthSystems

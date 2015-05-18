@@ -1,0 +1,49 @@
+ \ Here is a sample set of primitives.  These were found by taking the
+ \ Standard Forth core and some core extension words, and throwing out
+ \ the ones that cause trouble.
+
+ \ T: is the name of a command that assigns bytecodes to these words
+ \ on the tokenizer.  The tokenizer also defines additional tokens
+ \ that require special treatment.
+ \ T: is also the name of a different command that assigns execution
+ \ tokens to byte tokens on the token compiler.  The token compiler
+ \ has an additional T: ;T sequence to handle the special words that
+ \ didn't fit into this list.
+
+ \ T: is also the name of a third comimand that assigns names to tokens
+ \ on the detokenizer.  There is a third T: ;T sequence to give new names
+ \ to the special words.
+
+ \ So to make a new byte-code system, you might start by noticing which
+ \ words you need, and create a list like this.  Then you notice
+ \ which words require special attention.  Those will be particularly
+ \ parsing words, compiling words, and defining words.  They will each need
+ \ special treatment, probably in both the tokenizer and the token-compiler.
+ \ The words that don't need special treatment can go into this list.
+
+ T:
+ ! # #> #S * */ */MOD + +! +LOOP ,
+ - . / /MOD 0< 0= 1+ 1- 2! 2* 2/
+ 2@ 2DROP 2DUP 2OVER < <#
+ = > >BODY >IN >NUMBER >R ?DUP @
+ ABORT ABS ACCEPT ALIGN ALIGNED
+ ALLOT AND BASE BEGIN BL C! C, C@ CELL+
+ CELLS CHAR+ CHARS COUNT CR DO
+ DECIMAL DEPTH DROP DUP ELSE EMIT
+ EXECUTE EXIT FILL FIND FM/MOD
+ HERE HOLD I IF IMMEDIATE INVERT J KEY LEAVE LITERAL LOOP LSHIFT M*
+ MAX MIN MOD MOVE NEGATE OR OVER
+ QUIT  R> R@ RECURSE REPEAT ROT RSHIFT S>D SIGN SM/REM
+ SOURCE SPACE SPACES STATE SWAP THEN TYPE U.
+ U< UM* UM/MOD UNLOOP UNTIL
+ WHILE WORD XOR .S
+ ;T
+
+ \ WORD is the only one above that parses the input stream.
+ \ WORD should only be compiled into commands that will be executed
+ \ on the target, and that won't be expected to act on byte-code.
+ \ Since the byte-code is not a character input stream, WORD won't work on it.
+
+ \ Words that parse and words that compile will often need special treatment
+ \ in the tokenizer or the token-compiler or both.
+ 

@@ -1,0 +1,87 @@
+ \ Combsort
+ \ Adapted from code by Wayne Conrad and Nick Estes
+ 
+ defer less
+ 
+ : newgap ( gap -- gap )
+   10 13 */
+   dup 9 11 within if
+     drop 11
+   then 1 max ;
+ 
+ : swap-by-pointer? ( p1 p2 -- flag )
+   >r dup @ r@ @ less if
+     r@ @ over @ r> ! swap ! -1 else
+     r> 2drop 0 then ; 
+ 
+ : comb ( gap 0 array length -- flag )
+   bounds ?do
+     over i + i swap-by-pointer? or 
+   1 cells +loop nip ;
+ 
+ : combsort ( array length -- ) 
+   dup
+   begin
+     newgap dup >r cells
+     0 2over r@ - cells comb
+     r@ swap 0= r> 2 < and
+   until
+   drop 2drop ;
+
+ 
+ ' < is less
+ 10 Constant LENGTH
+ create array
+ 1 , 6 , 5 , 3 , 8 , 9 , 7 , 2 , 4 , 0 ,
+ 
+ : .array ( array length -- )
+   cells bounds ?do
+     i @ .
+   1 cells +loop ;
+ 
+ : main ( array length -- )
+    2dup combsort
+    .array
+ ;
+ 
+ array 10 main
+
+----
+
+ \ combsort with duplicates removed
+ 
+ defer less
+ defer equal
+ 
+ : newgap ( gap -- gap )
+   10 13 */
+   dup 9 11 within if
+     drop 11
+   then 1 max ;
+ 
+ : swap-by-pointer? ( p1 p2 -- 0 0 | -1 0 | p2 -1 )
+   over @ over @ ( p1 p2 a b )
+   2dup less if
+     swap rot ! swap ! -1 0 else
+     equal if nip -1 else 0 0 then
+   then ;
+ 
+ : comb-and-remove ( gap 0 array length -- end-of-array flag )
+   2>R begin
+     over r'@ + r'@ swap-by-pointer? 
+       if 
+         dup cell+ swap r'@ over - move r'@ 1 cells - 2r> nip 2>r else
+         or
+       then 
+     r> 1 cells + >R r@ r'@ u< 0= 
+   until 2r> drop swap ;
+ 
+ : combsort ( array length -- ) 
+   dup
+   begin
+     newgap dup >r cells
+     0 2over r@ - cells comb
+     2>r over r'@ - 1 cells / 
+     r@ swap 0= r> 2 < and
+   until
+   drop 2drop ;

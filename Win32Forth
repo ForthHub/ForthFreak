@@ -1,0 +1,7 @@
+!Win32Forth is a Public Domain Forth system for Windows 95 or better. It is a complete 32 bit Forth-compiler which includes an assembler, disassembler, decompiler, meta-compiler, a floating point pack and many sources and options.
+With this Forth system you can also address any API, VXD, or COM object you understand. 
+
+http://www.win32forth.org
+http://home.wxs.nl/~josv/
+
+ForthSystems

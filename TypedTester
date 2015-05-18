@@ -1,0 +1,48 @@
+== Source ==
+
+[http://qualdan.com/forth/tester.fs tester.fs]
+
+== Syntax ==
+
+    T{ test code => expected results }T
+    T{ test code => expected results }( types )T
+    T{ test code }( types )T
+
+That last syntax is for when you want to check that some property holds, rather
+than comparing against an expected value.
+
+Built-in types are:
+
+* X - unspecified cell
+* R - real number (floating-point)
+
+The tolerance of floating point checks is controlled by the (positive)
+values in RELATIVE-TOLERANCE (1E-12) and ABSOLUTE-TOLERANCE (0E).
+
+== Defining Types ==
+
+To add a new type FOO, define:
+
+* TEST-FOO ( -- flag ) using
+** TESTED ( u -- false | u*x true )
+** COMPARED ( u -- false | u*x u*x true )
+** FTESTED ( u -- false | u*r true )
+** FCOMPARED ( u -- false | u*r u*r true )
+** && ( flag -- )  EXIT (returning flag) if flag is false.
+
+* PRINT-FOO ( -- )
+** DISPLAYED ( u -- false | u*x true )
+** FDISPLAYED ( u -- false | u*r true )
+
+For example:
+
+ : TEST-X ( -- flag )  1 COMPARED && = ;
+ : PRINT-X ( -- )  1 DISPLAYED IF . THEN ;
+ : TEST-EVEN? ( -- flag )  1 TESTED && 2 MOD 0= ;
+ : PRINT-EVEN? PRINT-X ;
+ : TEST-R ( -- flag ) 1 FCOMPARED && 1E-12 F~ ;
+ : PRINT-R ( -- )  1 FDISPLAYED IF F. THEN ;
+
+ T{ 1 2 3 => 1 2 3 }( X X )T
+ T{ 18 }( EVEN? )T
+ T{ 1E7 => 1E7 }( R )T

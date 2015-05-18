@@ -1,0 +1,24 @@
+A token-compiler converts tokens to executable code which it executes or compiles.
+
+Token-compilers will use:
+
+* a list of 'primitives' that all systems are expected to have already available, specific for each tokenizer
+* a collection of standard routines that most token-compilers will have in common
+* some code from a collection of optional routines that token-compilers may use
+* possibly new code that is specific for that token-compiler.
+
+We provide here:
+
+* StandardTokenCompilerWords that most token-compilers may use
+* a collection of optional routines that token-compilers may use
+* a sample tokenizer/token-compiler pair
+* some minimal debugging tools
+* a simple decoder.
+
+Each tokenizer\token-compiler pair must be mutually compatible in their conversions of source code to tokens and tokens to executable code.
+
+So ideally to build a new byte-code system you would start with the standard framework for both tokenizer and token-compiler. You will choose a list of primitives. This is enough for a working system, but you may choose to optimise it by adding extra pairs of parsing routines. And if you need special behavior that is not provided by any of the standard approaches, you may write your own code from scratch.
+
+Again ideally, you would pay close attention to making your token-compiler easy to tokenize and generally to making it portable.
+
+* TokenCompilerIssues

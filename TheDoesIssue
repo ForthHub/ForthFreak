@@ -1,0 +1,15 @@
+Parsing words and compiling words may do special things on the host, or they can do it on the target. On the target they may act on bytecode or on text.
+
+' is no problem unless you compile it. When you interpret ' the host is using the token version. 
+
+['] is no problem unless you POSTPONE [']. When you execute it inline on the host you're using the token version.
+
+DOES> makes a special word. The special word could become a host word, that lays down a special sequence of bytecodes. There's no problem unless you try to execute the special word after you have finished parsing the bytecode. That won't happen unless you either compile the special word into a bytecode word, or you POSTPONE DOES> . So long as you execute the special word on the host while you parse text that will create bytecode, there's no problem.
+
+So the issue is that parsing words and compiling words may be used on the host to parse or compile source that will be turned into bytecodes, or they may be used on the target to parse or compile either text or bytecodes. And the solution should be to make them special. Whenever they execute on the host, compile a sequence of bytecodes that give the correct result on the target. And whenever they are compiled into bytecode words, lay down their bytecodes.
+
+You don't need parsing words or compiling words among your tokens unless you intend to make bytecode commands that will parse or compile text source code later, on the target.
+
+If you do intend that, then you need a way to mark the words you want to use that way. You can't just throw any old Forth source code at the tokeniser and expect it to work perfectly because there's the gap between code you want to do special things on the host, while parsing source code and creating bytecode, versus code you want to do special things on the target after the bytecode has been compiled.
+
+And we already have the distinction between nameless bytecode and named bytecode. But apart from these, you should mostly be able to simply tokenise whatever code you want and have it work on the target provided the correct routines are present on the target to match up with the bytecodes.

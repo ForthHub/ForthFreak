@@ -1,0 +1,4 @@
+An exokernel eliminates the notion that an operating system should provide abstractions on which applications are built. Instead, it concentrates solely on securely multiplexing the raw hardware: from basic hardware primitives, application-level libraries and servers can directly implement traditional operating system abstractions, specialized for appropriateness and speed. 
+
+For examples of the ExoKernel design, 
+[http://dmoz.org/Computers/Software/Operating_Systems/Submicrokernel/ look] at the OpenDirectoryProject (dmoz.org) pages on the topic.

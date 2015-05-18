@@ -1,0 +1,9 @@
+http://www.taygeta.com/hforth.html
+
+hForth is a small ANS Forth system based on eForth. It is especially designed for small embedded system. The basic ROM and RAM models are designed for portability, however, can be easily optimized for a specific CPU to build a competitive system as shown in 8086 EXE model.
+
+hForth packages for arm, 8086 and Z80 can be found at:
+* ftp://ftp.uni-bremen.de/pub/MIRRORS/Taygeta-Archive/Compilers/native/msdos/hForth/
+* http://www.taygeta.com/forthcomp.html
+
+ForthSystems

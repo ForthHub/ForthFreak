@@ -1,0 +1,107 @@
+Here's a persistent implementation of Conway's Game of Life (in ANSI Forth; should run unmodified on at least GForth, among others. Requires the BLOCK wordset):
+
+ VARIABLE STATEBLK
+ VARIABLE LIFEBLK
+ VARIABLE STATEP
+
+ \ : -ROT       ROT ROT ;
+
+ : WRAPY        DUP 0< IF DROP 15 THEN DUP 15 > IF DROP 0 THEN ;
+ : WRAPX        DUP 0< IF DROP 63 THEN DUP 63 > IF DROP 0 THEN ;
+ : WRAP WRAPY SWAP WRAPX SWAP ;
+ : DECEASED?    WRAP 64 * + LIFEBLK @ BLOCK + C@ BL = ;
+ : LIVING?      DECEASED? 0= ;
+ : (-1,-1)      2DUP 1- SWAP 1- SWAP LIVING? 1 AND ;
+ : (0,-1)       >R 2DUP 1- LIVING? 1 AND R> + ;
+ : (1,-1)       >R 2DUP 1- SWAP 1+ SWAP LIVING? 1 AND R> + ;
+ : (-1,0)       >R 2DUP SWAP 1- SWAP LIVING? 1 AND R> + ;
+ : (1,0)        >R 2DUP SWAP 1+ SWAP LIVING? 1 AND R> + ;
+ : (-1,1)       >R 2DUP 1+ SWAP 1- SWAP LIVING? 1 AND R> + ;
+ : (0,1)        >R 2DUP 1+ LIVING? 1 AND R> + ;
+ : (1,1)        >R 1+ SWAP 1+ SWAP LIVING? 1 AND R> + ;
+ : NEIGHBORS    (-1,-1) (0,-1) (1,-1) (-1,0) (1,0) (-1,1) (0,1) (1,1) ;
+ : BORN?        NEIGHBORS 3 = ;
+ : SURVIVES?    2DUP LIVING? -ROT NEIGHBORS 2 = AND ;
+ : LIVES?       2DUP BORN? -ROT SURVIVES? OR ;
+ : NEWSTATE     STATEBLK @ BLOCK UPDATE STATEP ! ;
+ : STATE!       STATEP @ C! 1 STATEP +! ;
+ : ALIVE        [CHAR] * STATE! ;
+ : DEAD BL STATE! ;
+ : ITERATE-CELL 2DUP SWAP LIVES? IF ALIVE ELSE DEAD THEN ;
+ : ITERATE-ROW  0 BEGIN DUP 64 < WHILE ITERATE-CELL 1+ REPEAT DROP ;
+ : ITERATE-BLOCK        0 BEGIN DUP 16 < WHILE ITERATE-ROW 1+ REPEAT DROP ;
+ : GENERATION   LIFEBLK @ STATEBLK @ LIFEBLK ! STATEBLK ! ;
+ : ITERATE      NEWSTATE ITERATE-BLOCK GENERATION ;
+ : DONE?        KEY [CHAR] Q = ;
+ : PROMPT       CR ." PRESS Q TO EXIT; OTHER KEY TO CONTINUE" ;
+ : VIEW PAGE LIFEBLK @ LIST PROMPT ;
+ : LIFE BEGIN VIEW ITERATE DONE? UNTIL ;
+
+Here is a Game of Life that just uses memory. -- IanOsgood
+
+ \ The fast wrapping requires dimensions that are powers of 2.
+ 1 6 lshift constant w \ 64
+ 1 4 lshift constant h \ 16
+
+ : rows    w * 2* ;
+ 1 rows constant row
+ h rows constant size
+
+ create world size allot
+ world   value old
+ old w + value new
+
+ variable gens
+ : clear  world size erase    0 gens ! ;
+ : age  new old to new to old  1 gens +! ;
+
+ : col+  1+ ;
+ : col-  1- dup w and + ; \ avoid borrow into row
+ : row+  row + ;
+ : row-  row - ;
+ : wrap ( i -- i ) [ size w - 1- ] literal and ;
+ : w@ ( i -- 0/1 ) wrap old + c@ ;
+ : w! ( 0/1 i -- ) wrap old + c! ;
+
+ : foreachrow ( xt -- )
+   size 0 do  I over execute  row +loop drop ;
+
+ : showrow ( i -- ) cr
+   old + w over + swap do I c@ if '* else bl then emit loop ;
+ : show  ['] showrow foreachrow  cr ." Generation " gens @ . ;
+
+ : sum-neighbors ( i -- i n )
+   dup  col- row- w@
+   over      row- w@ +
+   over col+ row- w@ +
+   over col-      w@ +
+   over col+      w@ +
+   over col- row+ w@ +
+   over      row+ w@ +
+   over col+ row+ w@ + ;
+ : gencell ( i -- )
+   sum-neighbors  over old + c@
+   or 3 = 1 and   swap new + c! ;
+ : genrow ( i -- )
+   w over + swap do I gencell loop ;
+ : gen  ['] genrow foreachrow  age ;
+
+ : life  begin gen ( 0 0 at-xy) show key? until ;
+
+ \ patterns
+ : pat ( i addr len -- )
+   rot dup 2swap  over + swap do
+     I c@ '| = if drop row+ dup else
+     I c@ bl = 1+ over w!  1+ then
+   loop 2drop ;
+
+ : blinker s" ***" pat ;
+ : frog s" ***| ***" pat ;
+ : pent s" **| **| *" pat ;
+ : spade s" **| **|**" pat ;
+ : glider s"  *|  *|***" pat ;
+ : pulsar s"   * *|** * **|  * *" pat ;
+ : cruiser s"  ****|*   *|    *|   *" pat ;
+
+ \ usage, demonstrating where ForthFreak's logo came from
+ clear 0 glider life

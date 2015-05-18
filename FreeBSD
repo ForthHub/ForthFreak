@@ -1,0 +1,9 @@
+!FreeBSD is one of the open source implementations of BSD UNIX, the others being !OpenBSD, and !NetBSD. A one floppy version of !FreeBSD called !PicoBSD is  also available.
+
+!FreeBSD lacks the broad community support of Linux, but is a modern UNIX, whereas Linux is a UNIX-like operating system. The BSD UNIX systems tend to be more stable and more secure than Linux systems.
+
+!FreeBSD is notable for using a standalone Forth (based on [Ficl]) as a boot loader. This is similar to how some commercial Unices use [OpenBoot], and is much better than the Linux Loader (lilo).
+----
+* http://www.freebsd.org
+* http://www.openbsd.org
+* http://www.netbsd.org

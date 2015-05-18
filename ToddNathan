@@ -1,0 +1,1 @@
+I'm the principle developer of [http://seaforth.dyndns.org/ SeaForth], a Forth-like implementation completely written in SenseTalk 1.x and [http://asforth.dyndns.org/ ASForth], a like port of SeaForth written entirely in AppleScript using XCode for the bridge to the OSX GUI libraries.

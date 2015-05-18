@@ -1,0 +1,29 @@
+This project started as a attempt to implement a eForth without using MASM. I just wanted to implement a Forth and then tried to experiment some ideas. The reason I didn't use MASM is because I didn't have MASM at hand. The assemblers I have are the ones come with F-PC and Win32Forth. I know it defies the original idea of eForth. But for me, I just want to try to write a meta compiler. To use eForth as a model is because it is simple.
+
+My first implementation was a eForth produced by F-PC.  It runs under DOS. Later, after I gained more and more interests in Linux, I though it may be fun to port this implementation to Linux. Because Linux is 32-bit OS,  I port this Forth system first  to Win32Forth and make it a 32-bit system. At first, I made it conform to ELF file format and run as stand alone program. When I tried to add the C function calling ability to this Forth system, I can not help but to use a C wrapper, which is also used in Win32Forth. The Forth became a image which was loaded after the C wrapper running.
+
+To this point, I had a Forth running in Linux. It can call the available C libraries in Linux if it is in .so file format. Because there are so many C libraries available, it became pretty easy to add more and more functionality to this Forth system. I tried to add memory word set, file word set, and floating point word set to the system. Although it is not complete yet, it started to become a useful system to me. I ported my filedump utility, which Tom Zimmer put in Win32Forth, to the system without a lot of trouble. This is where this Forth system stands now. I hope, by releasing it to public, it can be nurtured by all the people who are interested and someday becomes useful to some people. At least, I hope I can learn lessons from so many people out there. 
+
+
+* A Forth system running under Linux OS.
+* Be able to call functions (procedures) in the dynamic linked library (.so files).
+* A practice to do a metacompiling to move from one platform to another platform.
+* Follow eForth spirits to keep low level words as few as possible.
+* Keep system simple, easy to understand first, concern speed and elegance later.
+* Include utility words to make system easy to be explored:
+** *ll word*   shows the source
+** *debug word* single-steps through word after invocation. (use *unbug word* when completed)
+** *.libs* shows the loaded libs, *.procs* the used procedures
+* Include debugger to help system and application development.
+* Include assembler for metacompiling and improvement of speed.
+* Include metacompiler for complete development cycle.
+not realized (yet):
+* Conform ANS Forth requirement.
+* Include floating point math.
+* Hopefully, be able to do X windows programming later.
+
+http://lpforth.forthfreak.net/lpforth.html
+
+Here are a few [lpForthAdditions]
+
+ForthSystems

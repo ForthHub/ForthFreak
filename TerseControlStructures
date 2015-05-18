@@ -1,0 +1,115 @@
+TerseControlStructures Design Pattern
+
+
+Here i'll describe some new terse control structures what help to write terse code in one-line style proposed in *Jeff Fox*'s articles on *Thoughtful Programming*.
+
+The first is *REP* - it replaces the LOOP word.
+The second is *?;* - conditional EXIT.
+
+----
+
+*REP / TIMES *
+
+*REP* replaces the LOOP word.
+ 20 REP line.
+replaces 
+ 20 0 do line. loop
+
+a naming alternative could be *TIMES*, for which implementations can be found for systems dating back to FigForth. As *TIMES* turns out to be handy for interactive use, some of those tended to be immediate words, though it might be preferrable to have a word *![TIMES]* for that purpose.
+
+Implementation:
+1) Taking the next word's CFA from dictionary ( [isforth] ):
+ : rep param swap 0 do dup >r execute r> loop drop ; ( n -- )
+ \ param is *isForth* specific, 
+ \ it takes cell from dictionary after the calling word, like : LIT param ; ( -- n )
+2) Taking the next word's CFA from return stack:
+ : rep r@ swap 1 do dup >r @ execute r> loop drop ; ( n -- )
+3) Versions for RetroForth.
+ | For use in a definition (this could be simplified):
+ macro
+ : rep ' m: literal m: swap m: for ['] dup compile ['] execute compile m: next m: drop ;
+ | For use at the interpreter
+ forth
+ : rep ' swap for dup execute next drop ;
+
+
+Usage example:
+ : line. 20 rep cell. ; ( -- )
+ : show 20 rep line. ; ( -- )
+
+----
+
+*?; / UNLESS*, conditionally EXIT if true
+
+*WHEN / LEST*, conditionally EXIT if false
+
+
+ : ?; if r> drop then ; ( bool -- )
+Example:
+ : UPS? TRUE voltage @ dup 240 > ?; 200 < ?; surge? ?; FALSE ; ( -- bool )
+see also GuardedCode
+
+I've always named the conditional exit UNLESS
+and the inverted conditional exit WHEN
+
+* My naming preferences for the inverted /unless/ is  /lest/:
+ : example  <condition> lest <respond to condition> ;
+when has a time connotation, where against lest applies to general conditions. 
+
+
+: example1  full?  unless  lunch eat ;
+
+: example2  hungry?  when  lunch eat ;
+
+Similar in concept to REP and TIMES I use the defining word PLURAL that creates a countdown looping word from an xt.
+
+For example to define the usual Forth word SPACES I use:
+
+' space PLURAL spaces
+
+-- Mark W. Humphries
+
+
+----
+*?? / WILL *
+
+*WON'T*
+
+"The Ultimate Question ??"
+
+ \  *  ??             ( ... x "word" -- ??? )
+ \  *     If top of stack is true, execute the next word.  The next
+ \  *     word may be anything.                                       
+ \  *                                                                
+ \  *  This one definition takes the place of many:                   
+ \  *                                                               
+ \  *      ?? EXIT    for IF EXIT THEN                                
+ \  *      ?? 1+      for IF 1+ THEN                                  
+ \  *      ?? NEGATE  for IF NEGATE THEN                              
+ \  *      ?? CR      for IF CR THEN                                  
+ \  *      ?? RECURSE for IF RECURSE THEN                             
+ \  *                                                                 
+ \  *      Etcetera.                                                  
+
+?? i call /will/
+ : example  <condition> will <do_action>   ...  ( common ) ... ;
+the reverse condition i call /won't/
+ : example <condition> won't <do_action>   ...  ( common ) ... ;
+--
+http://home.earthlink.net/~neilbawd/ultque.txt
+
+----
+
+*VECTOR ... ENDVECTOR*, a case-like construct for zero based enums:
+
+ : example  ( u -- )
+   vector 
+          action0      // executed for u=0
+          action1      // executed for u=1
+          action2      // executed for u=2
+          actionother  // executed for any other u
+   endvector
+   ...  ( common ) ...
+    ;
+
+implemented as indexed execution vector, this often saves the overhead of a full case test chain, or cascaded if else endifs

@@ -1,0 +1,13 @@
+Those pages, which were a bit of a problem when migrating them to the new wiki, are listed here:
+
+| *page name*         | *reason*                 | *solution*                |
+| 8052-ANS-Forth      | dashes in page name      | renamed to [8052ANSForth] |
+| GP-Forth            | dash in page name        | renamed to [GPForth]      |
+| HS-Forth            | dash in page name        | renamed to [HSForth]      |
+| Holon-Lite          | dash in page name        | renamed to [HolonLite]    |
+| PDP-11              | dash in page name        | renamed to [PDP11]        |
+| SP-Forth            | dash in page name        | renamed to [SPForth]      |
+| sp-Forth            | dash in page name        | deleted                   |
+| systran-translation | dash in page name        | deleted                   |
+| cforth-compiler     | dash in page name        | renamed to [CFORTH]         |
+| AllForthWords       | misc chars in word names | replaced against Alphabetic Index of DPANS94 |

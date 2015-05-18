@@ -1,0 +1,15 @@
+There's every reason to think we'll have unexpected issues come up that would be helped by new header information.  If we were very confident we could assign one bit in the header for that.  If the bit is unset we expect the first version of the header, if it's set it's some later version.  The second version could dedicate a second bit, and if both bits are set it's some later version, etc.
+
+It might be more practical to devote a whole byte to the first 255 versions, and if it's version #256 or later that byte is set.
+
+---
+
+accessing all aspects of the header through words to produce the desired header portion would hide the exact header structure. Testing for non-version1 header structure would only make sense if some code would use the extra data. instead of checking the header version, this code could check for presence or absence of the words to access the desired header data, leaving the structure of headers entirely to the forth system implementor.
+
+---
+
+That makes sense when it's all done by one implementor.  But if somebody else has sent you a string of byte-code, and they aren't using the same header structure you are, what happens?  You can interpret their header your way and if you find out it doesn't make sense you can tell them there's something wrong.  But you don't know how to interpret their header until you find out.  (Of course there's also a chance their bytecode won't run on your system.)
+
+So if we ever find we need to revise the header structure, we should at *least* have a way for each user to see which version is being used.
+
+It makes sense that there should be a way to request they use a particular header structure too, so if you don't know the new one but they know the old one they might be able to still send you something.  Thank you!

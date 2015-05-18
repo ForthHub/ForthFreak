@@ -1,0 +1,35 @@
+\ ------------ token wordlist -------------
+
+ \ We will end up with a lot of words that have the same names as the words in the guts
+ \ of the Forth system, so we can look at source code and have those words compile bytecode.
+ \ Of course that tends to interfere with any normal interpretation of those words.
+ \ So we put the new words into a new wordlist.
+
+ \ An alternative for systems that lack alternate wordlists might be to compile the tokenizer,
+ \ compile the byte-code, and then delete the tokenizer completely.  Load it again the next
+ \ time you need to compile bytecode.  This may turn out slower and less flexible, but it
+ \ should be possible.  Define : and ; last.
+
+ ( G: Only words for byte-code tokens go into TOKENS )
+ WORDLIST CONSTANT TOKENS
+
+ ( G: get next word from source, find it in TOKENS wordlist )
+ : GET-TOKEN ( S: "name" -- x | 0 )
+    BL WORD COUNT TOKENS SEARCH-WORDLIST DUP IF DROP THEN ;
+ : [GET-TOKEN] ( S: "name" -- )
+    GET-TOKEN POSTPONE LITERAL ; IMMEDIATE
+ ( G: get next word from TOKENS wordlist, compile it )
+ : TOKEN- ( S: "name" -- )
+    GET-TOKEN COMPILE, ; IMMEDIATE
+
+ VARIABLE OLDWORDLIST
+ ( G: switch to TOKENS wordlist, switch back later with NONTOKEN-WORD )
+ : TOKEN-WORD ( S: -- )
+    GET-CURRENT OLDWORDLIST ! TOKENS SET-CURRENT ;
+
+ : NONTOKEN-WORD ( S: -- )
+    OLDWORDLIST @ SET-CURRENT ;
+
+
+ \ With just the TOKENS wordlist in the search order we almost don't need an interpreter,
+ \ we could just let the regular one work.  Except for numbers.

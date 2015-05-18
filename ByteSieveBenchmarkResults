@@ -1,0 +1,11 @@
+|compiler|cpu|clock|time/10000 iterations|
+|native code compiler (1)|Athlon 2400|1700 MHz|4.35 sec|
+|native code compiler (1)|Intel Celeron|1800 MHz|8.6 sec|
+|gforth 0.6|Intel Celeron|1800 MHz|16.8 sec|
+|gforth 0.5.0|G4 PowerBook|500 MHz|250.8 sec|
+|bashforth|Athlon 2400|1700 MHz|240000 sec|
+|bashforth|ipaq pxa250|400 MHz|24800000 sec|
+
+
+
+(1) [Speuler]'s NativeCodeCompiler which hasn't got a name yet

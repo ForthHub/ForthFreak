@@ -1,0 +1,6 @@
+IndirectThreadedCodeSlideshow6 IndirectThreadedCodeSlideshow8
+
+http://www.forthfreak.net/slides/slide15.jpg
+
+again, memory contents under IP are transferred to W,
+and IP will be incremented again, as will be the program counter.

@@ -1,0 +1,11 @@
+acWEB is a web-server written in FORTH by AndrejjCherezov.
+
+The first version was released in 1996 and included into Eserv/1.0. 
+
+Now this is mature opensource project, hosted at http://acWEB.sourceforge.net/ (source code on the CVS).
+
+It is also a part of Eserv/3. 
+
+Many sites - http://www.eserv.ru/, http://www.forth.org.ru/, http://www.delosoft.com/, http://www.etype.net/, etc hosted on the acWEB server.
+
+See also: [acFTP] (ftp server).

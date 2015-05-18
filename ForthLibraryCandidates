@@ -1,0 +1,25 @@
+* StringStack
+** implements a dedicated stack for strings, and operators to handle and modify string stack elements string data is kept in in dynamic memory.
+* [Julian] date calculation
+** calculate number of days between two dates, also determine day of week.
+* [Gregor]ian date calculation
+** calculate number of days between two dates, also determine day of week. shorter than Julian date, but date range into the past is more limited.
+* [Enum]eration type
+* SparseBitCounting
+* IsolateBits
+* SquareRoot
+* FloatingPoint
+* BinarySearchInsertionSort
+* CombSort
+* QuickSort
+* ShellSort
+* GreatestAndLeastCommonDenominator
+* AnsforthLocals
+* EndifEtc 
+* RecordConstructor
+** data structure builder with named records
+* PolarToCartesian
+* FastestRingBuffer
+* SmallOOPS
+** functional compact OOPS implementation, primarily a testbed for pretty syntax but it seems to works nicely so it may actually have some use.
+ 

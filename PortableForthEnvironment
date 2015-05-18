@@ -1,0 +1,5 @@
+Portable Forth Environment
+
+The Portable Forth Environment (PFE) is based on the ANSI Standard for Forth. The PFE has been created by Dirk-Uwe Zoller and had been maintained up to the 0.9.x versions (1993-1995). Tektronix has adopted the PFE package in 1998 and made a number of extensions. It is now fully multithreaded and it features a module system. You can load additional C objects at runtime to extend the Forth dictionary. It is best targeted for embedded environments since you can easily exchange the terminal driver and the initilization routines. 
+
+http://pfe.sourceforge.net/

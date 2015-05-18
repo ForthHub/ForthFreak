@@ -1,0 +1,54 @@
+ByteSieveBenchmark is another implementation of the Sieve of 
+Eratosthenes
+
+-----
+This uses the sqrt ( u -- root ) word defined on SquareRoot
+
+ \ the 1000th prime is 7919 
+ 7919 2/ constant maxp      \ 2/ because we only count odd primes
+
+ create flags maxp allot    \ one flag per odd number
+
+ : set-flags   flags maxp 1 fill ;
+
+ : count-flags ( -- n )
+   0  flags maxp bounds do  I c@ +  loop ;
+
+ : clear-multiples ( prime start -- prime )
+   flags maxp + swap do  0 I c!  dup +loop ;
+
+ : check-primes
+   3 ( initial-prime )
+   flags  maxp 2* sqrt 2/  bounds do
+     I c@ if       \ prime?
+       dup I + clear-multiples
+     then 2 +      \ next odd number
+   loop drop ;
+
+ : list-primes
+   2 .      \ since we only count odd primes
+   flags maxp bounds do  I c@ if  \ prime?
+     I flags - 2* 3 + .
+   then loop ;
+
+ : primes   set-flags check-primes ;
+ : count-primes ( -- n ) count-flags 1+ ;   \ +1 for 2
+
+ primes
+ count-primes .     \ 1000
+ list-primes        \ 2 3 5 7 11 .... 7919
+
+----
+Gilbreath Sieve, reportedly faster, though less factored
+
+ : PRIMES-G ( -- n )  set-flags
+   0  maxp 0 DO
+     I flags + C@ IF
+       I 2* 3 + ( dup .) DUP  I + ( prime current )
+       BEGIN  DUP maxp U<
+       WHILE  0 OVER flags + C!
+              OVER +
+       REPEAT
+       2DROP 1+
+     THEN
+   LOOP ;

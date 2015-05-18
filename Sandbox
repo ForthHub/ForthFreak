@@ -1,0 +1,20 @@
+*Bold text*, /italic text/, and _underscore text_.
+
+/*Combination of bold and italics*/
+
+-Strikethrough-
+
+
+
+WikiLinks are formed by two or more words in /camel-case/.
+
+[Freelance http://www.google.com Searcher]
+
+= large letters header
+== smaller letters 
+
+C_Foo
+[C_FooBar]
+[[C_foobar]]
+
+TestThis

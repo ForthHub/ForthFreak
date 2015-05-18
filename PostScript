@@ -1,0 +1,51 @@
+Forth and PostScript appear similar since both languages use a mostly postfix based syntax. Since Forth predates PostScript by quite a few years, PostScript is often seen as descended from Forth. According to John Warnock, inventor of PostScript, this is not the case.
+
+  PostScript is a graphical page description language invented by Chuck Getsche
+  and John Warnock (the President and CEO of Adobe). Its syntax looks a little 
+  bit like Forth, because it is derived from Forth; however, PostScript's 
+  internal implementation has nothing to do with Forth.
+
+(Taken from [http://sysadmin.habitue.net/html/v05/i07/a6.htm - The link is no longer valid)
+
+JohnWarnock also states in the preface to '!PostScript Language Reference Manual' (1st Edition) - /Although the Design System language and its successors bear a superficial resemblance to the Forth programming language, their conception and development were entirely independent of Forth./
+
+Given that, PostScript is still a useful language. It's not difficult to learn, especially if you already know Forth. The language itself, which is typically interpreted, is stack-based in the same manner as an RPN calculator. A program pushes arguments to an operator onto a stack and then invokes the operator. Typically, the operator will have some result which is left at the top of the stack. As an example, let us say we want to multiply 12 and 134. We would use the following PostScript code: [=12 134 mul]. Obviously, the Forth equivilent would be: [=12 134 *].
+
+Here's a longer example of PostScript code:
+
+ %!
+ % Demonstrate shading and width in drawing lines and filling shapes
+ 
+ % Define an operator box which builds a path for a one inch square box
+ % Note that box does not draw or fill the box.
+ 
+ /box {
+   newpath
+   moveto                                % Current point is on stack
+   0 72 rlineto                          % Left
+   72 0 rlineto                          % Top
+   0 -72 rlineto                         % Right
+   closepath                             % Bottom
+ } def
+ 
+ 0 setgray                               % 100% black
+ 1 setlinewidth                  % One point thick lines
+ 72 72 moveto 72 144 lineto stroke       % Draw a one inch line
+ 
+ gsave                                   % Save a copy of the current settings
+   0.5 setgray                   % 50% black
+   10 setlinewidth               % 10 point wide lines
+   144 72 moveto 144 144 lineto stroke   % Draw a one inch wide line
+   216 72 box                            % Build a square path...
+   0.35 setgray                  %    make it a little darker...
+   fill                                  %    and fill it.
+ grestore                % Go back to the original settings
+
+ 3 setlinewidth                  % Make the box lines wider
+ 300 72 box stroke               % Draw a black box 
+ 
+ showpage
+
+If you try this example, you should note a couple of things. Firstly, the black outlined box is a little larger than the gray filled one. This extra width comes from the 3 point wide lines used to draw it--they are centered about the path of the box. The ink filling the gray box, however, is completely within the path of the box. Also, when shading objects, you must be careful. PostScript makes shades through a process called halftoning. Basically, uniform dots are placed in various patterns to simulate different shades of grey. Unfortunately, various considerations limit how many shades a printer can produce. So some grey tones may come out the same. This may be the case with the filled box and the outlined box when viewed on your screen or printer.
+
+* [http://burks.bton.ac.uk/burks/language/forth/psintro/postscri.htm The third edition of the First Guide to PostScript]

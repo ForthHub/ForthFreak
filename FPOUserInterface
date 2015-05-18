@@ -1,0 +1,16 @@
+I see part of it looking like a wiki. Links to everything that looks immediately related. You look at a page, you look at the links the page provides, you can click on the title to see a clickable list of pages that link to this one. Click on something else to see where it fits into a history tree.
+
+It should be easy to do diffs between pairs of wiki pages. Presumably you'd get something that looked like a wiki page with the differences highlighted. 
+
+Wiki search should get you Forth definitions on the source code pages. Search for *: FOO* or *DEFER FOO* or *CREATE FOO* or whatever. That won't pick up words created by defining words. A Forth compiler will give you a better sense of those for code you've already loaded. Possibly there might be a way to run down somebody else's load tree and find the earliest occurrences of a word in their code.
+
+One special consideration is that team members shouldn't be able to modify each other's pages (which could depend on trust to start with). So it should be obvious whether a page is yours or not.
+
+/On the other hand, some people believe that team members/ should /be able to modify each other's pages./
+See
+http://c2.com/cgi/wiki?CodeOwnership
+for some of the controversy.
+
+If there's one official version then there's a conflict. The owner of a page doesn't want things shifting under him, he presumably knows more than anybody else how it's supposed to work. But when someone else needs changes so their stuff can work right, they have a lot of inconvenience waiting on him.
+
+Give everybody their own versions and the conflict is deferred. Do what you like right now. If the other guy looks over your changes and he chooses to be compatible with you, fine. If he doesn't then everybody else will have to choose. They can go with your version or his version or they can reconcile the two and make their own version. We can hope people will build on a version that leads to results.

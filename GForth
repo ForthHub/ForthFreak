@@ -1,0 +1,14 @@
+GNU Forth is the Forth implementation of the GNU project.
+Binary distributions exist for many platforms such as DOS, Windows, Linux (all architectures), OS/2, and Mac OS X.
+GNU Forth uses GCC to compile a fast direct or indirect threaded Forth; GNU Forth is fully [Ans Forth] compliant. 
+Authors of GNU Forth are AntonErtl, BerndPaysan, JensWilke, NealCrook, and others.
+
+* [http://www.complang.tuwien.ac.at/forth/gforth/Docs-html/ Gforth documentation]
+* [http://www.jwdt.com/~paysan/gforth.html More information]
+* [http://www.quirkster.com/forth/gforth.dmg.gz Mac OS X disk image]
+
+The most recent version of GNU Forth is 0.7.0, released in November 2008. It now uses the host gcc/linker to interface with C code, deprecating the previous ffcall interface.
+
+The previous version of gforth was 0.6.2. It included an interface to C code via the ffcall library (though not enabled in the Windows build of gforth). [http://www.shockfamily.net/cedric/fflib.html Documentation on this feature]
+
+ForthSystems

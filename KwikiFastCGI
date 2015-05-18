@@ -1,0 +1,23 @@
+Apache's mod_fastcgi makes Perl applications run much faster and scale well to heavy usage. Using Kwiki with mod_fastcgi is a piece of cake. 
+
+First you need is an Apache server built with mod_fstcgi support. See http://www.fastcgi.com/ for more information.
+
+Then install a Kwiki site following the normal KwikiInstallation procedures.
+
+Finally add something like this to your Apache configuration (The example is for named virtual host):
+
+  <VirtualHost *>
+    ServerName kwiki.yourhost.name
+    DocumentRoot /usr/local/www/data/kwiki
+  
+    AddHandler fastcgi-script cgi
+    DirectoryIndex index.cgi
+  
+    <Location />
+      Options ExecCGI
+    </Location>
+  </VirtualHost>
+
+That's it! You'll get an instant *performance boost*.
+
+You can switch from the standard CGI installation to mod_fastcgi anytime you want.

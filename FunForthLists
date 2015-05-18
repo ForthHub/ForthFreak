@@ -1,0 +1,97 @@
+A list type built on FunForth. Many of the words defined here are based on [http://www.haskell.org Haskell] standard functions.
+
+  \ list constructors
+  0 constructor: nil  ( -- list )
+  2 constructor: cons  ( list1 x -- list2 )
+  
+  defer .list
+  : ((.list))  ( list -- ) 
+    || nil  ( -- )  ."  } " ;;
+    || cons  ( tail x -- )  space 1 .r recurse ;;
+    ;
+  : (.list)  ( list -- )
+    || nil  ( -- )  ." { } " ;;
+    || cons  ( tail x -- )  ." { " 1 .r ((.list)) ;;
+  ;
+  ' (.list) is .list
+
+  \ make copy of a list  
+  : ldup  ( list1 -- list2 list3 )
+    || nil  ( -- nil nil )  nil nil ;;
+    || cons  ( tail x -- list1 list2 )
+       >r recurse r@ cons swap r> cons ;;
+    ;
+  \ deallocate a list
+  : ldrop  ( list -- )
+    || nil  ( -- )  ;;
+    || cons  ( tail x -- )  drop recurse ;;
+    ;
+  
+  : lfoldl  ( x1 xt list -- x2 )
+    || nil  ( x1 xt -- x1 )  drop ;;
+    || cons  ( x1 xt tail x2 -- x3 )
+       swap >r over >r swap execute r> r> recurse ;;
+    ;
+  : lfoldr  ( x1 xt list -- x2 )
+    || nil  ( x1 xt -- x1 )  drop ;;
+    || cons  ( x1 xt tail x2 -- x3 )
+       rot tuck >r >r swap recurse r> swap r> execute ;;
+    ;
+  : lmap  ( xt list1 -- list2 )
+    || nil  ( xt -- nil )  drop nil ;;
+    || cons  ( xt tail x -- list )
+       -rot over swap 2>r execute 2r> recurse swap cons ;;
+    ;
+  : lfilter  ( xt list1 -- list2 )
+    || nil  ( xt -- nil )  drop nil ;;
+    || cons  ( xt tail x -- list )
+       >r over >r recurse r> r> tuck swap execute
+       if cons exit then drop ;;
+    ;
+  : (lappend)  ( list1 list2 -- list3 )
+    || nil  ( list -- list ) ;;
+    || cons  ( list1 list2 x -- list3 )
+       >r recurse r> cons ;;
+    ;
+  : lappend  swap (lappend) ;
+  : ltake  ( n list1 -- list2 )
+    || nil  ( n -- nil )  drop nil ;;
+    || cons  ( n tail x -- list )
+       >r swap ?dup if 1- swap recurse r> cons exit then
+       ldrop nil r> drop ;;
+    ;
+  : ldiscard  ( n list1 -- list2 )
+    || nil  ( n -- nil )  drop nil ;;
+    || cons  ( n tail x -- list )
+       rot ?dup if nip 1- swap recurse exit then cons ;;
+    ;
+  : l>stack  ( list -- x1 .. xn )
+    || nil  ( -- )  ;;
+    || cons  ( tail x1 -- x1 x2 .. xn )  swap recurse ;;
+    ;
+  
+  : lgen  ( n1 n2 -- list )
+    nil -rot tuck 1+ swap do tuck cons swap 1- loop drop ;
+  : lsum  ( list -- sum )  0 ['] + rot lfoldl ;
+  : (lcount)  drop 1+ ;
+  : lcount  ( list -- count )  0 ['] (lcount) rot lfoldl ;
+  : lreverse  ( list1 -- list2 )  nil ['] cons rot lfoldl ;
+
+  \ simple list input syntax  
+  : }  ( flag list -- flag list )  nip 0 swap ;
+  : ..}  2 swap ltake l>stack swap lgen } lreverse ;
+  : {  ( "n1 .. nm } " -- list )
+    -1 nil begin over while bl word count evaluate
+    over if cons then repeat nip lreverse ;
+  
+Examples
+  { 7 5 3 1 } ' 2* swap lmap .list
+  { 10 20 ..} ldup .list lsum .
+  
+Apply execute to a list of xts
+  1 2 3 4 ' execute 
+  nil ' lshift cons ' * cons ' + cons
+  lfoldl .
+Equivalent to
+  1 2 3 4 + * lshift .
+ 

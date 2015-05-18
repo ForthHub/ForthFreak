@@ -1,0 +1,20 @@
+This is a Gcc/Relocatable/fAst/Small/Portable Forth
+
+graspForth is an attempt at a Forth-in-C that has the following goals:
+
+* GCC
+** /to support all 32-bit micros that GCC cross-compiles to/
+* Relocatable
+** /to be able to run in-place in either Flash or Ram/
+* Fast 
+** /to be "not much" slower than an assembly based native Forth/ 
+* Small 
+** /to fit-in approx 300 words in less than 25Kbytes on a 32-bit machine/
+* Portable 
+** /to achieve a 5 minute port to a new 32bit micro-processor, or micro-controller./
+
+Author: Bernard Mentink, powergen@xtra.co.nz
+
+ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/graspForth/
+
+ForthSystems

@@ -1,0 +1,10 @@
+AM Research's development environment is a unique branch of embedded control called "Tethered" or "Umbilical" Systems where the Target system is able to operate in an interactive environment under full keyboard control in constant communication with the Host development system rather than a simple "edit-compile-run-[puzzle over why it doesn't work]-recurse" system.
+In amrFORTH the programmer is given full interactive control of the target system without the overhead historically required. For instance the editor, compiler, and tools are retained on your Host development system with only a very tiny interactive kernel on the Target microcontroller. This permits a test and debug cycle not achievable any other way, once your new word is written it is compiled in a few milliseconds with the power of a workstation, downloaded to the Target and ready for interactive testing. No extensive compilation or download of text to the target and fully interactive too. This gives you the power to examine events, variables, inputs, outputs and execution in real time without emulators or simulators.
+
+their old domain has been squatted, their new domain is http://amresearch.net
+
+amr Forth, Basic, and Assembler are released under the LGPL open source license to use freely without charge.
+
+As far as I can tell, all of the hardware and software from AM Research uses 8051 style microcontrollers.
+
+ForthSystems

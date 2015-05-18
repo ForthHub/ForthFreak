@@ -1,0 +1,768 @@
+The GreatComputerLanguageShootout has added another benchmark, originally derived from an exercise in optimizing Java code.  [http://shootout.alioth.debian.org/gp4sandbox/benchmark.php?test=meteor〈=all]
+
+It is a tile space filling puzzle, similar to Pentominos, except on a hexagonal grid.
+
+Here is an example of a solved board:
+
+ 0 0 0 0 1 
+  2 2 2 0 1 
+ 2 6 6 1 1 
+  2 6 1 5 5 
+ 8 6 5 5 5 
+  8 6 3 3 3 
+ 4 8 8 9 3 
+  4 4 8 9 3 
+ 4 7 4 7 9 
+  7 7 7 9 9 
+
+One idea is to represent the board as a 64-bit number. You have to straighten it in a particular way to preserve the relative cell offsets for both odd and even rows of a hexagonally connected grid.  The stars are bits that are always set, representing the left and right edges of the board. The offsets are 1, 6, 7, -1, -6, -7. 
+
+  0  0 0 0 0 1 * * 
+  7   2 2 2 0 1 * 
+ 13  2 6 6 1 1 * * 
+ 20   2 6 1 5 5 * 
+ 26  8 6 5 5 5 * * 
+ 33   8 6 3 3 3 * 
+ 39  4 8 8 9 3 * * 
+ 46   4 4 8 9 3 * 
+ 52  4 7 4 7 9 * * 
+ 59   7 7 7 9 9 
+ 64                  ( 64 positions total ) 
+
+Whew! The 5x10 board just fits in a 64-bit word, since the final border 
+is not needed. 
+
+Pieces are specified by a path of four relative directions. This path is then transformed via rotations and reflections into board positions, which can then be used as a bit mask.
+
+ : enum ( n -- ) 0 do I constant loop ;
+ : table create does> ( i -- t[i] ) swap cells + @ ;
+
+ 7 enum         E   SE   SW    W   NW   NE   STOP
+ table offset   1 ,  7 ,  6 , -1 , -7 , -6 ,    0 ,
+ table rotate  SE , SW ,  W , NW , NE ,  E , STOP ,
+ table reflect  E , NE , NW ,  W , SW , SE , STOP ,
+
+ \ specify via paths because paths are more easily transformable than bit masks
+ 
+ create path 5 cells allot
+
+ : init-path ( 4*dirs -- )
+   E path 5 0 do tuck ! cell+ loop drop ;
+ : rotate-path
+   path 5 0 do dup @ rotate  over ! cell+ loop drop ;
+ : reflect-path
+   path 5 0 do dup @ reflect over ! cell+ loop drop ;
+
+ create offsets 6 cells allot
+
+ : path-offsets
+   0 offsets !
+   path offsets
+   5 0 do
+     over @ offset
+     over @ +
+     over cell+ !
+     swap cell+ swap cell+
+   loop 2drop ;
+ : minimum-offset ( -- n )
+   offsets @
+   6 1 do offsets I cells + @ min loop ;
+ : normalize-offsets
+   minimum-offset negate
+   6 0 do dup offsets I cells + +! loop drop ;
+ : offsets-mask ( -- mask )
+   0
+   6 0 do
+     offsets I cells + @
+     1 swap lshift or
+   loop ;
+
+ \ make and store the twelve transformations of the path
+
+ : path-mask ( -- mask )
+   path-offsets normalize-offsets offsets-mask ;
+ : path-masks ( 4*dirs -- )
+            init-path path-mask ,
+   5 0 do rotate-path path-mask , loop
+         reflect-path path-mask ,
+   5 0 do rotate-path path-mask , loop ;
+
+ \  all paths start with an implicit E
+
+ create pieces
+  STOP SE  E  E path-masks
+  STOP NE  E SE path-masks
+  STOP SW SE  E path-masks
+  STOP SE SW  E path-masks
+    SW  W  E SE path-masks \ one backtrack, since this shape branches
+  STOP SE NE SE path-masks
+  STOP NE SE SE path-masks
+  STOP  E SW SE path-masks
+  STOP  E SE  E path-masks
+  STOP NE SE  E path-masks
+
+Next comes some support for 64-bit math, assuming we are running with 32-bit cells.
+
+ \ a double result lshift for a 32-bit forth
+ : dlshift ( u n -- l h )
+   dup 32 < if
+     dup if     \ 32 rshift is not portable
+       2dup lshift -rot ( l u n )
+       negate 32 + rshift
+     then
+   else
+     32 - lshift 0 swap
+   then ;
+
+ : dand   ROT AND >R AND R> ;
+ : dxor   ROT XOR >R XOR R> ;
+
+Next, storing and displaying a solution.
+
+ variable found-solutions
+
+ create smallest 64 chars allot
+ create largest 64 chars allot
+
+ : put-piece ( shift piece -- )
+   dup pieces - 12 cells / [char] 0 + >r ( R: piece-char )
+   swap chars here + swap @ ( buffer mask )
+   begin
+    dup 1 and if
+      over r@ swap c!
+    then
+    swap char+ swap 2/  dup 0=
+   until 2drop r> drop ;
+
+ \ extract solution from stack of (shift, piece addr)
+ : store-solution
+   here 64 chars [char] * fill
+   depth 1 do
+     i pick i pick put-piece
+   2 +loop ;
+
+ : .line ( line -- line+6 )
+   5 0 do dup c@ emit space char+ loop cr char+ ;
+ : .solution ( buffer -- )
+   5 0 do .line char+  space .line loop cr drop ;
+
+ : check-solution ( [st] -- [st] )
+   store-solution  \ here .solution
+   here 64 smallest 64 compare 0< if
+     here smallest 64 move
+   then
+   largest 64 here 64 compare 0< if
+     here largest 64 move
+   then
+   1 found-solutions +! ;   \ throw if found-solutions == NUM
+
+And the recursive heart of the program.
+
+ 2 base !
+
+ \ initial board, with edges filled in
+ 0000011.000001.0000011.000001.0000011.000001.0000011.000001.0000011.00000
+ 2constant init-board
+
+ decimal
+
+ 2variable board
+ create used 10 cells allot
+
+ \ check whether piece sticks off bottom of the board
+ : fits? ( shift piece -- shift piece ? )
+   over 39 < if true exit then
+   over negate 64 + 1 swap lshift 1-
+   over @ U< 0= ;
+
+ \ add/remove piece to the board
+ : mark ( shift piece -- )
+   @ swap dlshift board 2@ dxor board 2! ;
+
+ \ find next free cell (64 if completely full)
+ : next-shift ( shift -- shift+n )
+   begin
+     1+ dup 64 = if exit then
+     1 over dlshift board 2@ dand or 0=
+   until ;
+
+ : solve ( shift -- )
+   dup 64 = if drop check-solution exit then
+   pieces
+   10 0 do
+     used I cells + @ if
+       12 cells +
+     else
+       true used I cells + !
+       12 0 do
+         2dup @ swap dlshift board 2@ dand or 0= if fits? if
+           2dup mark
+           \ .s cr store-solution here .solution key 'q = if abort then
+           over next-shift recurse
+           2dup mark
+         then then
+         cell+
+       loop
+       false used I cells + !
+     then
+   loop 2drop ;
+
+ : main
+   0 found-solutions !
+   smallest 64 chars [char] 9 fill
+   largest  64 chars [char] 0 fill
+   init-board board 2!
+   used 10 cells erase
+   0 solve
+   found-solutions @ . ." solutions found" cr cr
+   smallest .solution
+   largest  .solution ;
+
+
+Contributors: IanOsgood
+
+Code is tested and obtains the correct number of solutions (2098), smallest, and largest boards. *TODO:* read parameter to limit solutions found, optimization.
+
+== Optimizations ==
+
+i only took a very quick glimpse at it, therefore my contribution is very superficial ATM:
+
+The phrase
+    32 swap - rshift
+i'd replace against
+    negate 32 + rshift
+because negate is a monadic operation, and - on some systems - potentially quicker than swap, though for optimizing compilers the opposite might be true.
+bigforth isn't, so chances are that negate shaves off few cycles.
+
+/Done. Please add yourself to the contributors./ -- IanOsgood
+----
+is the effort of bit-toggling the contents of variable available really worth the few bytes of memory it saves, or wouldn't it, for the sake of speed, not be a good place to trade a few bytes for speed, by using an array of bytes or even cells?
+
+/Yes, that and setting the flag outside the inner loop shaved off 15% of the runtime!/ -- IanOsgood
+----
+instead of rshift/lshift a single bit to form a mask, you could consider to use a lookup table, with bit number as table index, and read the corresponding bit mask from that table element. Though this probably won't gain anything on CPUs with barrel shifters, and rshift/lshift primitives to take advantage of those.
+
+/It was not faster compared to doing it in code./ -- IanOsgood
+----
+/Adding *fits?* shaved another 36% off the runtime by reducing the node count by more than half./ -- IanOsgood
+
+Using gforth on a G5 Mac, I'm seeing big changes in the runtime just by changing the size and position of some words relative to others. I'm guessing that I'm running into cache issues. I also ran into a portability bug: /n/ 32 RSHIFT is undefined, giving 0 on G5 and /n/ on Intel. DLSHIFT was modified to avoid this case.
+----
+Here is an optimization that tries to get rid of as many indirections (fetches) as possible. It builds directly on Ian's code. It runs in 862 ms on my 3 GHz PIV, and should (at least for a short while) be one of the fastest Shootout entries.
+
+The iForthisms in this file came out of my throwing  the code around when searching for bottlenecks, sorry. -- MarcelHendrix
+
+ ANEW -xmeteor                                                                                                  
+                                                                                                                
+ DOC                                                                                                            
+ (*                                                                                                             
+        FORTH> main                                                                                             
+        0.862 seconds elapsed, 2098 solutions found.                                                            
+                                                                                                                
+        smallest solution:                                                                                      
+                                                                                                                
+        0 0 0 0 1                                                                                               
+         2 2 2 0 1                                                                                              
+        2 6 6 1 1                                                                                               
+         2 6 1 5 5                                                                                              
+        8 6 5 5 5                                                                                               
+         8 6 3 3 3                                                                                              
+        4 8 8 9 3                                                                                               
+         4 4 8 9 3                                                                                              
+        4 7 4 7 9                                                                                               
+         7 7 7 9 9                                                                                              
+                                                                                                                
+                                                                                                                
+        largest solution:                                                                                       
+                                                                                                                
+        9 9 9 9 8                                                                                               
+         9 6 6 8 5                                                                                              
+        6 6 8 8 5                                                                                               
+         6 8 2 5 5                                                                                              
+        7 7 7 2 5                                                                                               
+         7 4 7 2 0                                                                                              
+        1 4 2 2 0                                                                                               
+         1 4 4 0 3                                                                                              
+        1 4 0 0 3                                                                                               
+         1 1 3 3 3                                                                                              
+ *)                                                                                                             
+ ENDDOC                                                                                                         
+                                                                                                                
+ : ENUM ( n -- ) 0 DO  I CONSTANT  LOOP ;                                                                       
+ : ARRAY CREATE ( n -- ) CELLS ALLOT DOES> ( i -- 'a[i] ) []CELL ;                                              
+ : TABLE CREATE ( n -- ) DOES> ( i -- t[i] ) []CELL @ ;                                                         
+                                                                                                                
+ 0   VALUE found-solutions                                                                                      
+ 0. DVALUE board                                                                                                        
+                                                                                                                
+ CREATE smallest #64 CHARS ALLOT                                                                                        
+ CREATE largest  #64 CHARS ALLOT                                                                                        
+ CREATE offsets    6 CELLS ALLOT                                                                                        
+ CREATE path       5 CELLS ALLOT                                                                                        
+                                                                                                                
+ #10 ARRAY used                                                                                                 
+                                                                                                                
+ 7 ENUM         E   SE   SW    W   NW   NE   STOP                                                               
+ TABLE offset   1 ,  7 ,  6 , -1 , -7 , -6 ,    0 ,                                                             
+ TABLE rotate  SE , SW ,  W , NW , NE ,  E , STOP ,                                                             
+ TABLE reflect  E , NE , NW ,  W , SW , SE , STOP ,                                                             
+                                                                                                                
+                                                                                                                
+ -- specify via paths because paths are more easily transformable than bit masks                                        
+                                                                                                                
+ : init-path    E path 5 0 DO  TUCK ! CELL+  LOOP DROP ; ( 4*dirs -- )                                          
+ : rotate-path  path 5 0 DO  DUP @ rotate  OVER ! CELL+ LOOP DROP ;                                             
+ : reflect-path  path 5 0 DO  DUP @ reflect OVER ! CELL+ LOOP DROP ;                                            
+                                                                                                                
+ : path-offsets ( -- )                                                                                          
+        0 offsets !                                                                                             
+        path offsets                                                                                            
+        5 0 DO                                                                                                  
+               OVER @ offset                                                                                    
+               OVER @ +                                                                                         
+               OVER CELL+ !                                                                                     
+               SWAP CELL+ SWAP CELL+                                                                            
+          LOOP                                                                                                  
+        2DROP ;                                                                                                 
+                                                                                                                
+ : minimum-offset ( -- n )                                                                                      
+        offsets @  6 1 DO  offsets I CELLS + @ MIN  LOOP ;                                                      
+                                                                                                                
+ : normalize-offsets ( -- )                                                                                     
+        minimum-offset negate                                                                                   
+        6 0 DO  DUP offsets I CELLS + +!  LOOP DROP ;                                                           
+                                                                                                                
+ : offsets-mask ( -- mask )                                                                                     
+        0 6 0 DO  offsets I CELLS + @  2^x OR  LOOP ;                                                           
+                                                                                                                
+ -- make and store the twelve transformations of the path                                                       
+                                                                                                                
+ : path-mask ( -- mask )                                                                                                
+        path-offsets normalize-offsets offsets-mask ;                                                           
+                                                                                                                
+ : path-masks ( 4*dirs -- )                                                                                     
+                init-path    path-mask ,                                                                        
+        5 0 DO  rotate-path  path-mask , LOOP                                                                   
+                reflect-path path-mask ,                                                                        
+        5 0 DO  rotate-path  path-mask , LOOP ;                                                                 
+                                                                                                                
+ -- all path-masks start with an implicit E and are 12 cells long                                               
+                                                                                                                
+ CREATE pieces                                                                                                  
+        STOP SE  E  E path-masks                                                                                
+        STOP NE  E SE path-masks                                                                                
+        STOP SW SE  E path-masks                                                                                
+        STOP SE SW  E path-masks                                                                                
+          SW  W  E SE path-masks \ one backtrack, since this shape branches                                     
+        STOP SE NE SE path-masks                                                                                
+        STOP NE SE SE path-masks                                                                                
+        STOP  E SW SE path-masks                                                                                
+        STOP  E SE  E path-masks                                                                                
+        STOP NE SE  E path-masks                                                                                
+                                                                                                                
+ -- Next comes some support for 64-bit math, assuming we are running with 32-bit cells.                                 
+                                                                                                                
+ -- a double cell result lshift                                                                                 
+ : dlshift ( u s -- l h )                                                                                       
+        dup #32 < IF  DUP IF  2DUP LSHIFT -ROT ( l u s )                                                        
+                              #32 SWAP - RSHIFT                                                                 
+                       ENDIF                                                                                    
+                ELSE  #32 - LSHIFT 0 SWAP                                                                       
+               ENDIF ;                                                                                          
+                                                                                                                
+ : btab,  #64 0 DO  1 I dlshift 2,  LOOP ;                                                                      
+                                                                                                                
+ CREATE _d2^x  btab,                                                                                            
+                                                                                                                
+ : d2^x   _d2^x []DOUBLE 2@ ;                                                                                   
+                                                                                                                
+ : shifts, ( -- )                                                                                               
+        #64 0 DO  pieces  #120 0 DO  @+ J dlshift 2, LOOP  DROP                                                 
+                  8 0 DO  0. 2, LOOP                                                                            
+            LOOP ;                                                                                              
+                                                                                                                
+ CREATE shifts  shifts,                                                                                         
+                                                                                                                
+ -- Next, storing and displaying a solution.                                                                    
+                                                                                                                
+ : put-piece ( shift piece -- )                                                                                 
+        DUP pieces - #12 CELLS / '0' + >R ( R: piece-char )                                                     
+        SWAP CHARS HERE + SWAP @ ( display mask )                                                               
+        BEGIN                                                                                                   
+           DUP 1 AND IF   OVER R@ SWAP C!   ENDIF                                                               
+           SWAP CHAR+  DUP HERE #64 CHARS + <                                                                   
+        WHILE                                                                                                   
+           SWAP 2/  DUP 0=                                                                                      
+        UNTIL THEN                                                                                              
+        2DROP R> DROP ;                                                                                         
+                                                                                                                
+ -- extract solution from stack of (shift, piece addr)                                                          
+ : store-solution ( ? -- )                                                                                      
+        HERE #64 CHARS '*' FILL                                                                                 
+        DEPTH 1 DO  I PICK I PICK put-piece  2 +LOOP ;                                                          
+                                                                                                                
+ : .line                5 0 DO  C@+ EMIT SPACE  LOOP  CR CHAR+ ;   ( line -- line+6 )                                   
+ : .solution    5 0 DO  .line CHAR+  SPACE .line  LOOP  CR DROP ; ( buffer -- )                                 
+                                                                                                                
+ : check-solution ( [st] -- [st] )                                                                              
+        store-solution                                                                                          
+        HERE    #64 smallest #64 COMPARE 0< IF   HERE smallest #64 MOVE  ENDIF                                  
+        largest #64 HERE     #64 COMPARE 0< IF   HERE largest  #64 MOVE  ENDIF                                  
+        1 +TO found-solutions ;   \ throw if found-solutions == NUM                                             
+                                                                                                                
+ -- And the recursive heart of the program.                                                                     
+                                                                                                                
+ BASE @ BINARY                                                                                                  
+ -- initial board, with edges filled in                                                                         
+ 0000011.000001.0000011.000001.0000011.000001.0000011.000001.0000011.00000 2CONSTANT init-board                 
+ BASE !                                                                                                         
+                                                                                                                
+ -- check whether piece sticks off bottom of the board                                                          
+ : fits? ( shift #piece -- bool )                                                                               
+        OVER #39 < IF   2DROP TRUE                                                                              
+                 ELSE   pieces []CELL @                                                                         
+                        #64 ROT - 2^x 1- U<                                                                     
+                ENDIF ;                                                                                         
+                                                                                                                
+ : shifted  >R  #128 * R> + shifts []DOUBLE 2@ ; ( shift #piece -- dmask )                                      
+ : mark     shifted  board dxor TO board ;      ( shift #piece -- )                                             
+                                                                                                                
+ -- find next free cell (64 if completely full)                                                                 
+ : next-shift ( shift -- shift+n )                                                                              
+        BEGIN                                                                                                   
+           1+ DUP #64 <>                                                                                        
+        WHILE                                                                                                   
+           DUP d2^x  board dand or 0=                                                                           
+        UNTIL THEN ;                                                                                            
+                                                                                                                
+ : piece, ( #piece -- )                                                                                                 
+        DUP #12 * LOCALS| #ipx #piece |                                                                         
+        #piece POSTPONE LITERAL EVAL" used @ "                                                                  
+          EVAL"    IF   #12 CELLS + "                                                                           
+          EVAL"  ELSE " #piece POSTPONE LITERAL EVAL" used ON  "                                                
+                        #12 0 DO                                                                                
+                                POSTPONE OVER #ipx POSTPONE LITERAL                                             
+                                EVAL" shifted  board dand OR 0= "                                               
+                                EVAL"    IF " POSTPONE OVER #ipx POSTPONE LITERAL                               
+                                EVAL"       fits? IF "                                                          
+                                                      POSTPONE OVER #ipx POSTPONE LITERAL POSTPONE mark         
+                                                      EVAL" OVER next-shift RECURSE "                           
+                                                      POSTPONE OVER #ipx POSTPONE LITERAL POSTPONE mark         
+                                EVAL"          ENDIF "                                                          
+                                EVAL" ENDIF "                                                                   
+                                EVAL" CELL+ "                                                                   
+                                1 +TO #ipx                                                                      
+                            LOOP                                                                                
+                        #piece POSTPONE LITERAL EVAL" used OFF "                                                
+          EVAL" ENDIF " ;                                                                                       
+                                                                                                                
+ : dopieces ( -- )                                                                                              
+        POSTPONE pieces                                                                                         
+        #10 0 DO  I piece,  LOOP                                                                                
+        POSTPONE 2DROP ; IMMEDIATE                                                                              
+                                                                                                                
+ : solve ( shift -- )                                                                                           
+        DUP #64 = IF  DROP check-solution EXIT  ENDIF                                                           
+        dopieces ;                                                                                              
+                                                                                                                
+ : main CR TIMER-RESET                                                                                          
+        CLEAR found-solutions                                                                                   
+        smallest #64 CHARS '9' fill                                                                             
+        largest  #64 CHARS '0' fill                                                                             
+        init-board TO board                                                                                     
+        0 used #10 CELLS ERASE                                                                                  
+         0 solve                                                                                                
+        MS? n.ELAPSED ." , " found-solutions . ." solutions found."                                             
+        CR CR ." smallest solution: " CR CR smallest .solution                                                  
+           CR ." largest solution: "  CR CR largest  .solution ;                                                
+                                                                                                                
+ \ EOF                                                                                                          
+
+----
+Here is an alternative optimization that removes the recursive calls. Maybe this works better on bigForth. On iForth this approach is only slightly faster: 0.642 seconds. 
+BTW, C++ now leads this benchmark with 0.28 seconds. Maybe it is time to break out Knuth's Algorithm X. -- MarcelHendrix
+
+ [DEFINED] -zmeteor [IF] -zmeteor [THEN]  MARKER -zmeteor
+
+ [UNDEFINED] TIMER-RESET [IF]    0 VALUE _time_
+                                : TIMER-RESET GetTickCount TO _time_ ;                [THEN]
+ [UNDEFINED] n.ELAPSED   [IF]   : n.ELAPSED   ( u -- )  . ." ms elapsed" ;            [THEN]
+ [UNDEFINED] MS?         [IF]   : MS?         ( -- u )  GetTickCount _time_ - ;       [THEN]
+ [UNDEFINED] DAND        [IF]   : DAND        ( ud1 ud2 -- ud3 )  ROT AND >R AND R> ; [THEN]
+ [UNDEFINED] DXOR        [IF]   : DXOR        ( ud1 ud2 -- ud3 )  ROT XOR >R XOR R> ; [THEN]
+
+
+ 0 [IF] ---------
+        [1] iForth server 1.00 (console), Dec 28 2006, 13:28:14.
+        [2] Stuffed iForth at 00438200 [entry: 0x440000]
+        [3] Current process priority is 32.
+        iForth version 2.1.2513, generated 17:01:01, January 14, 2007.
+        i6 binary, native floating-point, double precision.
+        Copyright 1996 - 2006 Marcel Hendrix.
+
+        FORTH>
+        executing /dfwforth/include/iforth.prf
+        Creating --- Several utilities   Version 3.07 ---
+        Creating --- Extended OS words   Version 3.16 ---
+        Creating --- Terminal Driver     Version 3.12 ---
+        Creating --- Command line Editor Version 1.28 ---
+        Creating --- Online help         Version 1.34 ---
+        Creating --- Glossary Generator  Version 1.05 ---
+        Creating --- Disassembler        Version 2.20 ---  ok
+        FORTH> in zmeteor
+        Port TIMER-RESET n.ELAPSED and MS?
+
+        Have patience ...
+        Redefining .ABOUT
+        Try: MAIN ok
+        FORTH> MAIN
+        0.652 seconds elapsed, 2098 solutions found.
+        -----------
+        Gforth 0.6.2, Copyright (C) 1995-2003 Free Software Foundation, Inc.
+        Gforth comes with ABSOLUTELY NO WARRANTY; for details type `license'
+        Type `bye' to exit
+        include zmeteor.fs
+        Port TIMER-RESET n.ELAPSED and MS?
+        redefined table with TABLE  redefined .line
+        Have patience ...
+        Try: MAIN ok
+        MAIN
+        4597 ms elapsed., 2098 solutions found.
+        -----------
+        SwiftForth 2.2.2.9 07May2001
+        cd C:\Documents and Settings\Marcel Hendrix ok
+        cd /ForthInc/SwiftForth/Lib/Samples  ok
+        include zmeteor
+        Port TIMER-RESET n.ELAPSED and MS?
+
+        Have patience ...
+        Try: MAIN ok
+        MAIN
+        3593 ms elapsed, 2098 solutions found.
+        ----------
+         MPE VFX Forth for Windows IA32
+         © MicroProcessor Engineering Ltd, 1998-2005
+
+         Version: 3.80 [build 1937]
+         Build date: 29 September 2005
+
+         Free dictionary = 7932511 bytes [7746kb]
+
+
+        include zmeteor
+        Including zmeteor.fth
+        Port TIMER-RESET n.ELAPSED and MS?
+
+        ARRAY is redefined
+        Have patience ...
+        Try: MAIN ok
+        MAIN
+        750 ms elapsed, 2098 solutions found.
+        --------
+        Win32Forth crashes.
+    [THEN]
+
+
+ : ENUM: ( n -- ) 0 DO  I CONSTANT  LOOP ;
+ : ARRAY CREATE ( n -- ) CELLS ALLOT DOES> ( i -- 'a[i] ) SWAP CELLS + ;
+ : TABLE CREATE DOES> ( i -- t[i] ) SWAP CELLS + @ ;
+
+ \ Some support for 64-bit math, assuming we are running with 32-bit cells.
+
+ [UNDEFINED] 2,  [IF] : 2,  ( d -- ) , , ;               [THEN]
+ [UNDEFINED] 2^x [IF] : 2^x ( x -- 2^x ) 1 SWAP LSHIFT ; [THEN]
+
+ \ a double cell result lshift
+ : dlshift32 ( u s -- l h )
+        DUP  32 < IF  DUP IF  2DUP LSHIFT ROT ROT ( l u s )
+                              32 SWAP - RSHIFT
+                        THEN
+                ELSE   32 - LSHIFT 0 SWAP
+                THEN ;
+
+ : btab,  64 0 DO  1 I dlshift32  2,  LOOP ;
+
+
+ \ initial board, with edges filled in
+ \ %0000011.000001.0000011.000001.0000011.000001.0000011.000001.0000011.00000
+   434650421954089056. 2CONSTANT init-board
+
+ 0 VALUE found-solutions
+ 2VARIABLE board
+
+ CREATE _d2^x     btab,
+ CREATE smallest  64 CHARS ALLOT
+ CREATE largest   64 CHARS ALLOT
+ CREATE shift-xt  65 CELLS ALLOT
+ CREATE offsets    6 CELLS ALLOT
+ CREATE path       5 CELLS ALLOT
+
+ 10 ARRAY used
+
+ 7 ENUM:        E   SE   SW    W   NW   NE   STOP!
+ TABLE poffset  1 ,  7 ,  6 , -1 , -7 , -6 ,    0  ,
+ TABLE rotate  SE , SW ,  W , NW , NE ,  E , STOP! ,
+ TABLE reflect  E , NE , NW ,  W , SW , SE , STOP! ,
+
+
+ \ specify via paths because paths are more easily transformable than bit masks
+
+ : init-path     E path 5 0 DO  TUCK ! CELL+  LOOP DROP ; ( 4*dirs -- )
+ : rotate-path     path 5 0 DO  DUP @ rotate  OVER ! CELL+  LOOP DROP ;
+ : reflect-path    path 5 0 DO  DUP @ reflect OVER ! CELL+  LOOP DROP ;
+
+ : path-offsets ( -- )
+        0 offsets !
+        path offsets
+        5 0 DO
+               OVER @ poffset
+               OVER @ +
+               OVER CELL+ !
+               SWAP CELL+ SWAP CELL+
+          LOOP
+        2DROP ;
+
+ : minimum-offset ( -- n )
+        offsets @  6 1 DO  offsets I CELLS + @ MIN  LOOP ;
+
+ : normalize-offsets ( -- )
+        minimum-offset NEGATE
+        6 0 DO  DUP offsets I CELLS + +!  LOOP DROP ;
+
+ : offsets-mask ( -- mask )
+        0  6 0 DO  offsets I CELLS + @  2^x OR  LOOP ;
+
+ \ make and store the twelve transformations of the path
+
+ : path-mask ( -- mask )
+        path-offsets normalize-offsets offsets-mask ;
+
+ : path-masks ( 4*dirs -- )
+                init-path    path-mask ,
+        5 0 DO  rotate-path  path-mask , LOOP
+                reflect-path path-mask ,
+        5 0 DO  rotate-path  path-mask , LOOP ;
+
+ \ all path-masks start with an implicit E and are 12 cells long
+
+ CREATE pieces
+        STOP! SE  E  E path-masks
+        STOP! NE  E SE path-masks
+        STOP! SW SE  E path-masks
+        STOP! SE SW  E path-masks
+           SW  W  E SE path-masks \ one backtrack, since this shape branches
+        STOP! SE NE SE path-masks
+        STOP! NE SE SE path-masks
+        STOP!  E SW SE path-masks
+        STOP!  E SE  E path-masks
+        STOP! NE SE  E path-masks
+
+ : shifts, ( -- )
+         64 0 DO  pieces  120 0 DO  DUP @  J dlshift32 2, CELL+  LOOP  DROP
+                  8 0 DO  0. 2, LOOP
+            LOOP ;
+
+ CREATE shifts   shifts,
+
+ \ Next, storing and displaying a solution.
+
+ : put-piece ( shift piece -- )
+        DUP pieces - 12 CELLS / [CHAR] 0 + >R ( R: piece-char )
+        SWAP CHARS HERE + SWAP @ ( display mask )
+        BEGIN
+           DUP 1 AND IF   OVER R@ SWAP C!    THEN
+           SWAP CHAR+  DUP HERE 64 CHARS + <
+        WHILE
+           SWAP 2/  DUP 0=
+        UNTIL THEN
+        2DROP R> DROP ;
+
+ \ extract solution from stack of (shift, piece addr)
+ : store-solution ( ? -- )
+        HERE 64 CHARS [CHAR] * FILL
+        DEPTH 1 DO  I PICK I PICK put-piece  2 +LOOP ;
+
+ : .line                5 0 DO  COUNT EMIT SPACE  LOOP  CR CHAR+ ;  ( line -- line+6 )
+ : .solution    5 0 DO  .line CHAR+  SPACE .line  LOOP  CR DROP  ;  ( buffer -- )
+
+ : check-solution ( [st] -- [st] )
+        store-solution
+        HERE    64 smallest 64 COMPARE 0< IF   HERE smallest 64 MOVE   THEN
+        largest 64 HERE     64 COMPARE 0< IF   HERE largest  64 MOVE   THEN
+        found-solutions 1+ TO found-solutions ;   \ throw if found-solutions == NUM
+
+ \ And the non-recursive heart of the program.
+
+ \ Check whether piece sticks off bottom of the board
+ : fits? ( shift #piece -- bool )
+        OVER  39 < IF   2DROP TRUE
+                 ELSE   CELLS pieces + @
+                        64 ROT - 2^x 1- U<
+                 THEN ;
+
+ : shifted  >R  128 *  R> + 2* CELLS shifts + 2@ ; ( shift #piece -- dmask )
+ : mark     board 2@ DXOR board 2! ;               ( dmask -- )
+ : d2^x     2* CELLS _d2^x + 2@ ;                  ( x -- d )
+
+ \ find next free cell (64 if completely full)
+ \ executes about 3,000,000 times / 16 ms.
+ : next-shift ( shift -- shift+n )
+        BEGIN
+           1+ DUP 64 <>
+        WHILE
+           DUP d2^x  board 2@ DAND OR 0=
+        UNTIL THEN ;
+
+ : num,  ( n -- ) POSTPONE LITERAL ;
+ : dnum, ( d -- ) SWAP num, num, ;
+
+ : piece, ( shift #piece -- )
+        DUP 12 * LOCALS| #ipx #piece shift |
+        #piece used num, POSTPONE @
+        S"    IF     12 CELLS + " EVALUATE
+        S"  ELSE "   EVALUATE
+                     #piece used num, S" TRUE SWAP ! " EVALUATE
+                         12 0 DO
+                                shift #ipx fits?
+                                   IF   shift #ipx shifted dnum, S" board 2@ DAND OR 0= " EVALUATE
+                                        S"    IF " EVALUATE
+                                                   shift #ipx shifted dnum, POSTPONE mark
+                                                         shift num, S" next-shift CELLS shift-xt + @ EXECUTE " EVALUATE
+                                                   shift #ipx shifted dnum, POSTPONE mark
+                                        S"  THEN " EVALUATE
+                                 THEN
+                                S" CELL+ " EVALUATE
+                                #ipx 1+ TO #ipx
+                            LOOP
+                        #piece used num, S" FALSE SWAP ! " EVALUATE
+        S"  THEN " EVALUATE ;
+
+ : solve, ( shift -- )
+        LOCALS| shift |
+        shift num, pieces num,
+        10 0 DO  shift I piece,  LOOP
+        POSTPONE 2DROP ;
+
+ : solvers, ( -- )
+        64 0 DO  :NONAME  I solve, POSTPONE ;  shift-xt I CELLS + !  LOOP ;
+
+        CR .( Have patience ... ) solvers,
+
+ :NONAME ( -- ) check-solution ; shift-xt 64 CELLS + !
+
+ : MAIN CR TIMER-RESET
+        0 TO found-solutions
+        smallest 64 [CHAR] 9 FILL
+        largest  64 [CHAR] 0 FILL
+        init-board board 2!
+        0 used 10 CELLS ERASE
+          shift-xt @ EXECUTE
+        MS? n.ELAPSED ." , " found-solutions . ." solutions found."
+        CR CR ." smallest solution: " CR CR smallest .solution
+           CR ." largest solution: "  CR CR largest  .solution ;
+
+ : ABOUT CR ." Try: MAIN" ;
+
+        ABOUT
+
+                          ( * End of Source * )   

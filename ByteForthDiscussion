@@ -1,0 +1,46 @@
+yes, i was formulating my question about incompatibility issues with literals / parsing words, when i was called away, and didn't resume when i returned.
+
+this page, and the link was added to keep your pages from getting messy, by having discussions go on there, also, it might be difficult to get to the different parts of ByteForth discussion when it is spread out all over the place, therefore i've added the link (which could be referenced form other ByteForth pages as well)
+
+the little-endian/big-endian issue was the one which came to mind with parsing words, but the tokenizer should be able to handle this, as it knows about the specifics of the underlying machine.
+----
+Partly for social reasons I want to make bytecode with one Forth and run it on another Forth.  We have lots of incompatibility issues, and I notice that parsing words and compiling words have more than their fair share of the problems.  The more you can get by without them, the better.
+
+But we can't do without them completely.  So there are compromises.
+
+For some parsing words, we can pack the string to be parsed into the byte-code and let the target parse it.  That's necessary for ." ABORT" .( etc.
+
+For things like ' and ['] I think it's better to find the word, find its token, and store that.  Then the T' or T['] bytecode can pick up the following token, get it's target execution token, and use that.  And if we try to ' a word we don't have a token for we have a security violation.  There's no guarantee that a random word will even be present on the target.
+
+S" should pack the following string into the bytecode, but the bytecode shouldn't get the chance to EVALUATE it since it might contain anything at all.
+
+You can store numbers in some format and then unpack them with a token-compiler routine that's designed to work on that format.  You can't just use @ or 2@ etc because the host and target Forth systems may be incompatible.  You *can* use >NUMBER because the target will convert the string into its own kind of number.  Of course it isn't compact and it isn't fast, but it's easy.  
+
+Etc.
+----
+Would it be too much of a departure from Forth to have a first-class block of XTs?  This would replace
+ S" string is really late-bound code" EVALUATE
+with something like
+ B[ code compiled inline immediately] EVALUATE
+An XT block would be similar in representation to strings ( xt-addr cell-len ).  There is a similar concept in the Joy language, where it is used to implement all the control structures.
+----
+Oh!  I just figured out what you're talking about!  You're saying, get the equivalent of EVALUATE by using an array of execution tokens instead of a string of names.  Yes, that works, and it isn't late-binding because you find the xts early.
+
+But to adapt code that uses EVALUATE to that method we'd have to do it by hand.  When you do S" there's no way for the code to know at that point what will happen to the string later.  Maybe EVALUATE maybe TYPE etc.  It could even include names of words that haven't been defined yet but that *will* be defined before it gets run.  So converting code would have to be done by subtle minds and not by any mechanical approach.
+----
+We can do something like that.  What it takes is instead of EVALUATE you do repeated POSTPONE.  You just POSTPONE each word until the buffer is empty, instead of evaluating each word until the buffer is empty.
+
+That's fine for source code since you get to see the names regardless.  
+ : EARLY-MACRO ]] string is not late-bound code [[ ; IMMEDIATE
+ \ only works if 'string' 'is' 'not' 'late-bound' and 'code' are in the dictionary
+
+And POSTPONE probably saves an xt pretty much the way you want.  But it's an implementation issue that may vary from system to system.
+----
+i tried to reply by email but it seems that your mailer does not accept mail from me:
+ <name.protected@cavtel.net>: host mx-incoming.cavtel.net[64.83.1.147] said: 554 <name.protected@cavtel.net>: Recipient address rejected: Access denied (in reply to RCPT TO command),
+
+and
+
+ User unknown in local recipient table (in reply to RCPT TO command)
+----
+I had a similar problem with Anton Ertl some months ago.  I don't know what it's about yet.  I'm glad you found a way to get through.

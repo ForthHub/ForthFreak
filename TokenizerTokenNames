@@ -1,0 +1,12 @@
+ ( G: display names of all the tokens )
+
+ : .TOKEN ( S: n -- )
+    SPACE DUP LAST-TOKEN @ > IF
+      ." TOKEN#" . ELSE
+      CELLS TOKEN-NAMES + @ C@+ TYPE
+    THEN ;
+    
+ : TOKENNAMES ( S: -- )
+    CR CR LAST-TOKEN @ 1+ 0 ?DO
+      I .TOKEN SPACE
+    LOOP CR ;

@@ -1,0 +1,27 @@
+The central criterion for the compression algorithm is that it should be easy to collect data from it. 
+
+What small sequences of words are being used most often? Those words are candidates for factoring.
+
+How many people are using your defined word?
+
+How many ways have people modified it?
+
+Is there some way to classify the changes people make to the spec?
+
+Since we don't know ahead of time what information people will want, a compression system that lets us get new stuff from it the easiest is probably best.
+
+
+----
+compression to reduce data storage requirement, or to reduce file transfer times? in both cased, i believe compression should be handled transparently, and not concerning the user with the fact of using compression at all.
+----
+For both of those, and also to organise data.
+
+With the right frontend, you could use the compression system to tell how many people are using a particular piece of code and where they're using it. You could look at similar code -- which gives a sense of how they've modified it. Etc.
+
+These would surely be useful for a system that didn't have a single official latest version.
+
+Better to have a system where that front end is easy to build and modify, than a black box that takes a lot of hacking to get into.
+
+The user shouldn't be burdened with the compression system unless he wants to get information from it that hasn't already been automated for him.
+
+Software that doesn't actually depend on the compression system to give it results it wouldn't have without compression, can probably be written as if the data was not compressed, and changed a little later to allow for compression. Write most of it ignoring compression.

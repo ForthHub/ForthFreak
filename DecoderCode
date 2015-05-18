@@ -1,0 +1,99 @@
+\ byte-code decoder
+ \ these routines need the tokenizer compatibility words.
+ \ Also they use a new list of names for the special commands.
+ \ The token compiler uses new names to avoid name clashes in a single wordlist.
+ \ But the decoder only prints names, it can afford to use the old names for words like : CHAR etc.
+
+ VARIABLE LAST-TOKEN -1 LAST-TOKEN !
+ VARIABLE LAST-ADDRESS -1 LAST-ADDRESS !
+ CREATE TOKEN-NAMES 256 CELLS ALLOT
+
+
+ ( G: display name of nth token )
+ : .TOKEN ( S: n -- )
+    SPACE DUP LAST-TOKEN @ > IF
+      ." TOKEN#" . ELSE
+      CELLS TOKEN-NAMES + @ C@+ TYPE
+    THEN ;
+
+ ( G: display names of all the tokens )
+ : TOKENNAMES ( S: -- )
+    CR CR LAST-TOKEN @ 1+ 0 ?DO
+      I .TOKEN SPACE
+    LOOP CR ;
+
+ ( G: make string the newest token name )
+ : NEW-NAME ( S: ca len -- )
+    SAVE-STRING LAST-TOKEN NEXT-ITEM CELLS TOKEN-NAMES + ! ;
+
+ ( G: make new token names from list )
+ : T: ( S: -- )
+    BEGIN
+      REFILL? WHILE
+        BL WORD COUNT 2DUP S" ;T" COMPARE WHILE   \ quit for ;T
+          NEW-NAME
+      REPEAT
+    THEN 2DROP ;
+
+ S" SIMPLEWORDS.F" INCLUDED
+ S" COMPLEXNAMES.F" INCLUDED
+
+ ( G: put string in pictured number, backwards )
+ : -># ( ca len -- )
+    0 ?DO C@+ HOLD LOOP DROP ;
+
+ ( G: put string in pictured number followed by digits )
+ : PREFIX-N ( ca len n -- ca len )
+   <# 0 #S 2SWAP -># #> ;
+
+ ( G: make dummy name for unnamed token )
+ : EXTRA-NAME ( S: -- )
+    S" #nekoT" LAST-TOKEN @ 1+ PREFIX-N NEW-NAME ;
+
+ DEFER INPUT-TOKEN
+
+ ( G: print token name )
+ : .TOKEN ( S: n -- )
+    CELLS TOKEN-NAMES + @ C@+ SPACE TYPE ;
+ ( G: print counted string from tokens )
+ : .TOKENSTRING ( S: -- )
+    SPACE INPUT-TOKEN 0 ?DO INPUT-TOKEN EMIT LOOP ;
+
+ ( G: syntactic sugar for special CASE )
+ : COMPARE-TO ( C: "name" -- ) ( E: ca len -- ca len flag )
+    POSTPONE 2DUP BL WORD COUNT POSTPONE SLITERAL
+    POSTPONE COMPARE POSTPONE 0= ;  IMMEDIATE
+
+ ( G: more syntactic sugar )
+ : CIF ( C: -- dest ) ( E: ca len f -- )
+    POSTPONE IF POSTPONE SPACE POSTPONE TYPE ; IMMEDIATE
+ ( G: still more syntactic sugar )
+ : CTHEN ( C: dest -- ) ( E: -- )
+    POSTPONE EXIT POSTPONE THEN ; IMMEDIATE
+
+ ( G: display tokens, handle some special cases, minimal pretty-printing )
+ : SHOW-TOKEN ( S: ca len -- )
+    COMPARE-TO .(           CIF .TOKENSTRING [CHAR] ) EMIT CTHEN
+    COMPARE-TO [CHAR]       CIF SPACE INPUT-TOKEN EMIT CTHEN
+    COMPARE-TO CHAR         CIF SPACE INPUT-TOKEN EMIT CTHEN
+    COMPARE-TO :            IF CR TYPE EXTRA-NAME LAST-TOKEN @ .TOKEN ." ?" CTHEN
+    COMPARE-TO L:           IF CR TYPE .TOKENSTRING 1 LAST-TOKEN +! CTHEN
+    COMPARE-TO S"           CIF .TOKENSTRING [CHAR] " EMIT CTHEN
+    COMPARE-TO ABORT"       CIF .TOKENSTRING [CHAR] " EMIT CTHEN
+    COMPARE-TO ."           CIF .TOKENSTRING [CHAR] " EMIT CTHEN
+    COMPARE-TO LIT          CIF .TOKENSTRING CTHEN
+    COMPARE-TO CREATE       IF CR TYPE ."  Address#"  LAST-ADDRESS NEXT-ITEM . CTHEN
+    COMPARE-TO Address      IF SPACE TYPE INPUT-TOKEN [CHAR] # EMIT . CTHEN
+    COMPARE-TO :NONAME      IF CR TYPE CTHEN
+    COMPARE-TO ALLOT        CIF CR CTHEN
+    SPACE TYPE ;
+
+ ( G: display reverse-engineered source )
+ : DECODE ( S: -- )
+    BEGIN
+      INPUT-TOKEN DUP 255 - WHILE \ INPUT-TOKEN aborts if it can't find a token
+                                  \ quit for token# 255, make that stop-token?
+        CELLS TOKEN-NAMES + @ C@+ SHOW-TOKEN
+        KEY? IF KEY DROP EXIT THEN         \ bail out if key press
+    REPEAT
+    DROP ;

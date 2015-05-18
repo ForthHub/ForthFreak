@@ -1,0 +1,24 @@
+==== Forth-based single-board computers and microcontrollers ===
+
+* ATMEL
+** [http://www.mpeltd.demon.co.uk/avrstamp.htm MPE Forth AVR stamp]  professional grade development system with Forth for AVR
+** [http://www.forth.hccnet.nl/pr-bytef.html Boards for 8051 and AVR-chips] 
+** [http://amforth.sourceforge.net/ amforth] amforth is an interactive and extendable command interpreter for the Atmel AVR8 Atmega microcontroller family.
+** [http://krue.net/avrforth/ avrforth] is a 16-bit subroutine threaded forth kernel for atmel's avr series of microcontrollers.
+** http://www.robo-forth.de Atmel MEGA32 MEGA128
+* ARM
+** [http://www.amresearch.com/hardware.html AM Research SBC's] many 8051 variants and the 6811
+** [http://www.byvac.com/bv/bv511.htm ByVac BV511] board based on the ARM LPC2132.
+* PIC
+** [http://code.goto10.org/projects/packets/wiki/CATkit CATkit] is an open hardware project. The kit consists of a printed circuit board plus components, to be used as a standalone interactive Forth computer - Microchip PIC18LF1320.
+* OTHERS
+** [http://www.newmicros.com/ New Micros, Inc.] has SBC with Forth based 68332, 68HC11, etc. The home of the IsoPod, with a native Forth language called IsoMax.
+** [http://jpb.forth.free.fr/ JPB Forth] 68000/030 based SBC with Forth, Forth FPGA core
+** [http://www.forth.hccnet.nl/pr-ats.html 80C535] based SBC named the ATSboard with (8052-compatible) ANS-Forth. 
+** [http://www.forth.hccnet.nl/pr-bytef.html Boards for 8051 and AVR-chips] Using ByteForth or any other compiler.
+** TechnoForth ?
+** [https://sites.google.com/site/libby8dev/fignition FIGnition] is an AVR-based educational DIY computer which works like an 8-bit home Micro: outputting to composite video and ready to be interactively programmed from the moment you switch it on. It has  8Kb of RAM; 384Kb of storage; an 8-key keypad and runs a JupiterAce influenced variant of FigForth. It uses USB for power; firmware upgrades and program downloads.
+
+==== 80's Forth computers ===
+* [http://wiki.forthfreak.net/index.cgi?JupiterAce  Jupiter Ace] Z80A based single board machine with Forth in ROM.
+* [http://hectorvictor.free.fr/index.php?page=tEHwE78Vbb1BF  Hector HRX] Z80 based board machine with Forth in ROM.

@@ -1,0 +1,82 @@
+back to ForthSystems
+* Freely redistributable
+** Written in Forth (including [MetaCompiler]s)
+*** [MAF] A Minimal ANS Forth (Written in ANS Forth)
+*** [SPForth] SP-Forth, for Windows and POSIX-compliants (Linux, BSD...)
+*** VolksForth ([http://volksforth.sourceforge.net/ volksFORTH]) runs on MS-DOS (Intel x86 Architecture i8086-ia64), 6502 (Commodore 64, Commodore Plus 4, Commodore PET, Apple 1, Atari XL/XE), Z80 (CP/M, Amstrad CPC), 68000 (Atari ST).
+*** [strongForth].f a strongly-typed dialect of Forth.
+** Written in Assembly
+*** [ciforth] Standalone, DOS, Linux, Windows
+*** [eForth] DOS, Linux, Windows, misc. processors and microcontrollers, Java version. Originally by CHTing.
+*** [F68KANS] generic 68000, Atari ST, Amiga, Mac
+*** [figForth] Standalone, DOS, Windows, misc. processors and microcontrollers
+*** RetroForth Standalone, Windows, Linux, FreeBSD, misc. others
+*** HelFORTH Linux/x86, !OpenSolaris, Windows
+*** [Reva] Linux/x86, Windows
+*** FreeForth Linux/x86, Windows, misc. processors and microcontrollers
+** Written in C
+*** [4tH] Unix/Linux, DOS, Windows, ARM/OS
+*** [4IM] Standalone, DOS, Windows and Linux (in C)
+*** [ATLAST]
+*** "B4" - Block Forth https://sourceforge.net/projects/b-4/
+*** "bif-c" https://sourceforge.net/projects/bif-c/
+*** [bigFORTH] Linux/x86, Windows
+*** "calForth" https://sourceforge.net/projects/calforth/
+*** [cforth]
+*** [Ficl]
+*** "Fminus" https://sourceforge.net/projects/fminus/
+*** "froth" https://sourceforge.net/projects/froth/
+*** "Fth" http://fth.sourceforge.net/
+*** GForth Unix, Windows, misc !CPUs and microcontrollers
+*** [GraspForth] Runs on any 32bit micro gcc compiles to.
+*** [kforth] Linux, Windows
+*** LSE64: Is the core of LSE64 written in C? LSE64, based on LSE, inspired by STOIC, is allegedly "less complex" than standard Forth. http://noqsi.com/software.html
+*** MinForth Linux, Windows, DOS
+*** [PFE]
+*** [pForth]
+*** [ThisForth] DOS, Windows (console 32 bit), Unix/Linux
+*** [Timbre]
+*** [tileforth] Runs on 68000 based machines and also under Linux/Unix
+*** [until]
+*** "WMForth : Forth compiler written in C for Pocket PC with ARM processor running Windows Mobile" https://sourceforge.net/projects/wmforth/
+*** [yForth]
+** Written in Java ( or at least [http://www.robert-tolksdorf.de/vmlanguages.html#forth runs on the Java Virtual Machine] )
+*** DeltaForth (Also for .NET/C#)
+*** [FIJI]
+*** MistyBeachForth
+*** [myForth]
+*** [webForth]
+*** See also [eForth]
+** Written in JavaScript
+*** [jsforth] runs in your (JavaScript enabled) browser
+*** FOeRTHchen (JavaScript, Perl, Assembly)
+** Written in Lua
+*** MiniForth: [http://angg.twu.net/miniforth-article.html Boostrapping a Forth in 40 lines of Lua code.]
+** Written as bash shell script
+*** BashForth
+** Written in Perl
+*** PForth3
+*** FOeRTHchen (also JavaScript, Assembly)
+*** PerlForth
+** Other/Unknown
+*** [Jax4th]   Windows, Amiga
+*** [mxForth]  Linux, Windows (Uses a MetaCompiler, relies on a runtime server written in 'C')
+*** [postForth] (Assembly) Linux, MS-DOS
+*** [tpForth] Linux, Windows, eCos, !UniOp MMI, Windows CE
+* Commercial
+** [CFORTH] (predecessor of [ForthCMP]) MS-DOS, CP/M 
+** [Holon]  DOS, Java VM, and 68HC11
+** [iForth] Linux, Windows, Mac, DOS (distributed but unsupported), MMURTL (unsupported, on request)
+** [VFX] (MPE) Forth for x86 OS X, Linux and Windows. Cross compilers are available for ARM and many embedded CPUs.
+* Unknown
+** InfoForth, Forth compiler for KR1801, [PDP-11], KR1810 (Intel 8086) and K580 (Intel 8080).
+
+----
+
+/Is/ CamelForth /also/ MultiPlatform /? For the "8051, 8086, Z80, and 6809, with more to come"./
+
+/Is/ ByteForth /also/ MultiPlatform /? For the 8051 and the very different Atmel AVR./
+
+CamelForth and ByteForth might be [StandAloneForth]s - "multi platform" may be misleading, and may better be called "multi OS". 
+
+/Is/ FlashForth /also/ Multiplatform /? For the 1-register 8-bit PIC 18F and the very different 16-register 16-bit dsPIC 30F./

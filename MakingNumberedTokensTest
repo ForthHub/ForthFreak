@@ -1,0 +1,54 @@
+ S" SENDCOMPATIBLE.F" INCLUDED
+ S" SENDBYTECODE.F" INCLUDED
+ S" SENDWORDLIST.F" INCLUDED
+ S" SENDTOKENS.F" INCLUDED
+
+ ' . (IS) OUTPUT-CHAR
+ -1 LAST-TOKEN !
+ GET-ORDER TOKENS SWAP 1+ SET-ORDER
+
+ 5 LIT: TEST1 ;
+ CR .( routine made by 5 LIT: should . 5 -> ) TEST1 .
+ 7 LIT: TEST2 9 ;
+ CR .( routine made by 7 LIT: name 9 ;  should . . 9 7 -> ) TEST2 . .
+
+ 11 NEW-ITEM: TEST3 13 ;
+ GET-ORDER TOKENS SWAP 1+ SET-ORDER
+ CR .( routine made by 11 NEW-ITEM: name 13 ;  should . . 13 11 -> ) TEST3 . .
+
+ 0 LAST-TOKEN !
+ TOKEN: # ;
+ GET-ORDER TOKENS SWAP 1+ SET-ORDER
+ CR .( 2nd token routine, made by TOKEN: should output 1 -> ) #
+ TOKEN: #> ;
+ CR .( 3rd routine outputs 2 -> ) #>
+
+ HERE 5 OVER -1 , DOUBLE-TOKEN: XXXX ;
+ CR .( 1st double-token type 5 should output 5 0 -> ) XXXX
+ 5 SWAP DOUBLE-TOKEN: YYYY ;
+ CR .( 2nd double-token type 5 should output 5 1 -> ) YYYY
+
+ DOUBLE-TOKEN-TYPE: ADDRESS: ;
+ CR .( ADDRESS: is a defining word, it outputs a token when it defines 3 -> )
+ ADDRESS: MY-ADDRESS ;
+ CR .( new double-token-type will be type 4, outputs 4 0 -> ) MY-ADDRESS
+ CR .( ADDRESS: is a defining word, it outputs a token when it defines 3 -> )
+ ADDRESS: YOUR-ADDRESS ;
+ CR .( 2nd double-token outputs 4 1 -> ) YOUR-ADDRESS
+
+ DOUBLE-TOKEN-TYPE: DEFERS: ;
+ CR .( DEFERS: is a defining word, it outputs a token when it defines 5 -> )
+ DEFERS: MARIETTA ;
+ CR .( new double-token-type will be type 6, outputs 6 0 -> ) MARIETTA
+ CR .( DEFERS: is a defining word, it outputs a token when it defines 5 -> )
+ DEFERS: GEORGIA ;
+ CR .( new double-token-type will be type 6, outputs 6 1 -> ) GEORGIA
+
+ DOUBLE-TOKEN-MAKE: FILTER: ;
+
+ CR .( no token with this one, #tokens is now 7 -> )
+ FILTER: TESTA ;  LAST-TOKEN @ .
+ CR .( new double-token outputs 7 0 -> ) TESTA
+ FILTER: TESTB ;
+ CR .( new double-token outputs 7 1 -> ) TESTB
+ GET-ORDER NIP 1- SET-ORDER

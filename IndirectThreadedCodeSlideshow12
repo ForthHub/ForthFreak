@@ -1,0 +1,6 @@
+IndirectThreadedCodeSlideshow11 IndirectThreadedCodeSlideshow13
+
+http://www.forthfreak.net/slides/slide20.jpg
+
+first call in HILEVEL2 is to PRIM. memory contents under IP will
+be transferred to W, and IP incremented.

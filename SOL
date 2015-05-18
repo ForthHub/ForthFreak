@@ -1,0 +1,6 @@
+SOL is a small, FORTH-like language and OS. It was written in assembly for the [PDP-11].
+[http://www.holm-und-jeschag.de/nils/comp.html#/sol-11.tar.gz Source files (sol-11.tar.gz)] are available, and require the [http://www.holm-und-jeschag.de/nils/comp.html#btn11.zip BTN11 assembler (btn11.zip)]. 
+
+A [http://www.holm-und-jeschag.de/nils/comp.html#sol-86.zip port (sol-86.zip)] for 8086-based !PCs with at least 64K bytes of RAM exists.
+
+ForthSystems

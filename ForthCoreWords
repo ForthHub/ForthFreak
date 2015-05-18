@@ -1,0 +1,501 @@
+= Core and Core Extension
+----
+== legend: word implementation state for /[jsforth]/ and /PerlForth/ ==
+* http://forthfreak.net/dot_gr.gif implemented and working
+* http://forthfreak.net/dot_cy.gif implemented but not thoroughly tested
+* http://forthfreak.net/dot_yl.gif partial or incomplete implementation
+* http://forthfreak.net/dot_or.gif non-compliant implementation
+* http://forthfreak.net/dot_rd.gif broken
+* http://forthfreak.net/dot_bl.gif delayed/postponed: problem to solve
+* http://forthfreak.net/dot_wh.gif not started, thought about or cared for yet
+----
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [jsforth] ready
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PerlForth working on
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif !PyForth   not started
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_bl.gif http://forthfreak.net/dot_wh.gif LuaForth  suspended. no bit operations in lua. Online community discouraging the effort and advocating C.
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif !HaskellForth
+=== CORE ===
+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif !
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_or.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif #
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_or.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif #>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif #S
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif '
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif (
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif *
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif */
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif */MOD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif +
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif +!
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif +LOOP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ,
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif -
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif .
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ."
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif /
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif /MOD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 0<
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 0=
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 1+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 1-
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2!
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2*
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2/
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2@
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2DROP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2DUP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2OVER
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2SWAP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif :
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ;
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif <
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_or.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif <#
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif =
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif >
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif >BODY
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.0560 >IN]
+* http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_bl.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.0570 >NUMBER]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif >R
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ?DUP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif @
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.0670 ABORT]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ABORT"
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ABS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ACCEPT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ALIGN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ALIGNED
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ALLOT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif AND
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif BASE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif BEGIN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif BL
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif C!
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif C,
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif C@
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CELL+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CELLS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CHAR
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CHAR+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CHARS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CONSTANT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif COUNT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_cy.gif CR
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CREATE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DECIMAL
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DEPTH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DO
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DOES>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DROP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DUP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ELSE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif EMIT
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ENVIRONMENT?
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.1360 EVALUATE]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif EXECUTE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_cy.gif EXIT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FILL
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FIND
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FM/MOD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif HERE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_or.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif HOLD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif I
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif IF
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif IMMEDIATE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif INVERT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif J
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif KEY
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LEAVE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LITERAL
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LOOP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LSHIFT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif MAX
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif MIN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif MOD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif MOVE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif NEGATE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif OR
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif OVER
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif POSTPONE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif QUIT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif R>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif R@
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif RECURSE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif REPEAT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ROT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif RSHIFT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif S"
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif S>D
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_or.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SIGN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SM/REM
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SOURCE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SPACE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SPACES
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif STATE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SWAP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif THEN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif TYPE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif U.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif U<
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.2370 UM/MOD]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif UNLOOP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif UNTIL
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif VARIABLE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif WHILE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif WORD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif XOR
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [']
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.2520 [CHAR]]
+
+=== CORE EXT ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.0060 #TIB]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif .(
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif .R
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 0<>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 0>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2>R
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2R>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 2R@
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.0455 :NONAME]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif <>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ?DO
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif AGAIN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif C"
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CASE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.0945 COMPILE,]
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.0970 CONVERT]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ENDCASE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ENDOF
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ERASE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif EXPECT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FALSE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif HEX
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif MARKER
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif NIP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif OF
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PAD
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PARSE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PICK
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif QUERY
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif REFILL
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif RESTORE-INPUT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ROLL
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SAVE-INPUT
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SOURCE-ID
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SPAN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif TIB
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif TO
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif TRUE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif TUCK
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif U.R
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif U>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.2395 UNUSED]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.2405 VALUE]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.2440 WITHIN]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.2530 [COMPILE]]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.2.2535 \]
+
+=== DOUBLE/MIXED MATH ===
+* http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.1810 M*]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif [http://www.forthfreak.net/dpans/dpans6.htm#6.1.2360 UM*]
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif D.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif D.R
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif D+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif D=
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif D<
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DABS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DNEGATE
+
+=== VOCABULARY / WORDLIST EXTENSIONS ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif VOCABULARY
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DEFINITIONS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ORDER
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ONLY
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ALSO
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PREVIOUS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FORTH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif VOCS
+** displays all vocabulary names
+The vocabulary implementation in [jsforth] is not wordlist based, but simulates the Ragsdale/ONLY vocabulary contruct accurately, using the standards selector. There is a restriction associated with it: A maximum of about 20 additional - next to the predefined
+*ONLY, FORTH and HIDDEN* - can be defined.
+
+
+=== STRING EXTENSIONS ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif -TRAILING
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif /STRING
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CMOVE
+
+
+=== MEMORY EXTENSIONS ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ALLOCATE
+** Both first-fit and best-fit chunk search methods are provided.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FREE
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif RESIZE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FIT  ( -- a )
+** a variable to control ALLOCATE chunk search:
+*** FIT OFF  - first fit
+*** FIT ON  - best fit
+
+
+
+=== EXCEPTIONS EXTENSIONS ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CATCH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif THROW
+
+
+=== BLOCKS FILESYSTEM EXTENSIONS ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif BUFFER ( u -- a )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif BLOCK ( u -- a )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LIST ( u -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SAVE-BUFFERS ( -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif EMPTY-BUFFERS ( -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif UPDATE ( -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LOAD ( u -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif THRU ( u1 u2 -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif +LOAD ( u -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif +THRU ( u1 u2 -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CAPACITY ( -- u )
+** returns the number of blocks available
+*** block are mapped on cookies, RAM and web server. server blocks are read/only.
+More words from the blocks wordset can be loaded. Among those are:
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CLEAR ( u -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif COPY ( u1 u2 -- )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LS ( -- ) display index of all blocks
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif --> ( -- )
+
+
+=== FLOATING POINT MATH ESTIMATING ===
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif >FLOAT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif D>F
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DF!
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DF@
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DFALIGN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DFALIGNED
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DFLOAT+
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DFLOATS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F!
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F*
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F**
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F-
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F/
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F0<
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F0=
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F<
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F>D
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F@
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FABS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FACOS
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FACOSH
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FALIGN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FALIGNED
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FALOG
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FASIN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FASINH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FATAN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FATAN2
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FATANH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FCONSTANT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FCOS
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FCOSH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FDEPTH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FDROP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FDUP
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FE.
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FEXP
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FEXPM1
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLITERAL
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLNP1
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLOAT+
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLOATS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLOG
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FLOOR
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FMAX
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FMIN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FNEGATE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FOVER
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FROT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FROUND
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FS.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FSIN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FSINCOS
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FSINH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FSQRT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FSWAP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FTAN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FTANH
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FVARIABLE
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F~
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PRECISION
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif REPRESENT
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SET-PRECISION
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SF!
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SF@
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SFALIGN
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SFALIGNED
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SFLOAT+
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SFLOATS
+==== additionally ====
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif 1/F
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F0>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F<>
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F.S ( -- )
+** print contents of floating point stack
+
+
+=== COMMON EXTENSIONS ===
+
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DEFER
+* http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif IS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FOR
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif NEXT
+** "n FOR ... NEXT" is a countdown loop:
+*** goes from N down to 1 - PerlForth does the more logical N-1 .. 0 - I should modify [jsforth] accordingly.
+*** *I*, *J*, *LEAVE*, *?LEAVE*, *UNLOOP* all work with both *FOR* ... *NEXT* and *DO* ... *LOOP*
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ENDIF
+** alias of THEN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SKIP ( a1 u1 c -- a2 u2 )
+** truncate string by skipping all leading occurances of c
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SCAN ( a1 u1 c -- a2 u2 )
+** truncate string by searching for first occurance of c
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif COLD
+** perform a cold start:
+*** sets up stacks
+*** forgets all added words
+*** restores dp (here)
+*** sets number base to 10
+*** enter interpretation mode
+*** outputs initial greeting
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif WARM
+** perform a warm start:
+*** sets up stacks
+*** enter interpretation mode
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ,"
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ?EXEC
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ?COMP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ESC
+** the ASCII escape character
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif .NAME
+** prints word name when given an xt
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif NAME
+** returns word name as string when given an xt
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif BODY>
+** given a body (as from >BODY) get back the xt
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif HIDE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif REVEAL
+** smudging
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif WORDS
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif <<
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif >>
+** aliases for LSHIFT, RSHIFT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif .S
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PROMPT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif PAGE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CLS
+** alias for PAGE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ON
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif OFF
+** "variable ON/OFF" sets it to true or false
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif EXCHANGE
+** ( n addr -- m ) dup @ -rot ! ;
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SKIM
+** ( addr -- addr+ n ) dup cell+ swap @ ;
+** or (often more efficient):  cell+ dup cell- @
+** sometimes known as @+
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif -ROT
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif RDROP
+** drops top return stack element
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CASESENSITIVE
+** a variable to turn on/off case sensitivity for vocabulary searches                                s
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ?LEAVE
+** equivalent to  IF LEAVE THEN
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif KEY? ( -- f )
+** returns true flag if a key is waiting to be picked up with KEY, false otherwise.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif MS ( u -- )
+** pauses execution for u milliseconds
+
+
+=== JSFORTH SPECIFIC ===
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DU* ( ud1 u -- ud2 )
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif DEBUGGER ( -- a )
+** a variable, turn ON for additional diagnostic output
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ALERT ( a n -- )
+** pops up an alert box with string a n as text.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif CONFIRM ( a n -- f )
+** pops up a yes/no confirm box with string a n as text. choice is returned as flag
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif URL ( a n -- )
+** opens url in new browser window. http:// gets prepended to url if necessary.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif LOADURL ( a n -- )
+** opens url in help window.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif HELP
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif S(
+** put a string on the stack (addr len) in interpret mode. addr len are pointing into the parse buffer, therefore will entering a new line after carriage return overwrite the string.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif POPUPS
+** a variable, to turn on of off popup errors alerts. POPUPS OFF routes errors to console.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif NEWERROR  ( a n1 n2 -- )
+** installs string a n1 as error message for uncaught n2 THROW
+** example:   s( CUSTOM ERROR )  50 newerror
+**  empty string  s( ) 50 newerror   removes that error text again. both negative and positive error numbers are accepted. negative error numbers overwrite system errors texts.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_cy.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif EPOCH ( u -- )
+** returns number of seconds since jan1,1970
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif READLINE ( a n1 -- n2 )
+** reads screen line n1, writes to address a. n2 characters were read.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif WRITELINE ( a n1 n2 -- )
+** write n1 chars at a to screen line n2
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif INFO ( a n -- )
+** write n chars at address a to info screen.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif SLOW ( -- )
+** sets variable *OUTFILE* to use slow output routines
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FAST ( -- )
+** sets variable *OUTFILE* to use fast output routines, which cause line breaks during output to not update the screen. *KEY*, *KEY?*, *MS* (i.e. whenever JS-Forth waits for an event), *PAGE*, *CLS*, error output, still do.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif STARTCLOCK ( -- )
+** remember current time
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ELAPSED ( -- u )
+** calculate elapsed milliseconds since last STARTCLOCK
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif RANDOM ( u1 -- u2 )
+** return a random number between 0 and u1.
+
+
+
+=== MULTIPLE STANDARDS AND DIALECT SUPPORT
+* http://forthfreak.net/dot_gr.gif COMPLIANCE  ( -- a )
+** a variable, to select forth standard jsforth should comply to.
+** any other value than 0 filters words found by FIND and WORDS, according the selected standard.
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif ANS ( -- )
+** request DPANS94-compliance by writing to variable COMPLIANCE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F83 ( -- )
+** request F83-compliance by writing to variable COMPLIANCE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif F79 ( -- )
+** request F79-compliance by writing to variable COMPLIANCE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif FIG ( -- )
+** request fig-compliance by writing to variable COMPLIANCE
+* http://forthfreak.net/dot_gr.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif http://forthfreak.net/dot_wh.gif JSF ( -- )
+** makes DPANS words and JSFORTH extensions available.
+
+Whenever a standard is masked, the above words can not be found anymore, as they comply with no standard. To return to a dictionary, which provides those words not strictly belonging to a standard, use /JSF/ (even though JSF is not a word of any standard, it has been made visible through all standards, to make changing standards possible while one has been selected.
+
+* Standards are encoded as bit masks, and thus can be combined.
+* Not all words have been correctly categorized according the standards which require them. Not all alternative implementations of those words which changed throughout standards have been supplied yet. The information used for masking words is the same you get with HELP <word>  (which is only available in the JSF vocabulary).
+* jsforth starts in JSF mode.
+* Words with different semantics through standards are implemented by redefinition. one word is filtered by one, another by another standard.
+** example:  NOT is only available in fig/f79 mode.  ' has different implementations for ANS/F83  vs. FIG/F79, as has LEAVE
+
+Different standards have not be consequently set yet, and need to be checked against their corresponding documents.
+
+= PerlForth specifics 
+AND OR XOR INVERT << >> LSHIFT RSHIFT U< U> U. .  need extra testing - Perl bit operations work on numbers of defined bit length, but other operations don't. numbers outside of cell size aren't wrapped (outside "bits" truncated) but converted to "all bits set". Code has been included to counter this, but I might have overseen a case where the underlying Perl characteristics still bleed through. In Perl context, bitwise or of -1 with 0  ( -1|0 ) doesn't equal ( -1 ). but in PerlForth context, it does (which is good):
+ -1 0 or -1 =  cr .
+ -1  ok
+
+-Found cases which need fixing:  on 32 bit compiled Perl:-  fixed
+ 4294967295 -1 =  cr .
+ 0 
+
+does now this:
+ 4294967295 -1 = cr .
+ -1
+
+PerlForth can now be easily set to 16 bit, 32 bit, and - if perl has been compiled for - 64 bit.  Default is the word size perl has been compiled for, but have introduced a bug in pcitured number conversion with the 64 bit version. therefore, uploaded source is set to 32 bit for now.

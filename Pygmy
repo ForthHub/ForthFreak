@@ -1,0 +1,13 @@
+A small 8086 Forth, modelled after [CharlesMoore]'s [cmForth] (created for the 
+[http://www.ece.cmu.edu/~koopman/stack_computers/sec4_4.html Novix CPU])
+
+http://www.eskimo.com/~pygmy/forth.html
+----
+I've had the pleasure of learning Forth with this software.  Of all the Forths I've used to date, ANSI, F79, F83, and many others, this Forth is single-handedly the best Forth I've used to date.  It's simple, moderately fast (no speed demon, but it's "fast enough" for 99% of the stuff you'll ever write), easy to hack and customize to suit your own requirements, etc.  The integrated RPN assembler, while awkward to learn at first, makes any speed issue in Pygmy a non-issue.
+
+I literally cannot say enough good things about Pygmy.
+
+I'm basing my own Forth project on my experiences with !PygmyForth, primarily because I feel there is no adequate 32-bit Forth environment that fills Pygmy's shoes.  I'm hoping mine will be the first of many.  More details to come.
+-- SamuelFalvo
+
+ForthSystems

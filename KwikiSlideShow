@@ -1,0 +1,66 @@
+CGI::Kwiki has a !PowerPoint-like slideshow built in. Give it a try.
+
+*Click Here to start the slideshow*:
+[&SLIDESHOW_SELECTOR]
+----
+[&title Intro to Kwiki SlideShow]
+== Welcome to the Kwiki Slide Show Example ==
+* Press spacebar to go to next slide
+* You can also click on the slide to advance
+----
+== How it works ==
+* You create all your slides as a single wiki page
+* Slides are separated by horizontal lines
+----
+== Controls ==
+[&img http://www.google.com/images/logo.gif]
+This is an image, thrown in just for fun.
+* Press spacebar to go to next slide
+* Press backspace to go to previous slide
+* Press '1' to start over
+* Press 'q' to quit
+----
+== Adjustments ==
+* You should probably adjust your fonts
+* Mozilla uses <ctl>+ and <ctl>-
+* Very handy for adjusting on the fly
+----
+[&lf]
+[&subtitle Animations]
+== Linefeed Animation
+* This Slide
+* Displays
+* One Line
+* At a Time
+----
+[&lf]
+== More Animation
+* This Slide Also Displays
+* One Line At a Time
+----
+[&subtitle]
+[&bgcolor red]
+== Bugs ==
+* Everything works in Mozilla and IE
+* Some browsers do not seem to respond well to the onkeypress events.
+** Often you can get around this by using backspace or delete to go back a slide.
+----
+[&bgcolor]
+== Displaying Source Code ==
+* Here is some Javascript code:
+    function changeSlide(i) {
+        var myForm = document.getElementsByTagName("form")[0];
+        var myNum = myForm.getElementsByTagName("input")[0];
+        i = i * 1;
+        myVal = myNum.value * 1;
+        myNum.value = myVal + i;
+        myForm.submit();
+    }
+* Here is some Perl code:
+    sub process {
+        my ($self) = @_;
+        return $self->cgi->size ? $self->open_window 
+                                : $self->slide;
+    }
+----
+== The End ==

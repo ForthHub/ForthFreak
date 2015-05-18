@@ -1,0 +1,130 @@
+FHTML is a Forth->Hypertext Markup Language, primarily written for use with the WikiWrittenInForth project. Here is the latest version of the code:
+
+ : \\ 10 word  2drop ;
+
+ \\ RetroWiki 1.0
+ \\ ------------------------------------------------------
+ \\ Welcome to the heart of the RetroWiki application. In
+ \\ this RetroForth program, we convert a Forth-ish
+ \\ markup language into [mostly] valid HTML. There isn't
+ \\ too much magic here, so let's get started!
+ \\ ------------------------------------------------------
+
+ \\ The heart of the original tag generating code is these three 
+ \\ functions. Here are the arguments they take:
+ \\   <bytes to display> #number-of-bytes   emit-loop
+ \\   <bytes to display> #number-of-bytes   tag
+ \\   <bytes to display> #number-of-bytes   /tag
+ \\ tag and /tag generate open and closing tags
+ : emit-loop times emit repeat emit-loop ;
+ : tag '< emit emit-loop '> emit ;
+ : /tag '< emit '/ emit emit-loop '> emit ;
+
+
+ \\ For the simplified version of the markup language, we need
+ \\ to save the states of each tag. We use variables to do this.
+ 0 variable tag-i  \\ Italics
+ 0 variable tag-b  \\ Bold
+ 0 variable tag-u  \\ Underline
+
+
+ \\ Here's where the tags actually begin. First come the basic
+ \\ tags for document structure
+ : BR 'r 'b 2 tag ;
+ : P: 'p 1 tag ;
+ : ;P 'p 1 /tag cr ;
+ : HR 'r 'h 2 tag cr ; 
+
+ \\ Here are the basic tags for displaying images and linking to
+ \\ other wiki pages.
+ : IMG" '" word '= 'c 'r 's 32 'g 'm 'i '< 9 emit-loop type '>  emit cr ;
+ : ?ID= '? emit 'i emit 'd emit '= emit ;
+ : LINK 2dup '= 'f 'e 'r 'h 32 'a '< 8 emit-loop ?ID= type '>  emit type 'a 1 /tag ;
+ : [ '] word LINK ;
+
+ \\ And now for text styles
+ : PRE" '" word 'e 'r 'p 3 tag type 'e 'r 'p 3 /tag cr ;
+ : I" '" word 'i 1 tag type 'i 1 /tag ;
+ : B" '" word 'b 1 tag type 'b 1 /tag ;
+ : U" '" word 'u 1 tag type 'u 1 /tag ;
+ : ." '" word type ;
+ : H1" '" word '1 'h 2 tag type '1 'h 2 /tag cr ;
+ : H2" '" word '2 'h 2 tag type '2 'h 2 /tag cr ;
+ : H3" '" word '3 'h 2 tag type '3 'h 2 /tag cr ;
+ : H4" '" word '4 'h 2 tag type '4 'h 2 /tag cr ;
+ : ." '" word type ;
+ : ` '` word type ; 
+
+
+
+ \\ And now for the simplified markup language!
+ \\ These tags may eventually replace the older style tags; for now
+ \\ they coexist.
+ \\ ----------------------------------------------------------------------
+ \\ Each of the simplified tags has to use a corresponding variable to
+ \\ determine its state.
+ : ** 'b tag-b @ 1 = if 1 /tag 0 tag-b ! ;; then 1 tag 1 tag-b !  ; 
+ : // 'i tag-i @ 1 = if 1 /tag 0 tag-i ! ;; then 1 tag 1 tag-i ! ;
+ : __ 'u tag-u @ 1 = if 1 /tag 0 tag-u ! ;; then 1 tag 1 tag-u ! ;
+
+ \\ We also have a few other structure tags in the simplified form
+ : \ 'p 1 tag cr ;
+ : ---- '< emit 'h emit 'r emit '> emit cr ;
+
+
+ \\ Inter-Wiki Links
+ \\ ----------------------------------------------------------------------
+ \\ Recently we started adding easy links to other Wikis. We start with
+ \\ some generic code to make creating the tags easier and cleaner
+ : http '/ '/ ': 'p 't 't 'h 7 emit-loop ;
+ : www. '. 'w 'w 'w 4 emit-loop ;
+ : .net 't 'e 'n '. 4 emit-loop ;
+ : .org 'g 'r 'o '. 4 emit-loop ;
+ : .com 'm 'o 'c '. 4 emit-loop ;
+ : /wiki/ '/ 'i 'k 'i 'w '/ 6 emit-loop ;
+ : /cgi/ '/ 'i 'g 'c '/ 5 emit-loop ;
+ : index.cgi? '? 'i 'g 'c '. 'x 'e 'd 'n 'i 10 emit-loop ;
+ : <link '= 'f 'e 'r 'h 32 'a '< 8 emit-loop ;
+ : link> '> emit ;
+ : </a> '> 'a '/ '< 4 emit-loop ;
+ : wiki? '? 'i 'k 'i 'w 5 emit-loop ;
+
+ \\ And now for the wiki-specific code:
+ \\  Speuler's ForthFreak.net wiki
+     : forthfreak 'k 'a 'e 'r 'f 'h 't 'r 'o 'f 10 emit-loop ;
+     : ff[ '] word 2dup <link http www. forthfreak .net /wiki/ index.cgi? type link> type </a> 32 emit ;
+ \\  The original Wiki!
+     : c2  '2 'c emit emit ;
+     : c2[ '] word 2dup <link http www. c2 .com /cgi/ wiki? type link> type </a> 32 emit ;
+
+----
+For future work with my [http:index.cgi?WikiWrittenInForth Wiki in Forth] project, I'll be using just the simplified markups (which can be packed into just six lines as shown below).
+
+
+ : v create 0 , ; v ti v tb v tu v th : tp type ; : e emit ; : el times e repeat el ; 
+ : <l '= 'f 'e 'r 'h 32 'a '< 8 el ; : l> '> e ; : <|> '> 'a '/ '< 4 el ; : t '< e el '> e ; 
+ : ? '= 'd 'i '? 4 el ; : [ '] word 2dup <l ? tp l>  tp <|> 32 e ; : @1= @ 1 = ; : \ 'p 1 t ; 
+ : r 0 swap ! ; : c 1 swap ! ; : /t '< e '/ e el '> e ; : ---- 'r 'h 2 t ; : BR 'r 'b 2 t ;
+ : == '1 'h th @1= if 1 /t th r ;; then 1 t th c ; : ** 'b tb @1= if 1 /t tb r ;; then 1 t tb c ;
+ : // 'i ti @1= if 1 /t ti r ;; then 1 t ti c ; : __ 'u tu @1= if 1 /t tu r ;; then 1 t tu c ;
+
+----
+Of course it is also possible to use FHTML in a more common Forth like gForth:
+
+ variable ti variable tb variable tu variable th
+ : [ '] parse 2dup ." <a href=?id=" type ." >" type ." </a>" ;
+ : \ ." <p>" cr ;
+ : ---- ." <hr>" ;
+ : // ti @ 1 = if ." </i>" 0 ti ! exit then ." <i>" 1 ti ! ; 
+ : ** tb @ 1 = if ." </b>" 0 tb ! exit then ." <b>" 1 tb ! ;
+ : __ tu @ 1 = if ." </u>" 0 tu ! exit then ." <u>" 1 tu ! ;
+ : == th @ 1 = if ." </h1>" 0 th ! exit then ." <h1>" 1 th ! ;
+
+----
+Finally, I am working on adding a better method of inlining strings in RetroForth; when this are working, the old emit/emit-loop version will be eliminated and we'll have a cleaner design to work with. -- CharlesChilders
+
+----
+Cool, looks complicated too.
+
+----
+Take a look at the [FML] markup code for a much cleaner approach. FHTML is left here for historic value only :-)

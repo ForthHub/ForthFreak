@@ -1,0 +1,6 @@
+\ load names that match complex tokens in the right order.
+
+ T:
+   LIT CREATE Address .( S" ABORT" ." CHAR [CHAR]
+   [ ; ] :NONAME : L:
+ ;T

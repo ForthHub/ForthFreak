@@ -1,0 +1,16 @@
+ThisForth is a macro-oriented Forth based on Standard (ANS) Forth 94-08-16. 
+
+==== Features ====
+* Integrated macro processing 
+* Input/output re-assignment 
+* Portable implementation 
+* Easy extensibility 
+* Pinhole optimization 
+
+* http://sal.kachinatech.com/F/1/THISFORTH.html
+* Source: ftp://ftp.taygeta.com/pub/Forth/Compilers/native/unix/this4th.tar.gz
+* http://www.taygeta.com/forthcomp.html
+
+ThisForth is from WilBaden , to be seen in JeffFox 's Cinema.
+
+ForthSystems

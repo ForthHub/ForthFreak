@@ -1,0 +1,13 @@
+pbForth is the Forth for LEGO mindstorm. The system requirements for pbForth are absolutely minimal - that's because the Forth language was designed back in the 60's and 70's. In those early days of computing, a 16MHz processor with 32K of RAM was unheard of, and now you can hold one in your hand. Once the firmware is loaded into the brick, all you need to be able to do is send plain text to the tower over the serial port.
+
+One of the main reasons that you might consider using pbForth is that the common script language is independent of the host it is running on. That means that you can use a Windows PC, Linux, or even a Mac to control the RCX. I have written a GUI that you can use to control the RCX. It is written in TclTk, which is a language that can run on all three platforms.
+
+Some of the newer laptop and desktop machines no longer have serial ports - they use USB ports instead. In fact, Version 2.0 of the Mindstorms kit comes with a USB tower. I'm happy to report that the latest version of pbForth supports the USB tower under Windows. Support for Mac OS9/OSX and Linux will come if I get requests for it.
+
+(pbForth is a StandAloneForth that runs on the "RCX" brick. "At the core of the RCX is a Hitachi H8 microcontroller with 32K of external RAM.")
+
+http://www.hempeldesigngroup.com/lego/pbForth/download.html
+
+ftp://fprinz.org/programmieren/LEGO%20RCX/pbForth/
+
+ForthSystem

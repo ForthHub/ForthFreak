@@ -1,0 +1,3 @@
+The plan is to write a set of Forth words to implement such libraries as the ACM libraries, BLAS, LINPACK, etc. The libraries will be publicly available in source form (in some sort of "public" release: public domain, copyleft, copyrighted but freely distributable, etc).
+
+http://www.taygeta.com/fsl/scilib.html

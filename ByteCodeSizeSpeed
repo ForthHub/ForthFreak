@@ -1,0 +1,11 @@
+Byte code is compressed compared to text. It is not compressed as much as a good compression algorithm will do, but it is faster to compile byte code than it is to decompress and compile text, and the resources needed for a byte code system are much less than for a compressor/decompressor. When memory is more constrained than time it is easy to use a token interpreter that will run byte code without ever compiling it into bulky machine code.
+
+On the other hand, you may require a compressor for other reasons, which would mean those resources come for free except for the time.
+
+Byte code is obfuscated compared to text. Compressed code may be encrypted but the intended recipient must decrypt it to compile it. Byte code is obfuscated for everyone. This is a disadvantage for debugging. It is possible to expand byte code into a form of source code that has no comments, no stack diagrams, and only a few routine names. Quite likely someone who reverse-engineered this code would wind up with something that was much better written than the original, and thoroughly debugged. It would be possible to add comments, names, and stack diagrams to byte code at considerable cost in size.
+
+Byte code is vastly more portable than machine code, and usually more compact.
+
+Forth byte code is an intermediate between source code and object code. Particularly for resource-constrained systems, it offers compactness, portability and speed of compilation without costing much memory or time
+
+When the biggest cost in time or money is transmission over a network, byte code is the best whenever better compression isn't available.  But that advantage shows up only when you transmit code.  When space is constrained, bytecode lets you store code in a form that's often more compressed than machine code, without requiring a complex or slow decompresser.

@@ -1,0 +1,12 @@
+comment of admin:
+the server which hosts this wiki can execute CGI, also as Forth source, loaded into a Forth interpreter (gforth, for example, is installed, and even runs a bit of Forth source as CGI. Here is [http://fwiki.logilan.com an example of Forth source, executed by gforth, upon opening this link]. The Forth source can be opened and viewed from the displayed page, or by [http://fwiki.logilan.com/cgi/fwiki.forth following this link]).
+
+
+Provided that system as suggested above is meant to be implemented as Forth CGI, there's nothing to keep us from doing it. But I am a bit reluctant to grant write privileges of these CGI sources to world.
+
+More thoughts may be needed towards integrating public sources with - probably local - execution environmen; not many programmers may want to use such a system if considerable efforts to synchronize local with remote sources are required
+
+----
+Agreed. My thought is to have source on the host, and execute tests etc on each user's system. It would be good to put in some sort of claim about which Forths a given source file is certified for, but that's a detail that might go into a lower-level spec.
+
+It should be possible to sandbox a Forth so it can't do anything too disastrous, but I wouldn't want to bet the host on it.

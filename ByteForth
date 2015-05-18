@@ -1,0 +1,75 @@
+ByteForth is an 8 bit Forth for the Atmel AVR and 8032-series of processors and is based on ANSI-Forth, that is as far as 8 bits may be standard.
+
+* The 8051 version 1.70 supports the 89C1051 and 89C2051, the 8051 2.00 beta-version may be used at more than 16 different chips as the AT89C4051, 89S51 and 89S52, etc. The manual and programmer of this beta-version are not yet finished.
+  
+* The AVR version supports dozens of different AVR chips such as the ATtiny2313, ATtiny85 and the ATmega168.
+
+* Download: http://www.forth.hccnet.nl/downloads/pcr.zip
+
+http://www.forth.hccnet.nl/plaatjes/avrstamp4.jpg
+
+These processors, of which the most are fabricated by ATMEL, have a FlashEPROM instead of EPROM built in; you can erase these in 10 milliseconds.
+ByteForth is an optimising macrocompiler which generates royalty-free stand-alone applications. The compiler supports flexible use of RAM and ROM memory and contains a built-in flash programmer.
+The ByteForth compiler is a standalone application running under CHForth on a PC!
+
+== What does ByteForth contain? ==
+Most Forth primitives, all sorts of variables with 'TO' concept, powerful support of built-in registers (SFR, bit-SFR and bit-variables) and all other hardware, readable decompiler, AVR- or 8051 assembler, many library files, tested example files and  many utilities of which one is an online help function.
+
+[http://www.forth.hccnet.nl/downloads/avrb207.pdf AVRF 2.07 handbook (PDF)]
+
+For code testing there is a built-in software simulator complete with a tracer that supports breakpoints. The 'In System Programmer' (ISP) is connected to the parallel port. An external AT89C2051 flash programmer may be connected to the serial port.
+
+http://www.forth.hccnet.nl/plaatjes/dongle3.jpg In System Programmer
+
+
+== About AVR ByteForth version 2.08 ==
+=== A little history ===
+
+There were several in between versions starting with:
+version 0.13, 0.20, 0.21, 0.31, etc. We are now at version 2.08. AVR ByteForth for the IBM PC/AT is an inclusive simulator. All opcodes do work. Please direct any error found to me. 
+
+http://www.forth.hccnet.nl/plaatjes/avrstamp2.jpg
+
+In version 2.00 the word LEAVE is debugged, the special case optimizer for LSHIFT and RSHIFT are debugged. An error is removed from the special case optimizer of 2VARIABLES . For SFR's there are prefixes added for PUSH and POP . Debugger support for KEY, EMIT, TYPE, CR, FORGET and EXECUTE are added. An array of CONSTANTS, may also be used while assembling. I did add hi-level interrupt support with the words PUSHALL POPALL and ;INT  The macro's 0= = and <> where rewritten for some extra speed.
+
+An active reset is added to the ISP-programmer, the EL-cheapo is
+also usable as programming interface. Strange stack bug removed 
+from a piece of machine code in the simulator, it was discovered
+using VARIABLES in the simulator.
+
+The ISP-programmer is rewritten so that 90S8535, ATmega's, 90S1200 and ATtiny26 all will be handled correct. An error in TARGET.FRT is removed the word MAP is changed to handle AVR's without RAM correct.
+
+The word NEEDS is corrected and the test at startup for a dongle is improved and an 'IObit TO Flag' optimizer was added. Finally support for the ATtiny13 is added (The ISP programmer in version 2.00 does destroy the ATtiny13 so do not use it).
+
+http://www.forth.hccnet.nl/plaatjes/b4opstart2.jpg
+
+== AVRF version 2.08 updates ==
+There was a stackbug found in the ATtiny13 and ATtiny26  programming routine the ISP-programmer should be ok now. A fresh ATtiny13 did arive and this is checked and works fine now.
+
+Four new chips have been added, the ATtiny2313 an updated version of the AT90S2313, the ATmega165, ATmega48, ATmega88 and ATmega168 
+sucsessors of the AT90S4433 and ATmega8. The have 4 kB, 8kB or 16 kB Flash memory. The voltage range is from 1.8 V to 5.5 V, the current consumption will be .3 mA at 1.8 V and a clock of 1 MHz. Finally some small but nasty bugs have been removed from the ISP programmer.
+
+* TARGET.FRT is adapted and improved.
+* System flags for AVR-type dependant behaviour where rewritten      and adjusted to the different AVR opcode sets.
+* Illegal opcode control in the assembler is completely rewritten with help of the previous mentioned AVR system flags.
+* 80386 assembler is now neatly removed after use, this saves about 13 kByte memory space.
+* SFR is adjusted so it can be used for extended-SFR's, with a special adjustment for the ATmega64 which has an difference in the memory order of port-F. I/O-port control for SETDIR and FROM prefix is completely rewritten.
+* CONSTANT has almost always the correct label for decompiling of source code.
+* SEE "ccc" decompiles all standard datastructures.
+* IDLE SLEEP and POWERSAVE where removed from the macro wordlist. The existing version did not support these modes on most modern AVR chips. The new versions are added to the compiler and do support all AVR's.
+* I did update the English language version to 2.08!
+
+== AVRF version 2.09g preview ==
+Version 2.09 will include the ATtiny25, etc. the ATmega406 and newest members the ATmega164, ATtiny261, 461 and 861. Also bootloader support and 32-bit numbers, variable and arithmetic are added. Ask for a beta version if you like to try ByteForth in it's newest incarnation.
+
+== The hardware for AVRF ==
+AVR ByteForth on the PC uses the Kanda STK200(+) board as a flash-programmer and test/experimenting board, it must be connected to the printer port. At this moment we also have our own interface, together with several small cpu-boards. There are boards for the AT90S8515 or ATmega8515 in PLCC housing and the AT90S2313, AT90S4433, ATmega8, ATmega48, ATmega88, ATmega168 and ATtiny26 in DIP housing. We also have boards for the ATmega8, ATmega16 and ATmega32 in TQFP housing.
+
+http://www.forth.hccnet.nl/plaatjes/fggprod.jpg
+
+Kind regards, Willem Ouwerkerk.
+Chairman of the Dutch FIG-chapter.
+
+[http://www.forth.hccnet.nl/pr-bytef.html Go to the Byteforth pages]
+
+ForthSystems

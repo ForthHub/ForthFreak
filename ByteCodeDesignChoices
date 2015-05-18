@@ -1,0 +1,43 @@
+* How do we represent literals?
+
+They could have a lit token followed by a counted string. Or followed by a blank-delimited string. Or a binary number, but what size?  Declare ahead of time that the code will only be for 32-bit systems or whatever?
+
+We should provide the counted string and blank-delimited strings both, and let the disigner choose which to use when he designs his own byte-code system.  Maybe give a sample of a binary representation too.
+
+* How do we represent strings?
+
+They could be char-delimited strings, or counted strings etc.  
+
+We should provide both char-delimited strings and counted strings and let the designer choose which to use.  Remember not to use MOVE in the decompiler because some systems let endian matters get in the way.  abcd could be stored badc or dcba .  Both tokenizer and token-compiler must pick up the bytes one at a time.
+
+* Constants. These are unnecessary, but they might save space.
+
+If you feel cramped for tokens, represent each constant as a literal each time it gets used.
+
+If a single constant gets used enough to justify using a token, make a word that returns a literal. Slow but compact.
+
+If you have a lot of constants that are worth becoming tokens, make them two-byte tokens. One token that says it's a constant, followed by a number that says which one. You can then actually define them as constants on the target. A second token is needed to define token constants. Or you could define them all in a block.
+
+* Variables. A variable returns a fixed address, supplied by the target. That makes variables special. 
+
+If you don't feel crowded for tokens you can have one token to define variables, and then each variable gets a token. 
+
+If you have a lot of variables you can make them two-byte tokens. One token to say it's a variable and a number to say which one. You can have a token to create variables, or define them in a block.
+
+Created data structures are the same way, the base address can be treated just like a variable, and then more space allotted. 
+
+* How does the tokenizer or the token-compiler know when to stop?
+
+It might be run as a filter, converting whatever comes through.  Or it might be run in batches.  If it stops it could stop in response to a stop-token (or end-of-file) or it could know ahead of time how much to do.
+
+It seems perverse to devote a whole token to something that will only be done once.  Usually a tokenizer knows how much there is to do ahead of time.  And it can tell the token-compiler how much to expect.  So that should be how to do it.  Provide a count at the beginning, and if the token-compiler is going to run until its task is put to sleep, then it can ignore the count.  
+
+What if the tokenizer doesn't know how many tokens it will send? If it has to send a header, the header should have some way to say there's no count.  Then perhaps it could send .( DONE) or something similar at the end, something that the token-compiler or the user would use to tell it was done.
+
+* What about parsing words?
+
+This is the only thing that makes it complicated.  That and to a much lesser extent defining words and compiling words.
+
+TokenizedParsingWords
+
+TokenizedWordsThatReturnXT

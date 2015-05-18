@@ -1,0 +1,49 @@
+Here's a fantasy. Imagine two programmers who've been hired for part of a large project, and they're talking.
+
+Dave: This spec is awful. Look at the hoops they want us to jump through.
+
+Jim: Yeah, when they wrote the specs they didn't know then what we know now. But there's nothing we can do about it, just suck it up. That's what you're getting the big bucks for.
+
+----
+
+Now imagine that they do bother to show the problem to their manager, Sam. And imagine that Sam brings in George who has the authority to change the specs. George listens to Dave and also to Bob who's doing a different part of the project.
+
+Dave: So you see, this format makes it very hard to do connect to the hardware level which is organised along completely different lines.
+
+Bob: But the way Dave wants to do it will cause ungodly complications for the user interface. Users sure don't want to think that way.
+
+George: Either way I go might cause big trouble. Going both ways and approving some sort of interface between them might be bad too. I have to get these bozos to stop arguing and get back to work. I better make some decision quick and hope it works out. If it goes bad it's my neck on the line, but that's what I get the big bucks for.
+
+----
+
+Now imagine that it isn't a commercial project at all, but open-source. Bob is spearheading the project, and Dave is working because he's inspired, or for the good of his soul.
+
+Dave: The project is heading for trouble. The way you have these interfaces laid out is never going to work.
+
+Bob: It's my project and that's how it's going to be.
+
+Dave: Bye. I'm starting my own project.
+
+----
+
+Alternatively,
+
+Bob: Nobody else is doing that part. Why don't you do it however you want to, and we'll try to figure out a way to use your stuff later.
+
+Dave: OK. I guess. But somebody's going to have to do a lot of rewriting, or maybe build some kind of rickety glue layer.
+
+----
+
+What tools could help with this? 
+
+First, make it easy to split off new projects and still share code. Even if there are personality disputes or differences of opinion about what works, still they might as well share what can be shared.
+
+Second, make it easy to revise specs. You can't do that if there's a customer who's signed off on one set of specs, except at the lower levels the customer doesn't care about. But all put together the specs say what you're trying to do and the lower level specs are a big part of the documentation that says how you do it. We want to keep them updated. When you want to look at somebody else's code, looking at how he changed the specs for the code will tell you a lot about what he's doing. But we can't have everybody revising the official specs. We each need our own specs to modify. 
+
+Third, when the project branches, it's good to have tools to make it easier to heal the branch. When it's everybody trying to use everybody else's code, that's potentially faster. Whoever heals a branch the quickest is likely to get the most people using his version, provided it's adequate. You don't need somebody to decide how it's done ahead of time, it will happen when somebody sees how. And if not, people working on the different projects get to watch each other's progress and share what they can share.
+
+So what's particularly needed is tools to compare specs and source code and test suites. What are the differences and why are they important? That mostly has to be done by hand, how can the tasks be made easier?
+
+I believe that for open source projects it's valuable to be able to make branches easily (when it appears necessary) and very valuable to heal branches easily.
+
+What other unmet needs have you noticed?

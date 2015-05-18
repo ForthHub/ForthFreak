@@ -1,0 +1,205 @@
+Programming guidelines when you start doing forth programming:
+* try to keep your words to one line, two lines max
+* try not to pass more than 3 items on the stack to a word, preferably only 2
+* try not to juggle more than 3 items on the stack within a word if you can
+
+It'll force you to factor the code up better. A lot of newcomers to forth can get disillusioned because of the stack juggling.. They end up thinking the language is just good for nothing but the stack juggling. But following those rules kinda gets me away from the stack juggling
+Therefore:
+* write your code to minimize stack reordering.
+Try to avoid unnecessary swap, rot, or other operations which touch more than one stack item when touching just one item would suffice. often, unary operations like 1+ 2* 1- 0= invert can be used to replace the need of swapping. 
+
+Consider for example:
+ : count  ( a1 -- a2 c )   dup 1+ swap c@ ;  \ often found implemented like this.
+
+Many Forth implementations execute this version more efficiently:
+ : count  ( a1 -- a2 c )   1+ dup 1- c@  ;
+
+also: http://c2.com/cgi/wiki?ForthReadability
+
+-----
+
+Excerpts from a talk "1x Forth" by Charles Moore: (found at http://c2.com/cgi/wiki?ForthValues)
+
+* One is No Hooks. Don't leave openings in which you are going to insert code at some future date when the problem changes because inevitably the problem will change in a way that you didn't anticipate. Whatever the cost it's wasted. Don't anticipate, solve the problem you've got
+
+* Simplify the problem you've got or rather don't complexify it. I've done it myself, it's fun to do. You have a boring problem and hiding behind it is a much more interesting problem. So you code the more interesting problem and the one you've got is a subset of it and it falls out trivial. But of course you wrote ten times as much code as you needed to solve the problem that you actually had.
+
+* The whole point of Forth was that you didn't write programs in Forth you wrote *vocabularies* in Forth. When you devised an application you wrote a hundred words or so that discussed the application and you used those hundred words to write a one line definition to solve the application. It is not easy to find those hundred words, but they exist, they always exist.
+
+-----
+
+Excerpts from the book "Thinking Forth" by Leo Brodie
+
+* Good, Fast, Cheap. Pick any two! (p.37)
+
+* You don't understand a problem until you can simplify it (p.49)
+
+* Generality usually involves complexity. Don't generalize your solution any more than will be required; instead, keep it changeable. (p.53)
+
+* Exploit the "don't cares". (p.55)
+
+* To simplify, quantitize. (p.55)
+
+* To simplify, keep the user out of trouble. (p.56)
+
+* Within each component, implement only the commands needed for the current iteration. (But don't preclude future additions.) (p.64)
+
+* Both data structures and the commands involved in the communication of data between modules should be localized in an interface component. (p.75)
+
+* Express in objective units any data to be shared by components. (p.76)
+
+* In deciding where to start designing, look for: (p.79)
+** Areas where the most creativity is required (the areas where change is most likely).
+** Areas that give the most satisfying feedback (get the juices flowing).
+** Areas in which the approach decided upon will greatly affect other areas, or which will determine whether the stated problem can be solved at all.
+** Things you should show the customer, for mutual understanding.
+** Things you can show the investors, if necessary for the rent.
+
+* Don't bury your tools. (p.82)
+
+* In designing a component the goal is to create a lexicon that will make your later code readable and easy to maintain. (p.97)
+
+* Let numbers precede names. (p.97)
+
+* Let text follow names. (p.98)
+
+* Let definitions consume their arguments. (p.99)
+
+* Use zero-relative numbering. (p.100)
+
+* Let addresses precede counts. (p.100)
+
+* Let sources precede destinations. (p.101)
+
+* Avoid expectations (in the input stream). (p.101)
+
+* Let commands perform themselves. (p.102)
+
+* Don't write your own interpreter/compiler when you can use Forth's. (p.102)
+
+* In choosing which approach to apply towards solving a problem, give preference in the following order: (p.107)
+** Calculation (except when speed counts)
+** Data Structures
+** Logic
+
+* In devising an algorithm, consider exceptions last. In writing code, handle exceptions first. (p.111)
+
+* If you have trouble thinking about a conceptual model, visualize it - or draw it - as a mechanical device. (p.114)
+
+* Structure your application listing like a book: hierarchically. (p121)
+
+* The most accurate, least expensive documentation is self-documenting code. (p.143)
+
+* Choose names that work in phrases. (p.146)
+
+* Don't bundle numbers into names. (p.148)
+
+* Use prefixes and suffixes to differentiate between like words rather than cram details of meaning into the name itself. (p.150)
+
+* For simplicity, try to express the difference between similar fragments as a numeric difference (values or addreses), rather than a procedural difference. (p.155)
+
+* Don't pass flags downwards. (p.156)
+
+* If a series of definitions contains identical functions, with variation only in data, use a defining word. (p.158)
+
+* Keep definitions short (p.159)
+
+* Factor at the point where a comment seems necessary. (p.160)
+
+* Limit repitition of code. (p.161)
+
+* Be sure you can name what you factor. (p.162)
+
+* Factor definitions to hide details that may change. (p.163)
+
+* Factor calculation algorithms out of definitions that display results. (p.163)
+
+* If a repeated code fragment is likely to change in some cases but not others, factor out only those instances that might change. If the fragment is likely to change in more than one way, factor it into more than one definition. (p.165)
+
+* Simplify the command interface by reducing the number of commands. (p.165)
+
+* If a constant's value depends on the value of an earlier constant, use Forth to calculate the value of the second. (p.170)
+
+* Work on only one aspect of a problem at a time (p.172)
+
+* Don't change too much at once. (p.173)
+
+* Don't try to anticipate ways to factor too early. (p.173)
+
+* Today make it work. Tomorrow, optimize it. (p.174)
+
+* Anticipate things-that-may-change by organizing information, not by adding complexity. Add complexity only as necessary to make the current iteration work. (p.175)
+
+* When determining which arguments to handle via data structures rather than via the stack, choose the arguments that are more permanent or that represent a current state. (p.183)
+
+* Make sure that stack effects balance out under all possible control flows. (p.183)
+
+* When doing two things with the same number, perform the function that will go underneath first. (p.184)
+
+* Where possible keep the number of return arguments the same in all possible cases. (p.185)
+
+* Return Stack: (p.185)
+** Keep the return stack operators symmetrical
+** Keep return stackl operators symmetrical under all control flow conditions.
+** In factoring definitions, watch-out that one part doesn't contain one return stack operator, and the other its counterpart.
+
+* Unless it involves cluttering up the stack to the point of unreadability, try to pass arguments via the stack rather than pulling them out of variables. (p.187)
+
+* It's legal to use a component for an additional purpose besides its intended one, provided: (p.192)
+** All uses of the component are mutually exclusive.
+** Each interrupting use of the component restores the component to its previous state when finished.
+** Otherwise you need an additional component or level of complexity.
+
+* When the application requires handling a group of conditions simultaneously, use a state table, not seperate variables. (p.194)
+
+* A constant's value should never be changed once the application is compiled. (p.195)
+
+* Give each function its own definition. (p.208)
+
+* Use dumb words. [i.e. not state-smart] (p.211)
+
+* Words should not depend on 'state' if a programmer might ever want to invoke them from within a higher-level definition and expect them to behave as they do interpretively. (p.212)
+
+* Don't test for something that has already been excluded. (p.212)
+
+* Combine booleans of similar weight. (p.213)
+
+* When multiple conditions have dissimilar weights (in likelihood or calculation time) nest conditionals with the term that is least likely to be true or easiest to calculate on the outside. (p.214)
+
+* The most elegant code is that which most closely matches the problem. Choose the control structure that most closely matches the control-flow problem. (p.214)
+
+* Favor counts over terminators. (p.216)
+
+* Don't decide, calculate. (p.217)
+
+* Use booleans as hybrid values. (p.217)
+
+* To effect a decision with a numeric outcome, use AND. (p.218)
+
+* Use MIN and MAX for clipping. (p.220)
+
+* Use Decision Tables. (p.220)
+
+* One change at the bottom can save ten decisions at the top. (p.225)
+
+* Don't test for something that can't possibly happen. (p.226)
+
+* Reexamine the algorithm. (p.226)
+
+* Avoid the need for special handling. (p.227)
+
+* Use the properties of the component. (p.227)
+
+* Use the structured exit. (p.228)
+
+* Take the action when you know you need to, not later. (p.231)
+
+* Don't put off till run time what you can compile today. (p.231)
+
+* Dup a flag, don't recreate it. (p.231)
+
+* Don't set a flag, set the data. (p.231)
+
+* Don't set a flag, set the function. (Vector). (p.232)
+
+* Try to avoid altogether saving flags in memory. (p.234)

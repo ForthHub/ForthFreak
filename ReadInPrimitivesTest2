@@ -1,0 +1,22 @@
+ S" GETCOMPATIBLE.F"   INCLUDED
+ S" GETBYTECODE.F"     INCLUDED
+ S" GETTOKENS.F"       INCLUDED
+ S" GETSIMPLETOKENS.F" INCLUDED
+ S" SIMPLEWORDS.F"     INCLUDED
+
+ : T:
+    CR .( check all the primitives on the list  all true flags -> ) CR
+    0 BEGIN
+      REFILL? WHILE
+        DUP BL WORD FIND DUP WHILE        \ # # xt 1|-1
+          OVER ['] ;T - WHILE
+            1- 2/ 0= ROT ~IMMEDIATE? 0= = .  \ # xt
+            OVER TOKEN>XT @ = . 1+
+        REPEAT
+      THEN 2DROP DROP
+    THEN DROP ;
+
+ S" SIMPLEWORDS.F"     INCLUDED
+
+ \ Depends on finding the same xt in interpret state and compile state, and 
+ \ on the FIND flag being only -1|0|1

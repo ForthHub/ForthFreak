@@ -1,0 +1,8 @@
+tForth is a Forth with parallel facilities. It generates code for the INMOS range of transputers.
+
+From 1990 to 1994, tForth was the main project of the DFW, the Dutch Forth Workshop. tForth implements all words of the current ANS-Forth standard (all words). Version 2.0 is made available for non-commercial use at the side below.
+(In the future probably GPL.)
+
+http://home.hccnet.nl/a.w.m.van.der.horst/tforth.html
+
+ForthSystems

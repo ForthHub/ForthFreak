@@ -1,0 +1,11 @@
+* runs on a 8 pin Cypress PSoC microcontroller
+* interactive -- with only a dumb serial terminal connected to it, I can type in new words/programs and run them immediately, without recompiling and re-flashing the entire program.
+* useful as a learning tool -- simple, easy-to-understand, easy-to-modify code
+* a reasonable license so people can use it for useful things
+* at least somewhat "standard", so normal-ish Forth code (/Thinking Forth/) runs without change.
+* ...
+* experiment with collaborative development. Rather than DavidCary doing all the maintenance on the latest version, develop it wiki-style.
+* ...
+
+I think there are only two 8-pin M8C microcontrollers currently available: both have 256 bytes RAM, CY8C24123A has 4 KBytes Flash, CY8C27143 has 16 KBytes Flash.
+The M8C has a Harvard architecture -- its "RAM area" is accessed using completely different opcodes than its "Flash program area" (in particular, it's impossible to run programs that are in RAM).

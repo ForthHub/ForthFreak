@@ -1,0 +1,192 @@
+Several ports of the RetroEditor have been written. You can review them here, and help make improvements. If you port it to another Forth, please add the source to this page so that all can enjoy it.
+
+----
+==== RetroForth 
+
+ tib 1024 + constant <buffer>
+ 128 variable: <#blocks>
+ <buffer>  variable: b0
+ variable  current-block
+
+ : there b0 @ ;
+ : #-of-blocks <#blocks> @ ;
+
+ : new there #-of-blocks 512 * 32 fill 0 current-block ! ; new
+ : \f there #-of-blocks 512 * eval ; 
+
+ : (block) @current-block : block 512 * there + ;
+ : (line) 64 * (block) + ; 
+ 
+ : p 1 current-block -! ;
+ : n 1 current-block +! ;
+ : d (line) 64 32 fill ;
+ : x (block) 512 32 fill ;
+ : eb (block) 512 eval ;
+ : el (line) 64 eval ;
+ : e 8 for 8 r - el next ;
+ : s !current-block ;
+ : i 0 swap : ia (line) + lnparse rot swap move ;
+ : \ 1 s e ;
+ 
+ loc:
+  : .block ." Block: " @current-block . ." of " #-of-blocks 1- . ; 
+  : status .block ."  Stack: " .s cr ;
+  : row dup 64 type 64 + cr ;
+  : .line -8 + negate . ;
+  : rows 8 for r .line row next ;
+  : x--- 4 for ." +---:---+---:---" next ;
+  : --- space space x--- cr ;
+  here ] --- @current-block block rows drop --- status ;
+ ;loc is v
+ 
+ : edit [[ clear v ]] { is ui } ;
+
+This version makes use of several !RetroForth-specific features and will require some modifications to work on other Forths. "edit" in particular is tied closely to !RetroForth.
+
+----
+==== JS-Forth
+
+  here 50000 + constant offset
+  variable blk
+  : block 512 * offset + ;
+  : (block) blk @ block ;
+  : (line) 64 * (block) + ;
+  : s blk ! ;
+  : ia (line) + >r 0 parse r> swap move ;
+  : i  0 swap ia ;
+  : d (line) 64 bl fill ;
+  : x (block) 512 bl fill ;
+  : p -1 blk +! ;
+  : n  1 blk +! ;
+  : v (block) 8 for 64 2dup type + cr next drop cr cr ;
+
+The !RetroEditor is also included with JS-Forth. To load it, do the following:
+
+  8 load
+  11 load
+  v
+
+Please note that the version included with JS-Forth has been modified to operate on traditional 16x64 blocks, rather than an 8x64 block.
+
+----
+==== gForth
+
+ here 50000 + constant offset
+ variable blk
+ : block 512 * offset + ;
+ : (block) blk @ block ;
+ : (line) 64 * (block) + ;
+
+ : row dup 64 type 64 + cr ;
+ : .rows 7 for r@ 8 - negate . row next ; 
+ : .block ." Block: " blk @ . ;
+ : x--- ." +---:---+---:---" ; 
+ : --- space space x--- x--- x--- x--- cr ;
+ : vb --- blk @ block .rows drop --- ;
+ : .stack ."  Stack: " .s ;
+ : status .block .stack ;
+ : v cr vb status ;
+
+ : s blk ! v ;
+ : ia (line) + >r 10 parse r> swap move v ; 
+ : i  0 swap ia v ;
+ : d (line) 64 bl fill v ;
+ : x (block) 512 bl fill v ;
+ : p -1 blk +! v ;
+ : n  1 blk +! v ;
+
+This provides all of the visual aids that !RetroForth's implementation of the !RetroEditor does. At some point it'd be nice to make this fully ANS compliant to ensure that it'll work on most Forths.
+
+----
+==== isForth
+ \ Variables and buffer
+ 128 512 * allocate drop constant <buffer>
+ create   <#blocks>  128 ,
+ create   b0         <buffer> ,
+ variable current-block 
+ 
+ \ Support code
+ : there b0 @ ;
+ : #-of-blocks <#blocks> @ ;
+ : new there #-of-blocks 512 * 32 fill 0 current-block ! ; new
+ : block 512 * there + ;
+ : (block) current-block @ block ;
+ : (line) 64 * (block) + ;
+ 
+ \ Code to display a block nicely
+ : --- space space 64 0 do '-' emit loop cr ;
+ : .info ." Block " current-block @ . ." of " <#blocks> @ 1- . cr ;
+ : .row . 64 2dup type + cr ;
+ : v cr --- (block) 8 0 do i .row loop drop --- .info ; 
+ 
+ \ Navigation through the blocks
+ : p -1 current-block +! ;
+ : n  1 current-block +! ;
+ : s current-block ! ; 
+ 
+ \ Editing inside a block
+ : d (line) 64 32 fill ;
+ : x (block) 512 32 fill ;
+ : ia (line) + 10 parse rot swap cmove ;
+ : i 0 swap ia ;
+ 
+ \ Some hints to get you started
+ \
+ \ # s        Select a new block
+ \   p        Previous block
+ \   n        Next block
+ \ # i ..     Insert .. into line
+ \ # #2 ia .. Insert .. into line (#2) starting at column (#)
+ \   x        Erase the current block
+ \ # d        Erase the specified line
+ \   v        Display the current block
+
+----
+==== HelForth:
+
+ | Adoption of RetroForth Block Editor  (http://www.retroforth.org)
+ | * Released into the public domain * 
+ | Requires: mallot FileIO
+ 
+ context editor~
+ enter editor~
+   512 10 * constant buffersize
+   variable (buffer)
+   doer buffer
+   variable blk
+   : block blk @ 512 * buffer + ;
+   : header buffer drop ." Block: " blk @ . cr ;
+   : across 4 spaces 64 for '- emit loop cr ;
+   : row dup 64 type 64 + ;
+   : line '| emit row '| emit cr ;
+   : lines 8 for 8 r - dup . line loop ;
+   : s blk ! [                                        | Select a new block
+   : v page header across block lines across drop ;
+   : i 64 * block + >r 10 parse r> swap cmove v ;     | Update a line
+   : d 64 * block + 64 32 fill v ;                    | Delete a line
+   : x block 512 32 fill v ;                         | Delete the current block 
+   : e block 512 eval ;                              | Run the  current block
+ 
+ file Blockfile
+ doer blockfile make blockfile Blockfile " blocks" ;
+ variable (rbfsem)
+ : rbf (rbfsem) @ if ;; then
+   (rbfsem) on blockfile file~ open/r
+   buffer buffersize file~ read file~ close
+   if drop ." blocks loaded. " else ." blocks *not* loaded! " then (rbfsem) off ;
+ : wbf buffer blockfile file~ creat
+   buffersize file~ write file~ close
+   file~ result @ if ." blocks *not* written! " ;; then ." blocks written. " ;
+
+   make buffer
+     buffersize mallot (buffer) !
+     make buffer (buffer) @ ;and
+     buffer dup buffersize 32 fill rbf ;
+ 
+ ;enter
+ 
+ with editor~
+
+----
+==== Notes
+The word "v" is used to display a block. In the above examples, it's pretty minimal in most ports. In the !RetroForth version it also provides line numbers and column markers to aid in editing.

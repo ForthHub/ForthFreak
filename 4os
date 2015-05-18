@@ -1,0 +1,7 @@
+4os was a proprietary OS intended to run on a MISC-based set-top box. Developed by iTVC, it was claimed to be the first operating system written completely in Forth. A brief description follows:
+
+[=A complete Internet system (OS, live Forth system, network stack, flash file system, GIF and JPEG decoder, fonts, network support applications, email and browser customer applications) requires less than 1/2 megabyte of program memory. With boot compression (comes standard, takes about 1 second) that system fits in a 128Kbyte ROM.]
+
+Sadly money and other business aspects conspired and it never got released. A mirrored copy of the iTVC web pages related to 4os can be found at http://web.archive.org/web/19991022233047/www.itvc.com/Technology/4os.htm
+
+ForthSystems

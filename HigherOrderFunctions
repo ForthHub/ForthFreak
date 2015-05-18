@@ -1,0 +1,31 @@
+ \ : bounds ( addr len -- addr+len addr ) over + swap ;
+ \   from Wil Baden's toolbelt
+ \ sometimes "bounds" is called "range"
+
+ : foreach ( 'f addr count -- )
+   cells bounds do
+     I @ over execute
+   cell +loop drop ;
+
+ : .cells ( addr n -- )
+   ['] . rot rot foreach ;
+
+ create data 1 , 2 , 3 , 4 ,
+ data 4 .cells      \ 1 2 3 4
+
+ \ where : f ( n -- m )
+ : map ( 'f addr count -- )
+   cells bounds do
+     I @ over execute I !
+   cell +loop drop ;
+
+ ' negate data 4 map
+ data 4 .cells    \ -1 -2 -3 -4
+
+ \ where : f ( st n -- st' )
+ : zip ( st 'f addr count -- st' )
+   cells bounds do
+     I @ swap dup >r execute r>
+   cell +loop drop ;
+
+ 0  ' + data 4 zip  .    \ -10

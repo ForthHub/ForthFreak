@@ -1,0 +1,3 @@
+When a word doesn't parse then the tokenizer simply executes it, and it lays down a token.  Later the token compiler will note whether it is immediate on the target, and if not it will execute or compile it.
+
+When a parsing word is not immediate then it must be state-smart on the host.  When compiling it only lays down a token.  When interpreting it lays down a token and also it parses.  So the tokenizer has to track state.  : :NONAME and ] set state.  ] and ; reset state.  : :NONAME CREATE VARIABLE CONSTANT are all state-smart, they parse new names only when they are interpreted, not while already compiling.

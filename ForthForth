@@ -1,0 +1,6 @@
+ForthForth is a Forth interpreter, written in Forth. As such it doesn't really serve much practical purposes, and can be considered an experiment. Interesting aspect is that it keeps both virtual machine state as well as virtual machine data stack on the host systems data stack, and is build completely on its own primitives, rather than parasitizing on the host systems hi-level words.
+
+[http://wiki.forthfreak.net/forthforth/ff18.f ForthForth source code]
+ 
+----
+ForthSystems

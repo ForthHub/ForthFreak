@@ -1,0 +1,67 @@
+back to ForthSystems
+
+Stand-alone Forths are designed to be used as an operating system. They are generally smaller, and faster than general-purpose operating systems, though some are built around traditional kernels like Linux.
+[http://www.forth.org/svfig/osf.html Read more about Forth-OS]
+
+* Freely redistributable
+** Written in Assembly (using an assembler to translate to code)
+*** 8051
+**** ByteForth for 8051 and AVR
+*** AVR
+**** [amforth] for AVR devices. [avrforth] influenced but close to ANS94, written n ASM
+**** ByteForth for 8051 and AVR
+****  FlashForth for AVR devices
+**** [PFAVR], a [pForth] port to the AVR architecture.
+*** x86
+**** [4IM] (Also for DOS)
+**** EnthFlux
+**** RetroForth (Also for DOS, Linux, Windows)
+**** [JKForth] (16 bit)
+*** PIC
+**** FlashForth for the 8-bit PIC18F and 16-bit PIC24, dsPIC30 and dsPIC33 series
+**** [Purrr] is implemented for PIC18  family, for the [https://devel.goto10.org/packets/wiki/CATkit CATkit board]
+**** Pic18Forth
+**** [http://massmind.org/techref/microchip/language/forths.htm Another list of "PIC Micro Controller FORTH Languages"]
+*** TI MSP430
+**** [http://mecrisp.sourceforge.net/ Mecrisp]
+**** [http://www.forth-ev.de/wiki/doku.php/en:projects:4e4th:start 4E4th], a small Forth running on TI's LaunchPad.
+**** [http://sourceforge.net/projects/v4th/ 430 v4th] by Victor Plichota -- in T.I. MSP430 assembly
+*** PDP-11
+**** [SOL]
+*** Propeller
+**** [http://code.google.com/p/propforth/ PropForth] written in Spin assembler and forth
+*** not categorised
+**** Unnamed StandAloneForth by AlbertHorst, see [ciforth]: a target translated Forth.
+
+** Written in C / C+ASM
+*** [ZOG] ([Ficl] over eCos)
+*** [H3RL] Forth as Linux module
+
+** Written in Forth (MetaCompiler/CrossMetaCompiler, using Forth to translate to code)
+*** [avrforth] for AVR devices, [colorForth] influenced.
+*** 8051+
+**** [8052-ANS-Forth] [http://www.forth.hccnet.nl/pr-ats.htm version 1.12a ] standalone on our ATS-board with 80C535, also available for 8032, 80C320 and 80C552.
+*** x86
+**** [ForthOS] (eForth derivate -- adapted to load from GRUB)
+**** MetaStic (metacompiler) worked as stand-alone on H8 CPUs, but alas only the  MS-DOS version is available, which uses DOS/BIOS functions for file- and terminal i/o, and has some bits of 8086 code in its setup. It reverses the Forth/metacompiler approach: the result of metacompilation can compile its own sources without additional loading, which can be extended to become a full Forth.
+
+** Other/Unknown
+*** [Aha]
+*** BootOS
+
+* Commercial
+** [4os] (No longer available)
+** [CamelForth]  8051, 8086, Z80, 6809, Rabbit2000
+** [JPB] Forth (Assembly)
+
+* CrossForth - a CrossForth is not a stand-alone system, but can be used to compile stand alone code for the given platform, and may be an alternative or complement to the systems listed here.
+
+
+* Unknown
+*** IVOS Forth http://www.pbjtech.com/downloads.html for the NXP LPC2148 ARM, NXP LPC2138 ARM, Analog Devices ADuC7022 ARM, etc.
+*** MF32 "Machine Forth for the ARM processor" by Reuben Thomas http://rrt.sc3d.org/Software/Forth/Machine%20Forth/
+
+----
+FreeBSD also uses a standalone Forth (based on [Ficl]) to load itself.
+----
+"[UmbilicalForth]s" and "Forth cross compilers" (see CrossForth) may require a PC with its operating system to be plugged into the target system while interactively programming. But then the target is unplugged and it runs the Forth program on the target system without any underlying operating system.

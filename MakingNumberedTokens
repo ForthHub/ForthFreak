@@ -1,0 +1,73 @@
+ \ Each token word outputs its token number when it executes.
+ \ It may do other things afterward, too.
+ \ So we do TOKEN: name ; to get a word that only provides its token
+ \ and TOKEN: name further-actions ; for words that do more.
+
+ \ A word that creates another token like : or VARIABLE must have TOKEN: or equivalent
+ \ as one of its further actions.  When it executes it leaves its token to tell
+ \ the token-compiler that the new word is being created, and it also creates
+ \ the new token for itself.
+
+ \ Since defining words only work in interpret state, they must all be state-smart.
+ \ (Except DOES> which only works in compile state.)
+ \ But we'll make our own STATE variable to avoid side effects with the real one.
+ \ When compiling they only leave their tokens, when interpreting they also
+ \ create new tokens.  The tokenizer itself ignores state, it executes everything.
+
+ VARIABLE FAKESTATE
+
+ \ for debugging and for the detokenizer we want to go from tokens to names.
+ \ we save the name fresh as a counted string and have an array that points
+ \ to the names.
+ ( G: array of addresses of names of words that return tokens )
+ CREATE TOKEN-NAMES 256 CELLS ALLOT
+
+ ( G: save token name, counted string address goes into array )
+ ( G: can be removed with no loss except debugging and detokenizer )
+ : SAVE-NAME ( S: "name" n -- n "name" )
+    SAVE-WORD OVER CELLS TOKEN-NAMES + ! ;
+ \ : SAVE-NAME ; IMMEDIATE
+
+ ( G: bump counter and return new value )
+ : NEXT-ITEM ( S: addr -- n )
+    1 OVER +! @ ;
+
+ ( G: make a routine like a CREATE DOES> child )
+ : LIT: ( S: "name" data -- colon-sys )
+    >R : R> POSTPONE LITERAL ;
+
+ ( G: make new child-like word in token wordset )
+ : NEW-ITEM: ( S: data -- colon-sys )
+    TOKEN-WORD LIT: NONTOKEN-WORD ;
+
+ \ LAST-TOKEN tracks the last token that's been assigned.
+ VARIABLE LAST-TOKEN -1 LAST-TOKEN !
+
+ ( G: make new token, action is to output token value, maybe add more code later)
+ : TOKEN: ( S: -- colon-sys ) ( CHILD: -- )
+    LAST-TOKEN NEXT-ITEM
+    SAVE-NAME   \ save name for debugging
+    NEW-ITEM: POSTPONE OUTPUT-CHAR ;
+
+\ Following code is entirely for double tokens.
+
+ ( G: child outputs two bytes, one a constant prefix, the other new. )
+ : DOUBLE-TOKEN: ( S: "name"  n addr -- colon-sys ) ( CHILD: -- )
+    FAKESTATE @ 0= IF
+      >R NEW-ITEM: POSTPONE OUTPUT-CHAR
+      R> NEXT-ITEM POSTPONE LITERAL POSTPONE OUTPUT-CHAR ELSE
+      2DROP
+    THEN ;
+
+ ( G: make token that defines a double token type.  Like making VARIABLE )
+ ( G: defining word lays down its own token and defines child. )
+ : DOUBLE-TOKEN-TYPE: ( S: "name" -- colon-sys ) ( CHILD: "name" -- colon-sys )
+    HERE -1 , >R TOKEN:  LAST-TOKEN NEXT-ITEM POSTPONE LITERAL
+    R> POSTPONE LITERAL POSTPONE DOUBLE-TOKEN: ;
+
+ \ To make a defining word for double-tokens that doesn't have a token itself:
+ ( G: make double token type )
+ : DOUBLE-TOKEN-MAKE: ( S: "name" -- colon-sys ) ( CHILD: "name" -- colon-sys )
+    LAST-TOKEN NEXT-ITEM HERE -1 , >R
+    SAVE-NAME
+    LIT: R> POSTPONE LITERAL POSTPONE DOUBLE-TOKEN: ;

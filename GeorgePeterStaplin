@@ -1,0 +1,7 @@
+Hi,
+
+I'm using Forth primarily for scripting interactive graphics.  
+
+I'm using Ficl to develop a client API for my new window system called NexX.  NexX is primarily written in COOP/C, but I enjoy the dynamic abilities of Forth, and the quick debugging and testing in the client interface.  I've thought recently about rewriting more of the core in Forth.
+
+On this wiki I've shared code using my initials - GPS.  I used Tcl for many years prior to this, so it has influenced my style. It's very nice to find a Forth community wiki.

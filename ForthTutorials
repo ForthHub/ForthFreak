@@ -1,0 +1,27 @@
+* [http://www.xs4all.nl/~thebeez/ForthPrimer/Forth_primer.html Free Forth Primer Project] ANS-Forth tutorial by Hans Bezemer, distributed with several free Forth compilers.
+* [http://www.softsynth.com/pforth/pf_tut.html Forth Tutorial] introduction to the major concepts of Forth by Phil Burk of !SoftSynth.com
+* [http://www.taygeta.com/ansforth/ansforth.html Using ANS Forth -  A report from the trenches]
+* [http://astro.pas.rochester.edu/Forth/forth.html An Introduction to Forth] by J. Kevin !McFadden
+* [http://galileo.phys.virginia.edu/classes/551.jvn.fall01/primer.htm J.V. Noble's A Beginner's Guide to Forth] and [http://www.phys.virginia.edu/classes/551.jvn.fall01/primer.htm alternative url]
+* [http://www.murphywong.net/hello/simple.htm Simple Forth] by Leo Wong
+* [http://www.dec.bournemouth.ac.uk/forth/forth.html Forth - an underview] by Peter Knaggs
+* [http://hem.passagen.se/tiletech/forth.htm Crash Course in Forth] by Edward Patel
+* [http://theforthsource.com/guidec.html Forth Guide]
+* [http://www.angelfire.com/in/zydenbos/WhatisForth.html Introduction to the Forth Programming Language]
+* [http://home.hccnet.nl/anij/ The computer language Forth ] ( [http://home.hccnet.nl/anij/c/c200.html Dutch, ] [http://home.hccnet.nl/anij/ec/ec200.html English, ] [http://home.hccnet.nl/anij/gc/gc200.html German. )]
+* [http://retroforth.net/wiki/ RetroForth Tutorial]
+* [http://www.forth.hccnet.nl/downloads/avrb207.pdf AVR ByteForth handbook with crash course (Dutch only for now).]
+* [http://wiki.laptop.org/go/Forth_Lessons Forth Lessons] by MitchBradley, the author of OpenFirmware (on the One Laptop per Child wiki)
+* [http://colorforthray.info] colorForth quick start guide by [Raystm2] Ray St. Marie
+
+After going through one of these short tutorials, you might want to continue learning with a ForthBooks.
+
+----
+You can [http://forthfreak.net/jsforth.html try out the tutorials right away] with [jsforth], a [Forth] interpreter written in JavaScript. Look in [http://wiki.forthfreak.net/index.cgi?jsforth   the browser compatibility issues table on this page].
+
+----
+I keep wanting to write introductory articles about Forth, but not a whole tutorial.  So I'm going to put bits and pieces here.
+
+--JoshGrams
+
+* ControlFlow

@@ -1,0 +1,51 @@
+ \ for building data records with named fields, i came up with this construct:
+
+
+ variable current_record              \ want to get rid of this one
+
+ : record:   
+        create   ( <recordconstructor> -- )
+           here current_record !   \ tell "field:" where we are
+           cell ,                     \ first field in a record is always size
+                                      \ doubles as offset tracker at compile time
+
+        does>  ( <recordname> -- )
+           create @ dup , allot       \ creating a record just allocates memory for it
+      ;
+            
+
+
+ : field:
+       create  ( fieldsize <fieldname> -- )
+          current_record @ 
+          dup @ , +!        
+       does>   ( a1 -- a2 )                
+          @ + ;                        \ at runtime, adds field offset to address of record on stack. 
+
+          
+ \ ################### example ######################
+ record: moving
+    cell field: x
+    cell field: y
+    cell field: z
+    cell field: bearing
+    cell field: inclination
+    cell field: speed
+    cell field: hsteer     
+    cell field: vsteer     
+    cell field: acceleration
+    cell field: capabilities
+    cell field: model              \ pointer to blob appearance
+    cell field: plan               \ pointer to blob strategy
+
+
+ moving blob         \ creates record "blob", with data fields as defined above
+
+
+ \ accessing fields in record:
+ 
+ blob acceleration @    blob speed +!   
+
+
+ \ first field in a record is its size. 
+   blob @ .     \ outputs size of whole blob record

@@ -1,0 +1,34 @@
+ ( G: array of xts, look them up and execute or compile them. )
+ CREATE TOKEN-LIST 256 CELLS ALLOT
+ VARIABLE LAST-TOKEN  -1 LAST-TOKEN !
+
+ ( G: an array of execution tokens )
+ : TOKEN>XT ( S: n -- xt-addr )
+    CELLS TOKEN-LIST + ;
+
+ ( G: an array of immediate flags )
+ CREATE ~IMMEDIATE 256 CHARS ALLOT
+
+ ( G: find whether token is immediate )
+ : ~IMMEDIATE? ( S: n -- f )
+    CHARS ~IMMEDIATE + C@ ;
+
+ ~IMMEDIATE 256 CHARS 255 FILL
+
+ ( G: initialise token list to all no-ops )
+ MARKER FILLER
+ : FILL-LIST ( S: -- )
+    256 0 DO
+      ['] NOOP I TOKEN>XT !
+    LOOP ;
+ FILL-LIST
+ FILLER
+ \ without MARKER you could do ' NOOP , 256 times.  Longer source code,
+ \ fewer resources needed.
+
+ : NEW-ITEM ( addr -- n )
+    1 OVER +! @ ;
+
+ ( we want to fill our table of tokens. )
+ : NEW-TOKEN ( S: xt -- )
+    LAST-TOKEN NEW-ITEM TOKEN>XT ! ;

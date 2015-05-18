@@ -1,0 +1,18 @@
+HelFORTH is a FORTH development system. It's complete in the sense that you can build a more complex system from it. HelFORTH is designed to be a developer friendly, minimal FORTH system. The features of HelFORTH include:
+
+* very small core (less 10K including the disassembler, otherwise about 5K)
+* integrated symbolic disassembler in default installation
+* code optimizer
+* bytecode compressor
+* ANS compatiblity layer
+
+What next:
+* [http://maschenwerk.de/HelFORTH/ See the HelFORTH homepage] for more information
+* [http://maschenwerk.de/HelFORTH/downloads.html Download HelFORTH]
+* Visit [http://maschenwerk.de/HelFORTH/forum/ the HelFORTH forum] or [http://printly.de/HelFORTH/blog/ the HelFORTH Weblog] or the [http://maschenwerk.de/cgi-bin/hfdocs Wiki]
+----
+HelFORTH is released under a MIT-style license.
+ 
+Contact Information: HelmarWodtke, http://forthfreak.net/helmwo.png
+
+ForthSystems

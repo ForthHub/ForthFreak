@@ -1,0 +1,38 @@
+Good Forth code typically uses the data stack to pass values from one routine to the next. This is efficient, and also it is necessary for re-entrant code. Variables take up data space permanently and also their names take up space in the dictionary. When multiple tasks use the same routine, then any regular variables in that routine might get overwritten at bad times -- requiring local variables, or user variables, or rewriting to use the data stack.
+
+== Variables ==
+
+However, variables can be useful. One traditional explanation says that an item on the stack is like a letter that you send to one person. Data in a variable is like a poster that anybody can read (or write over) if they want to.
+
+A second use for variables comes when the data stack gets just too complicated. Rather than juggling the stack, put some items into variables or data structures. The best candidates are those that change the least, or those that are used out of order the most, 
+
+== Local Variables ==
+
+When do you use local variables instead of global variables? You can't use them when you must pass them outside of the current definition. In that case you must put the data back on the data stack to pass it, and if the called routine has too many of them it can put them into new local variables. If you try to avoid factoring so you can use your locals then your routine may get big and unwieldy. The big advantage of locals is that when your definition is done they vanish as if they never existed. They are completely temporary. Locals are typically stored on the return stack and when the maximum return stack depth is more threatened than the total data memory, this advantage may be lost.
+
+== Return stack ==
+
+You can put a data item or two on the return stack. This has all the limitations of locals and more. It can be useful when you don't have locals available, or you've sworn not to use them.
+
+== Values == 
+
+When do you use VALUE instead of VARIABLE ? A value has the advantage that it looks nicer to fetch its contents. And it's often more efficient when fetching and less efficient when storing. So values may be a good deal for data that is used often but changed seldom. However, you have to remember which items are values and which are variables. It can be tedious to track down missing or extra @ commands. So it's good to have something special about the names of values to remind you which ones they are. I don't know of a general naming convention for that, but you can make your own.
+
+== 2variables ==
+
+Use 2VARIABLE when you have pairs of items that stay together. For example, you might use that for the base address and length of a string. You can get the values with 2@ which will probably be more efficient than a couple of separate fetches and also is a conceptual unit. 
+
+== Data structures ==
+
+Use larger data structures when you have multiple items that fit together, and particularly when you have multiple instances. From one base address you can use offsets to find many items. Of course, you have to put the data into the data structure and then you have to compute the offsets to take it out repeatedly. Sometimes you might prefer to do without that, but only if you can avoid the bother and still keep it simple.
+
+== Allocate ==
+
+When the data stack is inconvenient and locals are too, and you want to recover the memory that your data structure used, you can ALLOCATE space and FREE it later. You can leave the base address on the stack or put it into a value. Presumably your Forth system is doing some sort of memory management. 
+
+== Rubber Band Memory ==
+
+Or if you don't have allocate, you can simply allot your data structure. When you're done you can use -ALLOT  (or -n ALLOT ) to get rid of it, provided you haven't allotted something you want to keep beyond it, and provided you haven't defined a new routine since you allotted it. This approach is called "rubber band memory management". You can stretch the allotted memory and then shrink it again, provided you save room at the beginning of the stretch for the things you want to keep the longest. With some effort it's possible to get all the results of memory management this way with no actual memory management machinery except ALLOT . It's less flexible than ALLOCATE but in constrained systems it can work very well.
+
+
+In conclusion, it's better to simply use the data stack, when that's simple. And it's worth some effort to make it simple to just use the data stack. But there are a variety of alternatives to use when juggling the data stack turns complicated.

@@ -1,0 +1,6 @@
+IndirectThreadedCodeSlideshow12 IndirectThreadedCodeSlideshow14
+
+http://www.forthfreak.net/slides/slide21.jpg
+
+Program counter is set to point into PRIM, and its code will be executed
+again.

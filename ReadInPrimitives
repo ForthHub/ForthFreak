@@ -1,0 +1,16 @@
+ ( G: name to stop T: loader )
+ : ;T ( S: -- )
+    ;
+ ( G: create new tokens for words that already exist )
+ : T: ( S: -- )
+    BEGIN
+      REFILL? WHILE
+ \       >IN @ BL WORD COUNT TYPE SPACE >IN !     \ display name
+        BL WORD DUP COUNT S" ;T" COMPARE WHILE   \ quit for ;T
+          ] FIND POSTPONE [ DUP                  \ find it while compiling
+          0= ABORT" badword" SWAP NEW-TOKEN      \ quit if not found, else make token
+ \         LAST-TOKEN ? CR                        \ display token#
+          0< LAST-TOKEN @ CHARS ~IMMEDIATE + C!  \ save immediate flag
+      REPEAT
+    THEN DROP ;
+    

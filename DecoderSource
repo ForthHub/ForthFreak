@@ -1,0 +1,5 @@
+The decoder is simpler than the tokenizer or token compiler, and depends on only a few commands from them.
+
+ DecoderCode
+ DecoderCodeTest
+ DecoderSpecialWordList

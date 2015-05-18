@@ -1,0 +1,9 @@
+Ideally we could have a tokenizer/token-compiler pair that could handle any Forth code it was given.  Say, anything that used the ANS Forth core wordset.  
+
+But we have two issues that require code to be massaged before it's tokenised.
+
+The first concerns headers. Headers take space in the bytecode source and in the dictionary and they allow name clashes. : and CREATE should default to nameless code, and the name commands need to be specially marked. This doesn't actually prevent you from running Forth code as-is, though. You could simply modify the tokenizer to pass all the names.
+
+The second issue is knottier. Words that parse text and words that do special compilation may be required to do them on the original source code or they may need to do them later, given text on the target. The default approach is to turn them into words on the host that lay down the appropriate bytecodes but not to give them bytecodes themselves, so they don't have any opportunity to operate on the target. To also compile them into bytecode would need them to be specially marked.
+
+There's room for problems with compiling words and with parsing words. 

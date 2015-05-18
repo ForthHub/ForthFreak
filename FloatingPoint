@@ -1,0 +1,468 @@
+= Floating Point Emulation Package =
+==== Rev 11. See bottom for rev history.
+
+*Author* Brad Eckert
+
+*Abstract*
+
+This package provides basic floating point number support and functions
+such as +, -, *, / and SQRT. Mantissas are double-cell unsigned.
+Single-cell exponents contain the mantissa's sign and a signed exponent.
+----
+*Introduction*
+
+The format used is non-standard for simplicity. Exponents are almost a
+whole cell wide, leading to a wider dynamic range than most IEEE formats.
+Range and digits of precision versus cell width are:
+
+| Cell width | Digits of precision | Range = 10-x to 10^x     |
+| 16         | 9                   | x = 4920                 |
+| 32         | 19                  | x = 323196269            |
+| n          | int(n*0.602)        | x = 0.301 * (2^(n-1)-2n) |
+
+Floating point arithmetic is easy to use, but be careful to watch where
+your inaccuracies are coming from. Floating point numbers are
+approximations. You can lose up to half a bit in each operation.
+Differences between large numbers can be trouble spots. For example,
+1000001 - 1000000 is 1. But, the precision of the result with 16-bit cells
+is only three digits. Six of the nine available digits of precision were
+used up representing the big operands.
+
+If you need transcendental functions, they can often be done in integer
+arithmetic since you don't need floating point's run-time auto-scaling. See
+the chapter on cubic interpolation of lookup tables.
+
+Floating point arithmetic uses a dedicated stack. There is no depth
+checking, so underflows and overflows will crash unless error checking is
+added. The stack depth is determined by the following line.
+
+----
+
+ 8 CONSTANT maxdepth                     \ size of floating point stack
+
+ \ Floating point representation uses three cells:
+ \ 0 upper mantissa
+ \ 1 lower mantissa
+ \ 2 exponent: MSB = sign of mantissa, others = signed exponent
+
+ 3 CELLS CONSTANT b/float
+ b/float NEGATE CONSTANT -b/float
+ VARIABLE sigdigits                      \ # of digits to display (see F., R.)
+ VARIABLE fsp                            \ stack pointer
+ CREATE fstak  maxdepth b/float * ALLOT  \ floating point stack
+ CREATE ftemp  6 CELLS ALLOT             \ temporary float variable
+ HEX
+ 10000 0<> 10 AND 10 + CONSTANT bits/cell \ 16-bit or 32-bit Forth
+ DECIMAL
+ bits/cell 1- 602 1000 */ CONSTANT maxdig \ max decimal digits that fit in double
+
+ -1 1 RSHIFT DUP CONSTANT &unsign  INVERT CONSTANT &sign  \ 7F... 80...
+ &sign  1 RSHIFT CONSTANT &esign                          \ 40...
+
+ \ A variable called ferror stores error codes in the event of an error.
+ \ Execution is not interrupted, but a bad result could be generated. You
+ \ should check for a non-zero error code at appropriate times.
+
+ VARIABLE ferror                         \ last seen error
+
+ \ | Code | Meaning             |
+ \ | 0    | no error            |
+ \ | 1    | F>D overflow        |
+ \ | 2    | division by zero    |
+ \ | 3    | sqrt of negative    |
+
+ \ The M[ ]M structure does something 0 or more times. You can extend your
+ \ compiler to encode this. The result has much less overhead than DO. The
+ \ high level Forth presented here will work for testing. Or, globally search
+ \ and replace M[ with 0 ?DO and ]M with LOOP.
+ : M[    ( -- )  s" >R BEGIN R> 1- DUP >R 0< 0= WHILE" EVALUATE ; IMMEDIATE
+ : ]M    ( -- )  s" REPEAT R> DROP" EVALUATE ; IMMEDIATE
+ \ A good speed-up can be had by coding the low level math operators in
+ \ assembly. CODE words can take advantage of the carry flag to quickly do
+ \ multiple precision arithmetic. ANS Forth doesn't accommodate carries so
+ \ easily.
+
+ \ : DU<   ( u_1 . u_2 . -- flag ) \ see double extension wordset
+ \   ROT 2DUP = IF 2DROP U< ELSE U> NIP NIP THEN ;
+
+ : ud2/          ( d -- d' )
+                 D2/ &unsign AND ;
+
+ : frshift       ( count 'man -- )               \ right shift mantissa
+                 SWAP 0 MAX bits/cell 2* MIN
+                 >R DUP 2@ R> M[ ud2/ ]M ROT 2! ;
+
+ : exp>sign      ( exp -- exp' sign )
+                 DUP &unsign AND                 \ mask off exponent
+                 DUP &esign AND 2* OR            \ sign extend exponent
+                 SWAP &sign AND ;                \ get sign of mantissa
+
+ : sign>exp      ( exp sign -- exp' )
+                 SWAP &unsign AND OR ;
+
+ : t2*           ( triple -- triple' )
+                 D2* ROT DUP 0< 1 AND >R 2* ROT ROT R> 0 D+ ;
+
+ : t2/           ( triple -- triple' )
+                 OVER 1 AND 0<> &sign AND >R D2/ ROT       \ MHL|C
+                 1 RSHIFT R> OR ROT ROT ;
+
+ : t+            ( t1 t2 -- t3 )
+                 2>R >R ROT 0 R> 0 D+ 0 2R> D+
+                 ROT >R D+ R> ROT ROT ;
+
+ : lstemp        ( -- )                          \ 6-cell left shift FTEMP
+                 ftemp 6 CELLS + 0               ( *LSB carry . . )
+       6 M[      >R -1 CELLS +                   \ LSB in high memory
+                 DUP @ 0 D2* SWAP R> +           ( a co n ) \ ROL
+                 ROT TUCK ! SWAP                 \ a carry
+         ]M      2DROP ;
+
+ : *norm         ( triple exp -- double exp' )   \ normalize triple
+      >R BEGIN   DUP 0< 0=
+         WHILE   t2* R> 1- >R
+         REPEAT  2DUP AND 1+ IF &sign 0 0 t+ THEN \ round
+ \        REPEAT  &sign 0 0 t+                    \ round
+                 ROT DROP R> ;
+
+ : longdiv       ( DA DB -- DA/DB )              \ fractional divide
+                 0 0 ftemp 2!
+                 bits/cell 2* 1+                 \ long division
+         M[      2OVER 2OVER DU<                 \ double/double
+                 IF   0
+                 ELSE 2DUP 2>R D- 2R> 1          \ a b --> a-b b
+                 THEN 0 ftemp 2@ D2* D+ ftemp 2!
+                 2SWAP D2* 2SWAP
+         ]M      DU< 0= 1 AND 0                  \ round
+                 ftemp 2@ D+ ;
+
+ \ The rest can be left in high level Forth...
+
+ : 'm1           ( -- addr )      fsp @ 3 cells - ; \ -> 1st stack mantissa
+ : 'm2           ( -- addr )      fsp @ 6 cells - ; \ -> 2nd stack mantissa
+ : 'm3           ( -- addr )      fsp @ 9 cells - ; \ -> 3rd stack mantissa
+ : 'e1           ( -- addr )      fsp @ 1 cells - ; \ -> 1st stack exponent
+ : 'e2           ( -- addr )      fsp @ 4 cells - ; \ -> 2nd stack exponent
+ : fmove         ( a1 a2 -- )     b/float MOVE ;
+ : m1get         ( addr -- )      'm1 fmove ;      \ move to M1
+ : m1sto         ( addr -- )      'm1 SWAP fmove ; \ move from M1
+ : expx1         ( -- exp sign )  'e1 @ exp>sign ;
+ : expx2         ( -- exp sign )  'e2 @ exp>sign ;
+ : ftemp'        ( -- addr )      ftemp 2 CELLS + ;
+ : >exp1         ( exp sign -- )  sign>exp 'e1 ! ;
+ : fshift        ( n -- )         expx1 >R + R> >exp1 ; \ F = F * 2^n
+
+ \ A normalized float has an unsigned mantissa with its MSB = 1
+
+ : normalize     ( -- )
+                 'm1 2@ 2DUP OR 0=
+        IF       2DROP                           \ Zero is a special case.
+        ELSE     0 ROT ROT expx1 >R *norm
+                 R> >exp1 'm1 2!
+        THEN     ;
+
+ \ *S Floating Point Words
+
+ \ *+
+ : F2*           ( fs: r1 -- r3 )  1 fshift ;
+ : F2/           ( fs: r1 -- r3 ) -1 fshift ;
+ : PRECISION     ( -- n )         sigdigits @ ;
+ : SET-PRECISION ( n -- )         maxdig MIN sigdigits ! ;
+ : FCLEAR        ( -- )           fstak fsp ! 0 ferror ! ;
+ : FDEPTH        ( -- )           fsp @ fstak - b/float / ;
+ : FDUP          ( fs: r -- r r ) b/float fsp +! 'm2 m1get ;
+ : FDROP         ( fs: r -- )    -b/float fsp +! ;
+ : FNEGATE       ( fs: r1 -- r3 ) 'e1 @ &sign XOR 'e1 ! ;
+ : D>F           ( d -- | -- r )  FDUP DUP 0< IF DNEGATE &sign ELSE 0 THEN
+                                  'e1 ! 'm1 2!  normalize ;
+ : F>D           ( -- d | r -- )  expx1 >R DUP 1- 0<
+         IF      NEGATE &unsign AND 'm1 frshift 'm1 2@ R> IF DNEGATE THEN
+         ELSE    R> 2DROP -1 &unsign  1 ferror !   \ overflow: return maxdint
+         THEN    FDROP ;
+ : S>F           ( n -- | -- r )  S>D D>F ;
+ : FLOAT+        ( n1 -- n2 )     b/float + ;
+ : FLOATS        ( n1 -- n2 )     b/float * ;
+ : F@            ( a -- | -- r )  FDUP m1get ;
+ : F!            ( a -- | r -- )  m1sto FDROP ;
+ : F0=           ( -- t | r -- )  'm1 2@ OR 0= FDROP ;
+ : F0<           ( -- t | r -- )  'e1 @ 0< FDROP ;
+ : FLOOR         ( fs: r1 -- r2 ) FDUP F>D F0< IF -1 S>D D+ THEN D>F ;
+ \ : FLOOR         ( fs: r1 -- r2 ) F>D DUP 0< IF -1 S>D D+ THEN D>F ;
+ : FABS          ( fs: r1 -- r3 ) 'e1 @ 0< IF FNEGATE THEN ;
+ : FALIGN        ( -- )           ALIGN ;
+ : FALIGNED      ( addr -- addr ) ALIGNED ;
+ : FSWAP         ( fs: r1 r2 -- r2 r1 )
+                 'm1 ftemp fmove 'm2 m1get ftemp 'm2 fmove ;
+ : FOVER         ( fs: r1 r2 -- r1 r2 r3 )
+                 b/float fsp +! 'm3 m1get ;
+ : FPICK         ( n -- ) ( fs: -- r )
+                 b/float fsp +! 2 + -b/float * fsp @ + m1get ;
+ : FNIP          ( fs: r1 r2 -- r2 ) FSWAP FDROP ;
+
+ : FROT          ( fs: r1 r2 r3 -- r2 r3 r1 )
+                 'm3 ftemp fmove  'm2 'm3 b/float 2* MOVE  ftemp m1get ;
+
+ : tneg          ( d flag -- t )  \ conditionally negate d to form 3-cell t
+                 >R 2DUP OR 0<> R> AND IF DNEGATE -1 ELSE 0 THEN ;
+
+ : F+            ( fs: r1 r2 -- r3 ) \ Add two floats
+        FDUP F0= IF FDROP EXIT THEN                      \ r2 = 0
+ \      FOVER F0= IF FNIP 'e1 @ 0< IF FNEGATE THEN EXIT THEN \ r1 = 0
+        FOVER F0= IF FNIP EXIT THEN                      \ r1 = 0
+                 expx1 >R expx2 >R -  DUP 0<
+         IF      NEGATE 'm1 frshift 0                    \ align exponents
+         ELSE    DUP    'm2 frshift
+         THEN    'e2 @ +
+                 'm2 2@ R> tneg
+                 'm1 2@ R> tneg
+                 t+ DUP >R                               ( exp L M H | sign )
+     DUP IF      t2/ IF DNEGATE THEN 'm2 2! 1+
+         ELSE    DROP 'm2 2!
+         THEN    R> &sign AND sign>exp 'e2 !
+                 FDROP normalize ;
+
+ : F-            ( fs: r1 r2 -- r3 )     \ Subtract two floats
+                 FNEGATE F+ ;
+
+ : F<            ( -- flag ) ( F: r1 r2 -- ) \ Compare two floats
+                 F- F0< ;
+
+ : FROUND        ( fs: r1 -- r2 )        \ Round to the nearest integer
+                 expx1 >R NEGATE 1- 'm1 frshift          \ convert to half steps
+                 'm1 2@ 1 0 D+  SWAP -2 AND SWAP         \ round
+                 'm1 2! -1 R> >exp1 normalize ;          \ re-float
+
+ : FMIN          ( F: r1 r2 -- rmin ) FOVER FOVER F<
+                 IF FDROP ELSE FNIP THEN ;
+
+ : FMAX          ( F: r1 r2 -- rmax ) FOVER FOVER F<
+                 IF FNIP ELSE FDROP THEN ;
+
+ : F*            ( fs: r1 r2 -- r3 )     \ Multiply two floats
+                 'm1 2@ 'm2 2@
+                 OVER >R ftemp' 2!
+                 OVER >R ftemp  2!
+                 R> R> OR                                \ need long multiply?
+         IF      FTEMP CELL+ @ FTEMP' CELL+ @ UM* &sign 0 D+ NIP \ round
+                 FTEMP @       FTEMP' @       UM*
+                 FTEMP CELL+ @ FTEMP' @       UM* 0 t+
+                 FTEMP @       FTEMP' CELL+ @ UM* 0 t+
+         ELSE    0 ftemp @ ftemp' @ UM*                  \ lower parts are 0
+         THEN    2DUP OR 3 PICK OR                       \ zero?
+         IF      expx1 >R expx2 >R + bits/cell 2* + *norm
+                 R> R> XOR sign>exp 'e2 !
+         ELSE    DROP                                    \ zero result
+         THEN    'm2 2! FDROP ;
+
+ : F/            ( fs: r1 r2 -- r3 )     \ Divide r1 by r2
+                 FDUP F0=
+         IF      FDROP -1 -1 'm1 2!  2 ferror !          \ div by 0, man= umaxint
+                 'e1 @ &sign AND &sign 2/ 1- OR 'e1 !    \   exponent = maxint/2
+         ELSE    'm2 2@ 'm1 2@
+                 DU< 0= IF 1 'm2 frshift F2/ THEN        \ divisor<=dividend
+                 'm1 CELL+ @
+            IF   'm2 2@ ud2/ 'm1 2@ ud2/  longdiv        \ max divisor = dmaxint
+            ELSE 0 'm2 2@ 'm1 @ DUP >R UM/MOD            \ 0 rem quot | divisor
+                 ROT ROT R@ UM/MOD ROT ROT R> 1 RSHIFT U> IF 1 0 D+ THEN \ round
+            THEN expx2 >R expx1 >R - bits/cell 2* -
+                 >R 'm2 2! R> R> R> XOR sign>exp 'E2 !
+                 FDROP
+         THEN    ;
+
+ : F~            ( f: r1 r2 r3 -- ) ( -- flag ) \ f-proximate
+                 FDUP F0<                                \ Win32forth version
+         IF      FABS FOVER FABS 3 FPICK FABS F+ F*      \ r1 r2 r3*(r1+r2)
+                 FROT FROT F- FABS FSWAP F<
+         ELSE    FDUP F0=
+ \                IF      FDROP F- F0=
+                 IF      FDROP 'e1 @ 0< 'e2 @ 0< = F- F0= AND
+                 ELSE    FROT FROT F- FABS FSWAP F<
+                 THEN
+         THEN ;
+
+ : FSQRT         ( fs: r -- r' )         \ Square root
+ \                expx1 IF 3 FERROR ! EXIT THEN   \ error: sqrt of negative
+                 expx1 IF DROP 3 FERROR ! EXIT THEN   \ error: sqrt of negative
+                 DUP 1 AND DUP >R +              \ round up exponent/2
+                 2/ bits/cell - 0 >exp1
+                 ftemp 6 CELLS ERASE  'm1 2@     \ x
+                 R> IF ud2/ THEN                 \ exponent was rounded
+                 ftemp 2 CELLS + 2!              \ x*2^(2*bits/cell)
+                 0 0  bits/cell 2*               \ p = 0
+         M[      lstemp lstemp                   \ shift left x into a 2 places
+                 D2*                             \ shift left p one place
+                 2DUP D2* ftemp 2@ D<
+                 IF      ftemp 2@ 2OVER D2* 1 0 D+ D-
+                         ftemp 2!                \ a:=a-(2*p+1)
+                         1 0 D+                  \ p:=p+1
+                 THEN
+         ]M      'm1 2! normalize ;
+
+ \ For fixed-width fields, it makes sense to use fsplit and (F.) for output.
+ \ fsplit converts a float to integers suitable for pictured numeric output.
+ \ Fracdigits is the number of digits to the right of the decimal.
+
+ : fsplit        ( F: r -- ) ( fracdigits -- sign Dint Dfrac )
+ \ Split float into integer component parts.
+                 >R expx1 NIP FABS               \ int part must fit in a double
+                 FDUP F>D 2DUP D>F F-            \ get int, leave frac
+             2 0 R> M[ D2* 2DUP D2* D2* D+ ]M    \ 2 * 10^precision
+                 D>F F* F>D  1 0 D+ ud2/ ;       \ round
+
+ \ (F.) uses PRECISION as the number of digits after the decimal. F. clips off
+ \ the result to avoid displaying extra (possibly garbage) digits. However,
+ \ this defeats last-digit rounding. (F.) TYPE is the prefered display method.
+ \ F. is included for completeness.
+
+ : (F.)          ( F: r -- ) ( -- addr len )
+ \ Convert float to a string
+                 <# FDEPTH 1- 0< IF 0 0 EXIT THEN \ empty stack -> blank
+                 PRECISION fsplit
+                 PRECISION M[ # ]M D+
+                 PRECISION IF [CHAR] . HOLD THEN
+                 #S ROT SIGN #> ;
+
+ : F.            ( F: r -- )  (F.) PRECISION 1+ MIN TYPE SPACE ;
+ : R.            ( F: r -- )  (F.) TYPE SPACE ;
+
+ : (E.)          ( stepsize resolution -- | F: r -- ) \ X.XXXXXXEYY format
+                 >R FDUP FABS 0                  ( step 0 )
+         BEGIN   FDUP 1 S>F F<
+         WHILE   OVER - R@ S>F F*
+         REPEAT
+         BEGIN   FDUP R@ S>F F< 0=
+         WHILE   OVER + R@ S>F F/
+         REPEAT  R> DROP NIP
+                 FSWAP F0< IF FNEGATE THEN
+                 (F.) TYPE
+                 DUP ABS S>D <# #S ROT SIGN
+                 [CHAR] E HOLD #> TYPE SPACE ;
+
+ : FS.   ( F: r -- ) 1   10 (E.) ; \ scientific notation
+ : FE.   ( F: r -- ) 3 1000 (E.) ; \ engineering notation
+
+ \ String to floating point conversion ---------------------------------------
+
+ : fsign         ( a n -- a' n' sign )   \ get sign from the input string
+                 OVER C@ OVER 0<> AND
+         CASE    [CHAR] - OF 1 /STRING -1 ENDOF
+                 [CHAR] + OF 1 /STRING  0 ENDOF
+                 0 SWAP
+         ENDCASE ;
+
+ variable flgood
+
+ : fdigit?       ( a len -- a len n f )  \ get digit from the input string
+                 DUP 0<> >R
+                 OVER C@ [CHAR] 0 - DUP 0< OVER 9 > OR 0=
+                 R> AND  DUP
+         IF      2SWAP 1 /STRING 2SWAP   \ good digit, use it
+                 1 flgood +!
+         THEN    ;
+
+ : flint         ( addr len -- addr' len' )
+         BEGIN   fdigit?                 \ get integer part
+         WHILE   10 S>F F* S>F F+
+         REPEAT  DROP ;
+
+ : flexp         ( addr len -- addr' len' ) \ get exponent
+                 OVER C@ [CHAR] D -      \ expect 0,1,20,21
+                 -34 AND 0=              \ and invert(0x21)
+                 flgood @ 1 <> AND       \ some mantissa digits are required
+         IF      1 /STRING fsign >R 0 >R \ E,e,D,d is valid
+          BEGIN  fdigit?                 \ get exponent
+          WHILE  R> 10 * + >R
+          REPEAT DROP R> R>
+          IF     M[ 10 S>F F/ ]M         \ positive exponent
+          ELSE   M[ 10 S>F F* ]M         \ negative exponent
+          THEN
+         THEN    DUP
+         IF      0 flgood !              \ unknown text left to convert
+         THEN    ;
+
+ : flfrac        ( addr len -- addr' len' )
+                 1 /STRING 1 S>F         \ convert after the decimal
+         BEGIN   fdigit?
+         WHILE   10 S>F F/               ( F: num digitmul )
+                 FDUP S>F F*             ( F: num digitmul delta )
+                 FROT F+ FSWAP
+         REPEAT  FDROP DROP DUP          \ more to convert?
+         IF      flexp
+         THEN    ;
+
+ : >FLOAT        ( addr len -- f ) ( f: -- r | <nothing> )
+ \ Convert base 10 string to float regardless of BASE.
+                 -TRAILING  0 S>F
+                 fsign >R   1 flgood !
+                 flint DUP
+         IF      OVER C@ [CHAR] . =
+                 IF flfrac ELSE flexp THEN
+         THEN    2DROP
+                 R> IF FNEGATE THEN
+                 flgood @ IF -1 ELSE FDROP 0 THEN
+                 ;
+
+ \ Not cross compiler friendly.
+
+ : FCONSTANT     ( -<name>- ) ( F: r -- )        \ compile time
+                              ( F: -- r )        \ runtime
+                 CREATE HERE F! b/float ALLOT DOES> F@ ;
+
+ : FVARIABLE     ( -<name>- )                    \ compile time
+                              ( F: -- r )        \ runtime
+                 CREATE b/float ALLOT ;
+
+ \ test goodies
+
+ : fd            fstak fdepth b/float * DUMP ;   \ dump stack
+ : F.S           ( -- ) FDEPTH BEGIN ?DUP WHILE 1- DUP FPICK F. REPEAT ;
+ : _f#           ( a -- a' )     DUP CELL+ SWAP @ POSTPONE LITERAL ;
+ : (f#)          ( mh ml e -- )  FDUP 'e1 ! SWAP 'm1 2! ;
+ : F#            ( <number> -- ) BL PARSE >FLOAT 0= ABORT" Bogus float"
+                 STATE @ IF 'm1 _f# _f# _f# DROP FDROP POSTPONE (f#) THEN
+                 ; IMMEDIATE
+
+
+ fclear
+ 100 SET-PRECISION       \ max precision for testing
+ : pi ( r -- ) F# 3.1415926535897932384626433832795 ;
+ : e  ( r -- ) F# 2.7182818284590452353602874713527 ;
+
+ CR .( Basic arithmetic ------------)
+ CR .( 1/7 = ) 1 S>F 7 S>F F/ R.
+ CR .( 1/3 = ) 1 S>F 3 S>F F/ R.
+ CR .( 2/3 = ) 2 S>F 3 S>F F/ R.
+ CR .( 355/113 = ) 355 S>F 113 S>F F/ R.
+ CR .( sqrt[2] = ) 2 S>F FSQRT R.
+ 6 SET-PRECISION
+ CR .( Numeric conversion ----------)
+ CR .( .0001 =         ) 1 S>F 10000 S>F F/ FE.
+ CR .( -.0001 =        ) F# -.0001 FE.
+ CR .( 10000 * .0001 = ) F# 10000 F# .0001 F* F.
+ CR .( 1M, 1u =        ) F# 1d6 FS. F# 1D-6 FS.
+ CR .( -1.23M, 1.23u = ) F# -1.23e6 FS. F# 1.23e-6 FS.
+ CR .( sqrt[1e99] =    ) F# 1e99 FSQRT FS.
+ CR .( 123 + 456 =     ) F# 123 F# 456 F+ F.
+ CR .( 123 - 456 =     ) F# 123 F# 456 F- F.
+ CR .( 456 - 123 =     ) F# 456 F# 123 F- F.
+
+ \ FLOATING and FLOATING-EXT words not implemented here are:
+ \ FLITERAL REPRESENT F** FACOS FACOSH FALOG FASIN FASINH FATAN FATAN2
+ \ FATANH FCOS FCOSH FEXP FEXPM1 FLN FLNP1 FLOG FSIN FSINCOS FSINH FTAN
+ \ and FTANH
+
+----
+
+Revision history:
+ 0: Initial release 11/7/02
+ 1: Removed locals from F*, PAD from F/. Added FSQRT.
+ 2: Fixed FROUND, F.
+ 3: Fixed FPICK, converted standard words to upper case, sped up stack.
+ 4: Limited the number of significant digits in F. to comply with ANS  standard.
+ 5: Changed F2* and F2/ to use fshift. You can use fshift for quick *2^n. Replaced DO..LOOP with M[ ]M structure.
+ 6: Changed M[ ]M to use EVALUATE (more optimizer-friendly).
+ 7: Fixed a bug in F/.
+ 8: Removed extra FDUPs from F<. Fixed a bug in F+. Added >FLOAT FS. FE. F.S
+ 9: Corrected (F.) rounding error and added more tests.
+ 10: Changed -ROT to ROT ROT for strict ANS compliance.
+ 11. Made F# state smart. Fixed bug in FSQRT.

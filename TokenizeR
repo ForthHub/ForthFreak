@@ -1,0 +1,16 @@
+A tokenizer converts Forth source into byte code.
+
+Tokenizers will each use:
+
+* a list of ByteCodePrimitives that are the only commands the tokenizer will compile into byte-code (The tokenizer may also create new tokens that the code itself defines using only existing tokens.)
+* a collection of StandardTokenizerRoutines that most tokenizers will have in common
+* some code from a collection of optional routines that tokenizers may use
+* possibly new code that is specific for that tokenizer
+
+We provide here:
+
+* standard routines that most tokenizers could use
+* a collection of optional routines that may be useful
+* a sample tokenizer/token-compiler pair
+* minimal debugging tools
+* a simple decompiling tool

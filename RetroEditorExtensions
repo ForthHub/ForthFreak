@@ -1,0 +1,21 @@
+This is a place for people using RetroEditor to share extensions that they write. Comments on how to use them will be appreciated.
+
+----
+==== Copy block
+
+ : cb ( sd- )  block swap block swap 512 move ;
+
+----
+==== Copy line to buffer
+
+ : cl ( l- )  (line) 64 >pad 2drop ;
+
+----
+====  Move line to buffer
+
+ : ml ( l- )  dup cl d ;
+
+----
+==== Yank line from buffer
+
+ : yl ( l- )  (line) pad swap 64 move ;

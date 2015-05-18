@@ -1,0 +1,12 @@
+ S" GETCOMPATIBLE.F"   INCLUDED
+ S" GETBYTECODE.F"     INCLUDED
+ S" GETTOKENS.F"       INCLUDED
+ S" GETSIMPLETOKENS.F" INCLUDED
+
+ T: @ ! SWAP ROT .( ;T
+ CR .( token 0 set to @ xt's should be same -> ) ' @ . 0 TOKEN>XT @ .
+ CR .( token 1 set to ! xt's should be same -> ) ' ! . 1 TOKEN>XT @ .
+ CR .( token 2 set to SWAP xt's should be same -> ) ' SWAP . 2 TOKEN>XT @ .
+ CR .( token 3 set to ROT xt's should be same -> ) ' ROT . 3 TOKEN>XT @ .
+ CR .( token 4 set to .( xt's should be same -> ) ' .( . 4 TOKEN>XT @ .
+ CR .( token 5 set to NOOP xt's should be same -> ) ' NOOP . 5 TOKEN>XT @ .

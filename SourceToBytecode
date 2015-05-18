@@ -1,0 +1,22 @@
+ ( G: send a LIT token followed by a counted string that represents a number )
+ DEFER DO-LIT ( S: "number" -- )
+
+ TOKEN-WORD
+ ( G: mark place for tokenizer to stop )
+ : |T ;
+  NONTOKEN-WORD
+
+ ( G: start tokenizer, continue until file end or bad word or |T )
+ : T| ( S: -- )
+    BEGIN
+      REFILL? WHILE
+        >IN @ >R GET-TOKEN    \ xt|0
+        DUP [ GET-TOKEN |T ] LITERAL - WHILE
+          DUP 0= IF
+            DROP R@ >IN ! DO-LIT ELSE
+            EXECUTE
+          THEN
+          R> DROP
+      REPEAT
+      R> 2DROP
+    THEN ; IMMEDIATE

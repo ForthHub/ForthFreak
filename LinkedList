@@ -1,0 +1,67 @@
+ \ Author GPS
+ \ It's known to work with Ficl.
+ vocabulary linked-list
+
+ also linked-list definitions
+
+ : list->next ;     
+ : list->next! list->next ! ;
+ : list->next@ list->next @ ;
+
+ : list->value 1 cells + ;
+ : list->value! list->value ! ;
+ : list->value@ list->value @ ;
+
+ : list 2 cells allocate if abort" out of memory" then
+   0 over list->next!
+   0 over list->value! ;
+
+ : list-free-item free if S" list-free-item failed" type cr then ;
+
+ : list! ! ;
+ : list@ @ ;
+ : list-variable create 0 , 1 cells allot ; immediate
+
+ : list-insert ( list variable-address ) 2dup list@ swap list->next! list! ;
+
+ : list-append ( list variable-address )
+   dup ( variable-address )
+   list@ 0=
+   if
+     list-insert
+   else
+     begin dup list->next@ 0<> while
+       list->next@
+     repeat
+     list->next!
+   then ;
+
+ : list-dump ( variable-address )
+   list@
+   begin dup 0<> while
+    dup list->value@ S" list->value: " type . cr
+    list->next@ 
+   repeat
+   drop ( 0= list-item ) ;
+
+ : list-destroy ( variable-address ) 
+   dup list@
+   begin dup 0<> while
+   dup list->next@ swap list-free-item
+   repeat  
+   drop ( list-item )
+   0 swap list! ;
+ previous
+----
+Usage:
+
+ also linked-list
+ \ test code
+ list-variable mylist
+
+ list 789 over list->value!  mylist list!
+ list 456 over list->value!  mylist list-insert
+ list 123 over list->value!  mylist list-insert
+ list 111 over list->value!  mylist list-append
+
+----

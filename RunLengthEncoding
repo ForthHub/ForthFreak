@@ -1,0 +1,73 @@
+This was some code used as a toy problem for language learning and comparison.
+
+ \ rle
+ \ [from" input"] [to" output"] encode|decode
+
+ \ buffered file support
+ 0 value infile   ( stdin )
+ 1 value outfile  ( stdout )
+
+ 4096 constant kBufSize
+ create inBuf kBufSize allot
+ create outBuf kBufSize allot
+ 0 value numRead
+ inBuf value inPos
+ outBuf value outPos
+
+ : from" ( filename" -- )
+  [char] " parse r/o open-file throw to infile
+  inBuf to inPos  0 to numRead ;
+ : to" ( filename" -- )
+  [char] " parse w/o create-file throw to outfile
+  outBuf to outPos ;
+
+ : flush
+  outBuf outPos over - outfile write-file throw
+  outBuf to outPos ;
+
+ : close
+  flush  infile if infile close-file throw  0 to infile then
+  outfile 1- if outfile close-file throw 1 to outfile then ;
+
+ : eof ( -- f )  numRead 0= ;
+
+ : getc ( -- c )
+  inPos inBuf numRead + =
+  if   inBuf kBufSize infile read-file throw to numRead
+       inBuf to inPos
+  then inPos c@  inPos 1+ to inPos ;
+
+ : putc ( c -- )
+  outPos [ outBuf kBufSize + ] literal = if flush then
+  outPos c!  outPos 1+ to outPos ;
+
+ \ run length codec
+ \ Run code has high bit set, remaining 7 bits are run length-1
+ \ Bytes in stream with high bit set are always encoded as a run,
+ \ perhaps with a length of only one.
+
+ : write-run ( char count-1 -- )
+  over 128 and or ?dup  \ does data have high bit set or is run > 0?
+  if   128 or putc       \ optional run/escape code
+  then putc ;
+
+ : encode
+  0 getc eof if ." empty file" 2drop close exit then ( count last )
+  begin getc eof 0=
+  while 2dup =
+        if   rot 1+  dup 127 =
+             if   write-run 0 cr ." hit run limit!"
+             else nip
+             then swap
+        else >r swap write-run 0 r>
+        then
+  repeat
+  drop swap write-run close ;
+
+ : decode
+  begin getc eof 0=
+  while dup 128 and
+        if   getc eof abort" Input truncated!"
+             swap 128 ?do dup putc loop
+        then putc
+  repeat drop close ;

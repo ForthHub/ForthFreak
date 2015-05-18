@@ -1,0 +1,257 @@
+
+=== This page has been generated automatically.
+=== Don't edit - any changes to this page will be lost.
+=== Instructions for adding a page to ForthSystemsAlphabetical can be found on WhatIsNew.
+=== last update:  Fri Nov 28 23:00:01 UTC 2014
+* 1. [44]
+** 44 is a small, rather loosely characterized version of forth. It has a number of standard words, such as @, !, emit, key, etc., but does not even come close to implementing the core wordset for an ANS-type forth. It includes a small extension to the language that the author considers nice, but it will doubtlessly annoy savants at large.
+* 2. [4IM]
+** 4IM is a public domain Forth system for PC and compatibles.
+* 3. [4os]
+** 4os was a proprietary OS intended to run on a MISC-based set-top box. Developed by iTVC, it was claimed to be the first operating system written completely in Forth. A brief description follows:
+* 4. [4tH]
+** 4tH is a Forth compiler with a little difference. Instead of the standard Forth engine it features a conventional compiler. 4tH is a very small compiler that can create bytecode, C-embeddable bytecode, standalone executables, but also works fine as a scripting language. It supports about 95% of the ANS Forth CORE wordset and features conditional compilation, pipes, files, assertions, forward declarations, enumerations, structures, suspended execution, recursion, include files, etc. It comes with an RPN calculator, preprocessor, line editor, compiler, decompiler, C-source generators, and a virtual machine.
+* 5. [8052ANSForth]
+** 8052-ANS-Forth, an 16 bits ANSI standard implementation for the 8032 processor series, it's available at this moment for the 80(C)32/80(C)52, 80C320, 80C520, 80C552, 80C535 and also runs on the recent 87C251 family from Intel.
+* 6. [Aha]
+** Jeff Fox's project for the F21 processor.
+* 7. [aiforth]
+** Features, present in the archive:
+* 8. [amforth]
+** amforth is a compact forth interpreter and compiler for the atmel avr atmega micro controller family. It is implemented in assembly language and forth itself. It is an interactive system running completely on the controller.
+* 9. [amrFORTH]
+** AM Research's development environment is a unique branch of embedded control called "Tethered" or "Umbilical" Systems where the Target system is able to operate in an interactive environment under full keyboard control in constant communication with the Host development system rather than a simple "edit-compile-run-[puzzle over why it doesn't work]-recurse" system.
+* 10. [ATLAST]
+** ATLAST is the /Autodesk Threaded Language Application System Toolkit/. 
+* 11. [avrforth]
+** avrforth is a 16-bit subroutine threaded forth kernel for atmel's avr series of microcontrollers. Current development is done for the at90can128 (my cansynth board, to be exact), but it will run on most any mega device with minimal adjustments.
+* 12. [Aztec]
+** This forth system is intended to be a minimum system for using Forth on IBM compatible computers using the Microsoft 32bit operating system, it has not been tested under NT earlier than version 4.0. The code is targeted at Intel 386 or higher processors and so should run on any computer that has a Win32 OS; code has been written with an eye to Pentium pairing rules and is very tight for a non-optimised compiler.
+* 13. [BashForth]
+** [http://www.forthfreak.net/bashforth BashForth] is a ForthInterpreter, written entirely in the bash scripting language. It requires bash v3.xx or higher. Its [http://www.wikipedia.org/wiki/Virtual_machine virtual machine] makes use of StringThreadedCode. Because its [http://www.forthfreak.net/bashforth source code] doesn't need to be compiled, it is highly portable (to any platform running bash). Previous versions can be found in the [http://forthfreak.net/bashforth.versions versions archive].
+* 14. [bigFORTH]
+** bigFORTH is a native code Forth written by BerndPaysan. It is available for Linux and Windows 95/98/NT under GPL. The most striking feature is the graphical user interface MINOS and the form editor Theseus (MINOS and Theseus are still beta).
+* 15. [BootOS]
+** From RussianFIG. [SPForth] based.
+* 16. [ByteForth]
+** ByteForth is an 8 bit Forth for the Atmel AVR and 8032-series of processors and is based on ANSI-Forth, that is as far as 8 bits may be standard.
+* 17. [c4w]
+** c4w is an adaption of Charles Moore's [colorForth] that runs under Microsoft Windows. Since it is an experiment, a work in progress, is poorly documented, buggy, contains some really bad examples of  forth and assembler, and has only even been run on Windows2000, I am calling this release Pre-Alpha v0.001.
+* 18. [CamelForth]
+** !CamelForth is a Forth implementation for embedded microprocessors (8051, 8086, Z80, and 6809, with more to come). It is compatible with ANS Forth [see note]. It was originally developed as an educational project for The Computer Journal, but has since become popular for embedded systems programming. For personal use, it is free of charge.
+* 19. [CFORTH]
+** The cforth compiler (not to confuse with the [cforth] interpreter, written in C) is a commercial Forth system from Laboratory Microsystems, Inc, written by Tom Almy. It was available for Z80 CP/M and MS-DOS. Later it was renamed to [ForthCMP], and distributed as Shareware.
+* 20. [cforth]
+** cforth is a portable, C-coded FigForth ForthInterpreter written by Allan Pratt in 1985 while a student at Indiana University.
+* 21. [CHForth]
+** 16-bits multisegmented ANSI forth system with lots of library, help and example files written by Coos Haak.
+* 22. [ChipForth]
+** [http://www.computer-solutions.co.uk/ COMSOL (Computer Solutions Ltd)] [http://www.computer-solutions.co.uk/chipdev/cf.htm chipFORTH] is a unique combination of High Level Language, a Real Time Operating system, a PC based compiler and an Interactive Environment. The resulting package provides high productivity without the need for expensive development hardware. Engineers producing software for embedded microprocessors or microcontrollers can now enjoy the considerable advantages (familiar to those who work in BASIC or FORTH) of interactive development in a High Level Language.
+* 23. [ciforth]
+** This is a generic system running on GNU-Linux. It generates x86 Forths, e.g. for Linux, DOS and Windows. In a configuration file you can specify 16 or 32 bits, Dos/linux/windows I/O, memory size, what assembler etc. You then generate an assembly source file, which can be run through an assembler to create an executable.
+* 24. [cmForth]
+** ==== Forth Computer Language for the 1st Forth Engine ====
+* 25. [colorForth]
+** colorForth is a dialect of Forth that uses color to replace punctuation. It is intended to be used as an operating system, though it has been ported to some of the more popular operating systems as well. 
+* 26. [DeltaForth]
+** Delta Forth is a simple and efficient development tool for the Forth programming language. Although not very well known, Forth is an excellent tool for scientific projects, providing a good learning curve. This tool brings Forth to the .NET world, making integration with other languages a snap.
+* 27. [DragonForth]
+** ANS-94 32-bit FORTH for PalmOS
+* 28. [dsForth]
+** dsForth/2 is an ANS Forth 94 compatible FORTH translator.
+* 29. [eForth]
+** eForth is a system produced by Ting to help implementers produce Forths for different targets, using assemblers. There is an eForth website at http://www.eforth.com.tw
+* 30. [eForthl]
+** A Linux port of [eForth], which is an inofficial version but usable nevertheless:
+* 31. [EnthFlux]
+** Enth is an experimental Forth written as a stand alone system for the 80386 PC or above. It has had some testing on various Pentiums and Athlons, desktops and laptops. Enth is currently based on the ANS Forth wordset and design though it is not guaranteed to be completely ANS complient. Enth's Bootcode is written in the Netwide Asembler or NASM version 0.98, a public domain 80x86 assembler. The kernel is written in SASM, a Forth coded assembler of my own included with the system. 
+* 32. [F68KANS]
+** Generic 68000 Forth kernel following ANSI standard.
+* 33. [F83]
+** This was a Forth created by Perry and Laxen in 1983. That's where it got it's name. 
+* 34. [Factor]
+** Factor is a dynamic programming language drawing inspiration from Forth, Joy, and LISP. Some key features include:
+* 35. [FICL]
+** Ficl is a programming language interpreter designed to be embedded into other systems as a command, macro, and development prototyping language.
+* 36. [FigForth]
+** In 1978, some years after Chuck Moore discovered the Forth language, volunteers started to make public domain implementations available for all popular micro computers. This was the FigForth series of compilers. Most modern public domain Forths are descendants of these Forths. Even though Forth-vendors introduced the F79-"industrie standard" shortly after FigForth became available, FigForth remained the workhorse of the [http://forthfreak.net/index.cgi?ForthCommunities Forth Community] until the F83 standard started to replace FigForth.
+* 37. [FIJI]
+** FIJI is a !ForthIsh Java Interpreter which features a Forth-like interpreter and has a java object stack instead of a data stack. http://fiji.sourceforge.net
+* 38. [FlashForth]
+** [http://flashforth.sourceforge.net/ FlashForth for PIC 18F, 24F, 24H and dsPIC 30F, 33F and AVR Atmega]
+* 39. [FOeRTHchen]
+** FOeRTHchen is a feature reduced, minimalistic language that claims to be a non-nonsense subset of FORTH.
+* 40. [Fork]
+** Fork is a Forth interpreter written using an intermediate language for a custom virtual machine.
+* 41. [Forth92]
+** Forth92 is a forth for the [http://en.wikipedia.org/wiki/TI-92 TI-92] programmable calculator.  It runs by hooks installed via the hacked [http://www.ticalc.org/pub/92/asm/shells/fargo-0.2.7.1.tar.gz Fargo SDK] (DOS/Windows version of the SDK is [http://www.ticalc.org/pub/92/asm/shells/fargo-0.2.7.1.zip here].
+* 42. [ForthCMP]
+** ForthCMP is the Forth language compiler for computers running MS-DOS. It has the following major features:
+* 43. [ForthForth]
+** ForthForth is a Forth interpreter, written in Forth. As such it doesn't really serve much practical purposes, and can be considered an experiment. Interesting aspect is that it keeps both virtual machine state as well as virtual machine data stack on the host systems data stack, and is build completely on its own primitives, rather than parasitizing on the host systems hi-level words.
+* 44. [Forthmacs]
+**  Title:			FORTHMACS
+* 45. [FreeForth]
+** http://christophe.lavarenne.free.fr/ff/
+* 46. [GForth]
+** GNU Forth is the Forth implementation of the GNU project.
+* 47. [GPForth]
+** Written by Aleksandr Larionov.
+* 48. [GraspForth]
+** This is a Gcc/Relocatable/fAst/Small/Portable Forth
+* 49. [H3RL]
+** Hohensee's 3-ring Linux, is a Forth-like language in the Linux kernel. This is an interesting project, and could pave the way towards something even more interesting...
+* 50. [HelFORTH]
+** HelFORTH is a FORTH development system. It's complete in the sense that you can build a more complex system from it. HelFORTH is designed to be a developer friendly, minimal FORTH system. The features of HelFORTH include:
+* 51. [HerkForth]
+** !HerkForth is a colored Forth for Linux/PPC that is being rewritten as [http://fronds.org/ fronds]. It's built around a block editor, and has a lot of interesting functionality. The "kernel" portion is just a couple of hundred bytes, and it metacompiles itself on startup. If you have a PPC Mac, and run Linux on it, be sure to take a good look at this. If you have Linux on x86, you can run herkforth under qemu. (qemu is an emulator that (among other things) lets you run linux programs compiled for other architectures. See: http://fabrice.bellard.free.fr/qemu/)
+* 52. [HForth]
+** http://www.taygeta.com/hforth.html
+* 53. [Holon]
+** Holon is a new interactive integrated programming tool based on Forth. 
+* 54. [HolonLite]
+** Holon is a new kind of cross-platform development system based on the programming language Forth. The development system (host) is able to work interactively on the living application program (target).
+* 55. [HSForth]
+** Harvard Softworks HS/FORTH makes full use of extended memory, and comes with optimizer, sound, graphics, and 80x87 libraries. Has an odd, but efficient, use of memory and dictionary structure.
+* 56. [iForth]
+** http://home.iae.nl/users/mhx/dilber.gif
+* 57. [iforth]
+** http://home.iae.nl/users/mhx/iforth.JPG
+* 58. [ImariProject]
+** Imari is a very small bytecode virtual machine written in C++. The author challenged himself one Christmas to write a VM in a page of C, and having achieved that, decided to refine the VM design till it was usable in a more practical sense, with no code-length constraints (though it's still rather small). The result of this refinement was the Imari VM.
+* 59. [isforth]
+** !IsForth is a free (LGPL'd) Forth for x86 Linux. It is written in assembly and is primarily developed by I440r. TomNovelli also helped to get it working and had been working on a (now abandoned) FreeBSD port.
+* 60. [Jax4th]
+** This is Jack Woehrs ANSI Standard Forth for Windows NT. It's a minimal but fairly complete treatment written to Microsoft Windows NT 3.1. Source & executable.
+* 61. [JForth]
+** !JForth is a subroutine threaded Forth for the Amiga Computer. It was written by Mike Haas, Phil Burk, Brian Donovan and Jim King. It features:
+* 62. [JKForth]
+** the JKForth compiler, interpreter, and runtime system (which is essentially an extremely primitive disk operating system) occupies well under 10K of RAM. And this is my first significant Intel assembly-language project: I'm sure an experienced x86 coder could do a lot better.
+* 63. [kforth]
+** kForth is an implementation of the Forth programming language and environment. The user may write Forth programs with an ordinary text editor, load these program files from kForth, and run them. kForth, like other implementations of Forth, provides an interactive environment, allowing the user to examine or define variables and execute or define individual words. There are many advantages in using a Forth environment for writing and testing computer programs. kForth provides a significant subset of the ANS specification for the Forth language. It also provides some extensions and "non-standard" features which its authors have found to be useful.
+* 64. [lib4th]
+** http://www.lxhp.in-berlin.de/lhpf8.html
+* 65. [lina]
+** Actually, [ciforth] configured to run on Linux/x86.
+* 66. [lpForth]
+** This project started as a attempt to implement a eForth without using MASM. I just wanted to implement a Forth and then tried to experiment some ideas. The reason I didn't use MASM is because I didn't have MASM at hand. The assemblers I have are the ones come with F-PC and Win32Forth. I know it defies the original idea of eForth. But for me, I just want to try to write a meta compiler. To use eForth as a model is because it is simple.
+* 67. [M8cForth]
+** M8cForth for the Cypress M8C core used in many Cypress PSoC chips.
+* 68. [MACroForth]
+** = !MACroForth - A Minimum ARM Cross Forth Compiler =
+* 69. [MadAppleForth]
+** Mad Apple Forth originated in Madison, Wisconsin, USA (hence the reference to "Mad" - Madison was also refered to as "Mad Town" or "Mad City").  It was derived from FigForth for the 6502, and was modified by the FORTH Interest Group of the Madison Apple II User's Group.  The code was modified to approximate FORTH-79 compatability.  The source was meta-compiled from Forth into 6502 code.
+* 70. [MAF]
+** ftp://ftp.taygeta.com/pub/Forth/Applications/ANS/maf1v02.zip
+* 71. [MetaStic]
+** !MetaStic is the reimplementation of Elastic (which was written in assembly language) as metacompiler. It differs from other Forth metacompilers in that respect that it does not implement a Forth system, which can be extended to become the meta compiler. It rather implements a meta compiler, which can be extended to become Forth. The minimal system (the kernel) can metacompile without any additions.
+* 72. [MinForth]
+** A free C-written Forth interpreter, with these design goals:
+* 73. [MistyBeachForth]
+** Misty Beach Forth is an implementation of the Forth programming language written in Java. Because it is written in Java, the Misty Beach Forth interpreter can be embedded in a WWW HTML page and launched as an applet.
+* 74. [Mops]
+** http://www.powermops.org/
+* 75. [mxForth]
+** mxForth is generated with the META program, which is a metacompiler written in Forth. The source code of mxForth is loosely based on Bill Muench's (BiMu@aol.com) bForth. mxForth comes for free with iForth.
+* 76. [OpenBIOS]
+** OpenBIOS will be a free portable firmware implementation. The goal is to implement a 100% IEEE 1275-1994 (Referred to as OpenFirmware) compliant firmware. Among it's features, OpenFirmware provides an instruction set independent device interface. This can be used to boot the operating system from expansion cards without any native binary code. Thus it is OpenBIOS' goal to work on all common platforms, like x86, Alpha, x86-64 and IA-64. Additionally OpenBIOS targets the embedded systems sector, where a sane and unified firmware is a crucial design goal.
+* 77. [OpenBoot]
+** Open Firmware is processor and system independent boot firmware.  OpenBoot is a specialized Forth system running from ROM of e.g. SUN Sparc systems and Apple MacIntosh systems, used to load an Operating System.  
+* 78. [PCForth]
+** http://www.softcon.com/ftp/languages/fourth/pcforth.arj (not sure if this is really pcforth)
+* 79. [PerlForth]
+** In the tradition of [jsforth] and [BashForth], here is (comes) now PerlForth, which is just as multiple platform
+* 80. [PF11]
+** PF11 is a port of [pForth] for the 68HC11 microcontroller.
+* 81. [PFAVR]
+** PFAVR is a port of [pForth] to the Atmel AVR architecture. Specifically, the !ATmega64 and !ATmega128 devices are supported on systems with at least 32K of external RAM. This is an interactive, interpreted Forth (not a native code compiler, not umbilical, not a CrossForth).
+* 82. [PFE]
+** Portable Forth Environment
+* 83. [pForth]
+** !PForth is a  public domain, portable ANS Forth based on a kernel written in ANSI 'C'. This makes it easy to port pForth to multiple platforms. So far, pForth has run on Macs, !PCs, !SUNs, Amigas, Linux, !BeOS, Nokia Communicator, SGI Indys, 3DO ARM systems, 3DO !PowerPC systems, !WebTV systems, Hitachi SH4, !OpenTV prototypes, and some internal projects at Lucent.
+* 84. [PForth3]
+** Features:
+* 85. [Pic18Forth]
+** Pic18Forth is a 16-bit implementation of the Forth programming language for Microchip PIC18Fxx2 microcontroller devices.
+* 86. [PicForth]
+** PicForth, a Forth compiler, generates code for the Microchip PIC 16F87x and 16F88x microcontroller families.
+* 87. [PocketForth]
+** http://chemlab.pc.maricopa.edu/pocket.html
+* 88. [postForth]
+** postForth is a small, easily ported Forth kernel with deferred binding like postscript, to allow for top-down design outside of the assembly-language core. Its two major design goals for the core are: 400 lines of source, or less, for the x86 version; and 1K or less compiled size. This was accomplished in June of 1997. 
+* 89. [PowerMacForth]
+** http://www.macforth.com/
+* 90. [ppforth]
+** This page is a stub!
+* 91. [ProForth]
+** The Windows-based Forth 6.2 Cross Compilers provide an interactive development system for embedded targets. MPE's VFX optimising code generators are available on a number of targets, producing excellent code quality and density. Customer comments include "Wow!" and "How do you do that?". As always, floating point, multi-tasking, full target source code, manuals and technical support are included as part of the package. Most compilers can be supplied with evaluation boards and prepackaged software configurations.
+* 92. [PsiForth]
+** [http://www.forthfreak.net/misc/interpreters/PsiForth.asc PsiForth] has been written in OPL-32, the ROM-resident interpreter of Psion 5. It uses
+* 93. [PurpleForth]
+** This is a FIG-Forth implementation, running under !ProDOS 8
+* 94. [Purrr]
+** Purrr is a template for building macro Forth dialects with support for partial evaluation and Scheme metaprogramming. It is part of the Staapl framework.
+* 95. [Pygmy]
+** A small 8086 Forth, modelled after [CharlesMoore]'s [cmForth] (created for the 
+* 96. [QBFORTH]
+** QBFORTH is simple Forth system written in QBASIC.
+* 97. [QForth]
+** ftp://ftp.uu.net/systems/apple2/languages/forth
+* 98. [QuartusForth]
+** Quartus Forth gives you a full-featured Forth development environment in the palm of your hand.
+* 99. [RetroForth]
+** !RetroForth is a small, open source implementation of Forth. The latest version was inspired by [cmForth], [colorForth], [eForth], and [Pygmy]. It also uses some of Chuck Moore's newer ideas.
+* 100. [Reva]
+** Reva is a small, cross-platform (x86: Linux, Mac OS/X and Windows) implementation of Forth. It was based on RetroForth but has diverged significantly since the initial version. It is developed and maintained by RonAaron. At present the current stable version is 9.0.
+* 101. [RiscyPygness]
+** Riscy Pygness, [Pygmy] Forth for the ARM7 by Frank Sergeant.
+* 102. [Roboforth]
+** The robot controller made by [http://strobotics.com/ ST Robotics] runs a forth system called Roboforth II.  It appears to be a simple traditional Forth system, with supporting code for running their robots.
+* 103. [SEDForth]
+** !SEDForth is a compiler for a subset of an old version of RetroForth. It consists of a small library written in assembly, a SED script, and some shell script wrappers. It was intended to be used to compile small, standalone applications. Two versions were developed.
+* 104. [SMAL32]
+** Written by Aleksandr Larionov.
+* 105. [SOL]
+** SOL is a small, FORTH-like language and OS. It was written in assembly for the [PDP-11].
+* 106. [SPForth]
+** ANS Forth for Win32 and POSIX compliant systems (Linux, BSD,..).
+* 107. [strongForth]
+** strongForth is a programming language that is very close to ANS Forth. One of the biggest differences is that it includes strong static type checking. ANS Forth itself is often called "typeless" or "untyped", which means that neither interpreter nor compiler do any type-checking when applying a function (a "word") to one or more operands. It is completely up to the programmer to chose the correct functions. In strongForth, the interpreter and the compiler check if a function matches the operands on the stack. This allows finding type errors already at compile time. Additionally, it is possible to overload operators by using the same name for different functions, as long as each function requires a different set of operands.
+* 108. [SwiftForth]
+** SwiftX cross-development systems harness the power of Windows to give you a fast, easy-to-use way to write and test software for embedded systems. Based on ANS Forth, SwiftX is the latest in a long line of products that, for more than 25 years, have helped embedded-systems programmers to get results faster using the Forth programming language.
+* 109. [TechnoForth]
+** [http://www.technoforth.ru/ ITF "TEKHNOFORT"] (Russian)
+* 110. [tforth]
+** tForth is a Forth with parallel facilities. It generates code for the INMOS range of transputers.
+* 111. [ThisForth]
+** ThisForth is a macro-oriented Forth based on Standard (ANS) Forth 94-08-16. 
+* 112. [tileforth]
+** TILEforth was designed for 68000 machines, but has been ported since to different platform, among which Linux. Its documentation is pretty good, and it comes with many examples.
+* 113. [tpForth]
+** The !TpForth project is an Open Source effort to produce a comprehensive development and run-time environment for industrial systems, based on Forth. The project aims to develop a visual IDE with CASE and project management support, code analysis and native code generation, based on a portable real-time VM supporting distributed and parallel applications. Wide-ranging libraries including MMI, SCADA and networking support are planned, along with comprehensive documentation and tutorials. 
+* 114. [until]
+** /until/ is a Forth-like language written in C for extreme portability. 
+* 115. [vforth]
+** ftp://ftp.forth.org/pub/Forth/Compilers/native/misc/vax/vax-forth.tar-z
+* 116. [VFX]
+** An ANS and Forth 2012 system designed for performance. VFX Forth compiles Forth source to optimized, native code. The compiled code can be turnkeyed saving VFX along with the program. Available for Windows, OS X, Linux and DOS. The systems are supplied with many examples in source code form.
+* 117. [VolksForth]
+** [http://volksforth.sourceforge.net/ VolksForth on SourceForge]
+* 118. [VWinForth]
+** http://www.well.com/user/jax/rcfb/forth/vwin4th.zip
+* 119. [webForth]
+** webForth was based on the [eForth] model, but has some changes and extensions  to be more compatible with the ANS/ISO standards. This version of Forth should be fairly consistent with Leo Brodie's "Starting Forth", (c) 1987 by Prentice-Hall, Inc.
+* 120. [WimpForth]
+** WimpForth (for ARM/Archimedes/riscos) runs under the desktop and is a freeware Forth system,
+* 121. [Win32Forth]
+** !Win32Forth is a Public Domain Forth system for Windows 95 or better. It is a complete 32 bit Forth-compiler which includes an assembler, disassembler, decompiler, meta-compiler, a floating point pack and many sources and options.
+* 122. [Win32Fx]
+** A variant of Win32Forth 6.01, that has many advantages including absolute addressing (simpler VM in code), a Library Loader called LibLoad that automaticaly resolves file dependencies with lots of other handy features, and a 5-stack system with the ability to import and run code from "C" prototypes such as are found in the sdk documenation with only minor modification. 
+* 123. [WinForth]
+** Features are:-
+* 124. [XForth]
+** Frank Hogg Labs !XForth-09 runs on the Flex-09 operating system, on the Motorola 6809 CPU. it is a 16 bit, indirect threaded interpreter.
+* 125. [yForth]
+** yForth? was written by Luca Padovani to try out the emerging ANS Forth standard in ANSI C.  The terminal I/O originally depended on Turbo-C style conio.h.
+* 126. [ZOG]
+** ZOG is a C-based version of the Forth Language called [Ficl] running on top of the eCos operating system. 

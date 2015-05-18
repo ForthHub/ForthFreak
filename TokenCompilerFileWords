@@ -1,0 +1,17 @@
+ ( -------------- file words )
+ VARIABLE INPUT-FID
+ : INPUT ( S: -- c-addr len )
+    S" OUTPUT.PB" ;
+ : START ( S: -- n )
+    INPUT-FID @ CLOSE-FILE . INPUT R/O BIN OPEN-FILE .  INPUT-FID !
+    INPUT-FID @ FILE-SIZE . DROP ;
+
+ : READ-TOKEN ( S: -- token )
+    PAD 1 INPUT-FID @ READ-FILE SWAP 0= OR ABORT" file problem" PAD C@ ;
+
+ : SETUP-INPUT ( S: -- n )
+    START ['] READ-TOKEN [IS] INPUT-TOKEN ;
+
+ ' READ-TOKEN (IS) INPUT-TOKEN
+
+ : GONE INPUT-FID @ CLOSE-FILE . ;

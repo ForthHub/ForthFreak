@@ -1,0 +1,11 @@
+8052-ANS-Forth, an 16 bits ANSI standard implementation for the 8032 processor series, it's available at this moment for the 80(C)32/80(C)52, 80C320, 80C520, 80C552, 80C535 and also runs on the recent 87C251 family from Intel.
+8052-ANS-Forth sits in an 32 kByte EPROM and needs a further 32 kByte RAM. the release of turnkey (self starting) programs is free of royalties. Turnkey programs may be in RAM using battery backup, or after relocating with the built in relocater, in may be burned in the unused gap of 8 kByte in EPROM. 
+
+http://www.forth.hccnet.nl/plaatjes/atsklein.gif
+
+=== What does 8052-ANS-Forth contains? ===
+Local variables, extended error recovery, 'TO' functions at all sorts af variable(s), 8052 assembler, powerfull support for built in registers, SFR, bit-SFR, bit-variables and all other hardware. Many library files, and a lot of tested example files. And last but not least a DOS and Windows SERVER with many utilities, for example an online help function.
+
+[http://www.forth.hccnet.nl/pr-ats.html More information about 8052-ANS-Forth here]
+
+ForthSystems

@@ -1,0 +1,5 @@
+This forth system is intended to be a minimum system for using Forth on IBM compatible computers using the Microsoft 32bit operating system, it has not been tested under NT earlier than version 4.0. The code is targeted at Intel 386 or higher processors and so should run on any computer that has a Win32 OS; code has been written with an eye to Pentium pairing rules and is very tight for a non-optimised compiler.
+
+http://www.tww.cx/azintro.php
+
+ForthSystems

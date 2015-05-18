@@ -1,0 +1,3 @@
+A threading type (ForthImplementation), usable if the language, used to implement a ForthInterpreter, doesn't support calling code by address- or token reference. Fortunately, most languages are beyond such a limitation. An example of such a language would be bash, a unix shell.
+References to code are expressed by strings, naming the function to call. Resolving is done at run time, which results in pretty slow ForthInterpreter (easily by a factor of > 10000 times slower than a native-code assembly language implemention).
+One notable example of a a ForthInterpreter which uses String Threaded Code, is BashForth.

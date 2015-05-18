@@ -1,0 +1,25 @@
+A TokenizeR takes Forth code and converts it to byte-code.  Many words can simply have a byte-code to represent them.  The tokenizer parses the word and outputs the bytecode.  The token compiler inputs the bytecode and executes or compiles the word.  Very simple.
+
+The complexities come entirely from words that parse.  The requirement then is to either pack the string and parse it later, or parse it now, do some preprocessing, and convert some intermediate result to bytecode.
+
+If you can limit yourself to Forth code that doesn't parse, the problems are minimised.
+
+Forth systems parse as follows:
+
+ 1  Parse a string and display it.  .( ." ABORT"
+ 2  Parse a string and make it a name.  : CREATE VARIABLE CONSTANT etc.
+ 3  Parse a string and save it for some later use.  S" WORD PARSE
+ 4  Parse a string and return an execution token.  ' [']
+ 5  Some systems have words that parse a following string and return a number
+
+Parsing words are among those most likely to have incompatibility problems among different Forth systems.  When you can compile an intermediate result into bytecode you reduce the incompatibility.  You make it plain what result you want, and the token-compiler which runs on the target can do something appropriate for the target.  If necessary you can create a token-compiler specifically for that target system, or even find a way to systematically modify imported token-compilers for that target.
+
+When there are nondefault behaviors, the question becomes whether the word should have special actions by the tokenizer, creating byte-code, or by the token-compiler, reading byte-code, or on the target, later.  Sometimes Forth code is written in ways that would require all three.  So it would be complicated to build byte-code systems that properly handle generic Forth code.  We'll start by accepting limitations on the code that can be tokenized.
+
+A TokenCompiler takes byte-code and converts it to executable code.  Most of the code could be headerless, only the words that may be called from the keyboard or by later target code need headers.
+
+A tokenizer and its paired token-compiler must agree on the meanings of a set of byte-codes.  One first approach for that is to have a list of ByteCodePrimitives, and that list will be assigned byte-codes in order, from zero onward.  The list could be put into a file and shipped with a token-compiler.  Or when some tokens are no longer needed a new list could be used which frees up those tokens.
+
+ByteCodeDesignChoices
+
+See also: ByteForthDiscussion

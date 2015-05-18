@@ -1,0 +1,12 @@
+http://home.iae.nl/users/mhx/dilber.gif
+It is a longstanding trend in the computer industry to try and wrest away control from the user. The keyword is 'obfuscation,' or maybe the nicer sounding 'abstraction.' The often-heard excuse is, perhaps surprisingly, 'user-friendliness.' The  resulting outrage is nicely illustrated by trying to write a one-line 'Hello, world!' C program for Windows, using the latest Visual Studio toolset from Microsoft (it's free for download). If you feel a slight unease after completing the above described task, pondering the near future, iForth may be for you.
+
+The primary goal of iForth is to supply its user with a human-to-computer language translator that combines the ease of use and flexibility of an interpreter with the run-time execution speed that is expected of a modern optimizing compiler. A second goal is that this programming environment (the Forth "command line") is completely customizable and can adapt to all features a host Operating System provides. iForth therefore does not hesitate to provide system-dependent features like graphics and sound, although these are layered such that the programming interface is the same on all supported OS's (OSX, Windows, Linux and MSDOS).
+
+Strong points of iForth are its floating-point support (finely tuned GotoBLAS, ATLAS, LaPACK, etc.), its electrical engineering toolsets (plotting and visualization, interfaces to Matlab, Mathematica, Excel etc.), and its truly enormous set of over 4100 non-trivial example programs.
+
+Read more about iForth [http://home.iae.nl/users/mhx/index.html here.]
+
+Note that iForth is not [https://order.kagi.com/?AMP free.]
+
+ForthSystems

@@ -1,0 +1,10 @@
+ \ this counts the number of set bits in a number.
+ \ the loop iterates once for each 1 in the the bit pattern of x
+ : #bits  ( x -- u )
+     0
+     begin
+       swap ?dup 
+     while
+       dup 1- and
+       swap 1+
+     repeat  ;

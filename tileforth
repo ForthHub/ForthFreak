@@ -1,0 +1,32 @@
+TILEforth was designed for 68000 machines, but has been ported since to different platform, among which Linux. Its documentation is pretty good, and it comes with many examples.
+
+TILEforth is a 32-bit implementation of the Forth-83 Standard 
+written in C. Thus allowing it to be easily moved between different 
+computers compared to traditional Forth implementations in assembly.
+
+The implementation of TILEforth is selected so that, in principle, 
+any C-level procedure may become available on the interactive and
+incremental forth level. Other models of implementation of a threaded
+interpreter in C are possible but these are not as flexible.
+
+TILEforth is organized as a set of modules to allow the kernel to be 
+used as a general threading engine for C. Environment dependencies such
+as memory allocation, error handling and input/output have been separated
+out of the kernel to increase flexibility. The forth application is "just"
+an example of how to use the kernel.
+
+The kernel supports the Standard Forth-83 word set except for the
+blocks file word set which are not used. The kernel is extended with
+many of the concepts from modern programming languages. Here is a list
+of some of the extensions; argument binding and local variables, queue
+management, low level compiler words, string functions, floating point
+numbers, exceptions and multi-tasking. The TILEforth environment also
+contains a set of reusable source files for high level multi-tasking, 
+data description and structuring modules, and a number of programming 
+tools.
+----
+* [http://www.forthfreak.net/misc/interpreters/tile-forth-2.1.txt TILEforth v2.1 README]
+* [http://www.forthfreak.net/misc/interpreters/tile-forth-2.1.tar.z TILEforth v2.1 source archive for unix]
+* ftp://ftp.forth.org/pub/Forth/Compilers/cross/68000/OS9TILE.LZH
+
+ForthSystems

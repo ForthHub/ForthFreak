@@ -1,0 +1,278 @@
+=== words with stack effect:  ( -- ) ===
+ WORDS                         \ display words in current vocabulary
+ VOCS                          \ display vocabularies.
+ ORDER                         \ show vocabulary search order.
+ HELP                          \ opens quick ref in help window
+ HELP WORD                     \ shows link to help about word in help window.
+ TAIL                          \ turn backscroll slider of info display off.
+ ALL                           \ turn backscroll slider of info display on.
+ SLOW , FAST                   \ update / don't update screen on carriage returns.
+ ANS                           \ filter and suppress non-ans words.
+ JSF                           \ don't filter non-ans words.
+ FORTH , HIDDEN                \ vocabularies, make the named vocabulary context. affects ORDER and WORDS
+ BYE                           \ close interpreter windows (if started in own window).
+many more words with stack effect ( -- ) exist. words in the above selection have been chosen to be of informative nature, or dealing with the screen one way or another.
+
+----
+
+=== comments ===
+ \                             \ rest of line is ignored.
+ (                             \ text between parenthesises is ignored.
+
+----
+
+=== input + output ===
+ EMIT   ( ascii -- )           \ outputs ascii as character.
+ CHAR   ( -- ascii )           \ read next word as char, put ASCII value on stack (compile time)
+ [CHAR] ( -- ascii )           \ read next word as char, put ASCII value on stack (immediate)
+ KEY    ( -- ascii )           \ waits for key, returns ascii.
+ .      ( n -- )               \ convert signed number n to string of digits, and output.
+ U.     ( u -- )               \ convert unsigned number n to string of digits, and output.
+ ACCEPT ( a n -- m )           \ input a string of max n characters, place at a.
+                               \ example:   PAD 10 ACCEPT.
+ TYPE   ( a n -- )             \ output the string of n chars at a.
+ CR     ( -- )                 \ output a line break.
+ SPACE  ( -- )                 \ output one single space character.
+ SPACES ( u -- )               \ output u space characters.
+ PAGE   ( -- )                 \ clear screen.
+ CLS    ( -- )                 \ clear screen.
+ KEY?   ( -- flag )            \ test whether key has been pressed, ready to be picked up by KEY.
+ .S     ( -- )                 \ display stack contents.
+
+----
+
+=== stack manipulation ===
+ DUP    ( x -- x x )           \ duplicate top stack element.
+ DROP   ( x -- )               \ drop top stack element.
+ SWAP   ( x1 x2 -- x2 x1 )     \ swap top two stack elements.
+ OVER   ( x1 x2 -- x1 x2 x1 )  \ copy NOS (next of stack) to top of stack
+ NIP    ( x1 x2 -- x2 )        \ remove NOS
+ 
+there's much more to stack manipulation, these words are the bare essentials.
+
+----
+=== integer arithmetics ===
+
+ +      ( x1 x2 -- x3 )        \ adds x1 and x2, leaves result x3
+ -      ( x1 x2 -- x3 )        \ subtracts x2 from x1, leaves result x3
+ *      ( x1 x2 -- x3 )        \ multiplies x1 with x2, leaves result x3
+ /      ( x1 x2 -- x3 )        \ divides x1 by x2, leaves result x3
+ 1+     ( x1 -- x2 )           \ increment x1 by 1.
+ 1-     ( x1 -- x2 )           \ decrement x1 by 1.
+ 2*     ( x1 -- x2 )           \ multiply x1 by 2.
+ 2/     ( n1 -- n2 )           \ divide n1 by 2.
+ ABS    ( n -- u )             \ return absolute value of n.
+ NEGATE ( n1 -- n2 )           \ change sign of n1.
+ MIN    ( n1 n2 -- n3 )        \ return the lesser of the two signed numbers n1 and n2.
+ MAX    ( n1 n2 -- n3 )        \ return the greater of the two signed numbers n1 and n2.
+ MOD    ( x1 x2 -- x3 )        \ calculates and returns remainder of division x1/x2
+ /MOD   ( x1 x2 -- x3 x4 )     \ divide x1 by x2, return remainder x3 and quotient x4.
+ */     ( x1 x2 x3 -- x4 )     \ multiply x1 with x2, then divide intermediate result by x3, return quotient x4.
+ */MOD  ( x1 x2 x3 -- x4 x5 )  \ multiply x1 with x2, then divide intermediate result by x3, return remainder x4 and quotient x5.
+
+----
+
+=== bit logic ===
+ AND    ( x1 x2 -- x3 )        \ bitwise and x1 with x2, return result x3.
+ OR     ( x1 x2 -- x3 )        \ bitwise or x1 with x2, return result x3.
+ XOR    ( x1 x2 -- x3 )        \ bitwise exclusive-or x1 with x2, return result x3.
+ INVERT ( x1 -- x2 )           \ return the bitwise complement of x1.
+ LSHIFT ( u1 u2 -- u2 )        \ logical shift left u1 by u2 bits.
+ RSHIFT ( u1 u2 -- u3 )        \ logical shift right u1 by u2 bits.
+
+----
+
+
+=== comparison ===
+ =      ( x1 x2 -- f )         \ compares top two stack elements, returns true flag if equal, false otherwise.
+ <>     ( x1 x2 -- f )         \ compares top two stack elements, returns true flag if different, false otherwise.
+ <      ( n1 n2 -- f )         \ compares signed numbers n1 with n2, returns true if n1 is less then n2.
+ >      ( n1 n2 -- f )         \ compares signed numbers n1 with n2, returns true if n1 is greater then n2.
+ U<     ( u1 u2 -- f )         \ compares unsigned numbers u1 with u2, returns true if n1 is lower then n2.
+ U>     ( u1 u2 -- f )         \ compares unsigned numbers u1 with u2, returns true if n1 is higher then n2.
+ 0<     ( n -- f )             \ return a true flag if value of n is negative.
+ 0=     ( x -- f )             \ return a true flag if value of x is zero.
+ 0>     ( n -- f )             \ return a true flag if value of x is greater than zero.
+ within ( x1 x2 x3 -- f )      \ return a true flag if x1 is in the range of x2 ... x3-1 .
+
+----
+
+=== reading, writing, manipulating memory ===
+ @      ( a -- x )             \ read and return the cell-sized contents of address a.
+ !      ( x a -- )             \ store cell-sized x in address a.
+ C@     ( a -- c )             \ read and return the character-sized contents of address a.
+ C!     ( c a -- )             \ store character-sized c in address a.
+ +!     ( x a -- )             \ adds x to contents of address a.
+ OFF    ( a -- )               \ writes FALSE to address.
+ ON     ( a -- )               \ writes TRUE to address.
+ MOVE   ( a1 a2 u -- )         \ copy contents of u memory locations from a1 to a2.
+ FILL   ( a u c -- )           \ fill u address locations fromon a with c.
+ COUNT  ( a -- a+ c )          \ read c, the character-sized contents of a, then increment a
+ EXCHANGE ( x1 a -- x2 )       \ read x2 from address a, then store x1 into a.
+
+----
+
+=== creating new words #1 ===
+==== constants, variables, values ====
+ 10 CONSTANT TEN               \ define constant TEN
+  5 CONSTANT FIVE              \ define constant FIVE
+ TEN FIVE * .                  \ use both constants.
+
+ VARIABLE APPLES               \ declare variable APPLES
+ 5 APPLES !                    \ store 5 in APPLES
+ 3 APPLES +!                   \ add 3 to APPLES
+ APPLES @ .                    \ fetch contents of APPLES, print it.
+
+ 15 VALUE TEMPERATURE
+ TEMPERATURE .
+ 20 TO TEMPERATURE
+ TEMPERATURE .
+
+
+==== compiling ====
+ definition of a new word starts with : and ends with ;
+
+ : STAR     42 EMIT  ;         \ define a new word, called STAR. Compile the action "42 EMIT" into it.
+ STAR                          \ try the newly compiled word.
+
+
+ : ^2       dup *    ;         \ any character combination allowed for word names (except space)
+ 6 ^2 .                        \ poassing arguments on stack to word
+
+
+ : ^3  (s n1 -- n2 )           \ stack comments are very important - stack effect is the major piece of
+    dup dup                    \ information for its use.
+    * *  ;                     \ words can be defined on several lines.
+   
+----
+
+=== control flow ===
+===== if ... then =====
+ : ?   ( n -- )
+    0< IF 
+      ." negativ"
+    THEN  ; 
+
+ 10 ?
+ -5 ?
+
+===== if ... else ... then =====
+ : ?   ( f -- )
+    IF    ." yes "
+    ELSE  ." no "
+    THEN ;
+
+ TRUE ?
+ FALSE ?  
+
+===== do ... loop =====
+ : ECHO5 ( -- )
+    5 0 DO
+       KEY EMIT
+    LOOP ; 
+
+ ECHO5
+
+
+ : ECHOES  ( u -- )
+    0 DO
+       CR
+       I .                     \ I is the index of the innermost loop
+       KEY .
+    LOOP  ;
+
+ 10 ECHOES
+
+
+ : 10x10  ( -- )
+    10 0 DO
+       CR
+       10 0 DO
+          I J * .              \ J is index of second-innermost loop
+       LOOP
+    LOOP ;
+
+
+
+===== do ... +loop =====
+ : STEP250  ( -- )
+    1000 0 do
+       I .
+    250 +LOOP  ;               \ loop increment of 250 rather than 1
+
+
+
+ : triangularnumbers  ( -- )
+    0                          \ loop step (gets incremented on each iteration)
+    1000 0 do
+       i .
+    1+ dup +loop               \ increment loop step, keep duplicate of step size, run loop
+    drop  ;
+
+
+
+
+===== do ...  ?leave ... loop =====
+===== for ... next =====
+===== begin ... again =====
+===== begin ... until =====
+===== begin ... while ... repeat =====
+
+----
+
+=== the Return Stack ===
+
+----
+
+=== vocabularies ===
+ ONLY
+ ALSO
+ ORDER
+ VOCS
+ VOCABULARY
+ DEFINITIONS
+ FORTH HIDDEN
+
+----
+
+=== input buffer parsing ===
+ PARSE
+ WORD
+----
+
+=== converting numbers
+
+----
+
+=== blocks file system ===
+ BLOCK
+ BUFFER
+ LOAD
+ LIST
+ UPDATE
+ CAPACITY
+
+----
+
+=== creating new words #2 ===
+==== defining words ====
+
+ : ARRAY    ( u -- )           \ create a word which can create arrays
+   CREATE ALLOT
+   DOES> + ; ( index -- a )
+
+
+ 10 ARRAY ACCOUNT              \ create an array of 10 elements, called ACCOUNT
+
+ 5086 8 ACCOUNT !              \ using the array
+ 4321 3 ACCOUNT !
+
+ 8 ACCOUNT @ .
+
+----
+
+=== double length (64 bit) arithmetic  
+
+----
+
+=== floating point arithmetics ===

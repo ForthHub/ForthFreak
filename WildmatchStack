@@ -1,0 +1,96 @@
+ \ written quickly for a comp.lang.forth discussion by Jonah Thomas  Oct 17, 2006
+
+ : andif  postpone dup postpone if postpone drop ; immediate
+ : Char>Upper ( x -- C )
+    dup [char] a [char] z 1+ within if bl - then ;
+ : stringsgone ( dtext dwild -- )
+    2drop 2drop ;
+ : oldcopygone ( dtext dwild dtext' dwild' -- dtext' dwild' )
+    2>r 2>r stringsgone 2r> 2r> ;
+ : savestrings ( dtext dwild -- dtext dwild dtext dwild )
+    2over 2over ;
+ : nextwild ( dwild -- dwild' )
+    1 /string ;
+ : nexttext ( dtext dwild -- dtext' dwild )
+    2>r 1 /string 2r> ;
+ : str>c ( addr count -- c|0 ) 
+    0> swap c@ and ;
+ : wildCi ( dwild -- dwild c|0 )
+    2dup str>c ;
+ : textCi ( dtext dwild -- dtext dwild f )
+    2over str>c ;
+ : nomatch ( dtext dwild -- dtext dwild f )
+    wildCi [char] ? <> andif textCi Char>Upper >r wildCi Char>Upper r> <> then ;
+ : char&~* ( dtext dwild -- dtext dwild f )
+    textCi 0<> andif wildCi [char] * <> then ;
+
+ : match-to-first-* ( dtext dwild -- dtext' dwild' f ) \ does 1st substring match?
+    begin
+      char&~*                       \ up to first *
+      while
+        nomatch while               \ chars same or ?
+          nexttext nextwild 
+      repeat 
+      false exit                    \ one mismatch means done
+    then true ;
+
+ : start-match-at-next-char ( doldt doldw dt' dw' -- doldt+1 doldw doldt+1 doldw )
+    stringsgone nexttext savestrings ;
+
+ : new-string-to-match ( dwild -- dwild' ) \ find string after *
+    begin 
+      wildCi [char] * = while
+        nextwild
+    repeat ;
+
+ : end-of-wild ( dtext dwild -- f ) \ when text gone, fail if any non* left.
+    new-string-to-match wildCi 0= >r stringsgone stringsgone r> ; 
+
+ : WILDCARD-MATCH  ( text nt wild nw -- flag )
+    match-to-first-* 0= if           
+      0 exit then                  \ fail if mismatch before first *
+    savestrings                    \ save copy to delete later
+    begin textCi while             \ to end of text
+      wildCi [char] * = if              
+        nextwild                   \ skip *
+        wildCi 0= if               \ no more to match, done
+          stringsgone stringsgone
+          true exit            
+        then  
+        oldcopygone                \ save spot, try again if match fails
+        savestrings  
+      else                         
+        nomatch if
+          start-match-at-next-char \ failed, try again
+        else
+          nexttext nextwild        \ matches so far, keep going
+        then
+      then
+    repeat
+    end-of-wild ;                    \ nomatch if more wild to match  
+
+ \ incomplete test code
+
+ : 1test s" edif" s" e?if" ;
+ : 2test s" edif" s" e?ig" ;
+ : 2'test s" edif" s" fdif" ;
+ : 3test s" e?if" s" e?if" ;
+ : 4test s" edif" s" ed*" ;
+ : 5test s" edif" s" e*f" ;
+ : 6test s" edif" s" *dif" ;
+ : 7test s" edif" s" *diff" ;
+ : 8test s" edif" s" *e*i*f" ;
+ : 9test s" edif" s" *e*f*" ;
+ : 10test s" blah.jpg"  s" *h*p" ;
+
+ 1test wildcard-match .  -1 . cr
+ 2test wildcard-match .   0 . cr
+ 2'test wildcard-match .  0 . cr
+ 3test wildcard-match .  -1 . cr
+ 4test wildcard-match .  -1 . cr
+ 5test wildcard-match .  -1 . cr
+ 6test wildcard-match .  -1 . cr
+ 7test wildcard-match .   0 . cr
+ 8test wildcard-match .  -1 . cr
+ 9test wildcard-match .  -1 . cr
+ 10test wildcard-match .  0 . cr

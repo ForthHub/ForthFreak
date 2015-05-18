@@ -1,0 +1,7 @@
+Holon is a new kind of cross-platform development system based on the programming language Forth. The development system (host) is able to work interactively on the living application program (target).
+
+HOLON-LT (lite) is a fully functional demonstration version of HOLON-86, which builds target programs on DOS platforms. You can use it for real programming.
+
+http://dec.bournemouth.ac.uk/forth/holon.html
+
+ForthSystems

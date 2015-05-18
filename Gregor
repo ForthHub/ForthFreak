@@ -1,0 +1,27 @@
+ \ date and weekday calculation
+ \ simpler than julian date, but only works
+ \ for dates fromon Oct15,1582
+ decimal
+ \ number of elapsed days to reference date
+ : gregor             ( dd mm yyyy -- gregor )
+     >r 3 - dup 0<
+     dup r> + >r 12 and +
+     306 *  5 +  10 / +
+     r@  1461 4 */  + 1+
+     r@ 100 / -  
+     r> 400 / +
+ ;
+
+ \ day of week 
+ : dow  ( dd mm yyyy -- dow )  \ 0: monday 1: tuesday .... 6: sunday 
+    gregor 7 mod  ;
+ 
+ 
+ : .weekday ( 0...6 -- )
+    7 mod 3 * s" MonTueWedThuFriSatSun" drop + 3 type  ;
+ 
+ \ outputs day of week
+ : .dow  ( dd mm yyyy -- )
+    dow .weekday ;
+
+ \ example:  24 12 1970  .dow   ( Thursday )

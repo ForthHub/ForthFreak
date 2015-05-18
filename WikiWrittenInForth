@@ -1,0 +1,205 @@
+The idea to write a Wiki engine in Forth has popped up several times, so I started working on one about a year ago. I paused work on this to get RetroForth to a more useable state, but have recently resumed work on it.
+
+My first attempts to implement a wiki in Forth were built around [FHTML], a Forth->Hypertext Markup Language. Since then I have made some major changes to it, and it is now called [FML] (Forth-ish Markup Language). It is easy to learn and use, and is modelled after traditional wiki markups.
+
+The current version is almost totally written in RetroForth. I use a single PHP file to execute the RetroForth interpreter and allow editing of pages. It can be dropped into existing websites with minimal effort.
+
+In the latest versions, the [FHTML] (and now [FML]) implementation has become editable, allowing anyone to customize the markups. In addition to that, there is now some basic support for linking to other wikis, including this one. Try it out at http://wiki.retroforth.org
+
+The [FHTML] and even [FML] have proven a bit messy to maintain on larger pages. I'll be doing something far cleaner in RetroWiki 2. A bit of code follows:
+
+ : later : ) r> r> swap >r >r ;
+ : (b ." <b>" later ." </b>" ;
+ : (i ." <i>" later ." </i>" ;
+ : (u ." <u>" later ." </u>" ;
+ 
+ (b ." This is a test. This text should be bold, "
+   (i ." bold + italics, " (u ." bold + italics + underline, " )
+      ." back to bold + italics, " ) ." and back to bold." )
+
+
+ If your forth doesn't support multiple entry points, do:
+
+  : later r> r> swap >r >r ;
+  : ) r> r> swap >r >r ;
+
+The RetroWiki 2 will use an FML-based syntax over this for basic markups, but full HTML flexibility with a cleaner syntax is within reach at last.
+
+- CharlesChilders
+
+----
+Here's a very minor matter:
+ : later R> R> 2>R ;
+
+2>R does precisely SWAP >R >R and it might possibly be written efficiently. 
+----
+
+lets ignore that hilevel words which access return stack values put there by words nested from are not - well, "clean", and look 
+at the stack use: a (call inherent) parameter is passed on the return stack, and in order to get that parameter back on the parameter stack when required, you need to move return addresses to parameter stack, get the parameter, and move the return addresses back. so why not pass it on the parameter stack ( as xt or string) straight away?
+
+good html style requires proper tag nesting. thus a stack of opening tags allows us to generate the proper tag closing html sequence, without literally naming the closing tag. a single word generates the corresponding /tag from what is placed on tag stack. this eliminates verbose closing, no parameters are passed from opening to closing tag.   : (b (i would only output the opening tag. ) and stack a suited some representation of it.   ) as closure word unstacks and outputs /tag. the need for bracketing forth words is eliminated, with identical hi-level syntax.
+
+----
+
+"lets ignore that hilevel words which access return stack values put there by words nested from are not - well, clean" -- Yes, let's.  Failure to forget this is failure to exploit Forth's utterly unique features.
+
+Forth is all about describing solutions to problems in terms of the problem itself, and can do so in a succinctness that makes even Lisp and Scheme users envious.  Forth's unique ability to define new control constructs and provide direct access to the return stack (a formalism in the Lisp/Scheme world called "Partial Continuations") affords this capability.  You should not be advocating against the skillful use of Forth.  You should instead be learning from it.  You'll *never* find a more elegant solution than what Charles implemented above.  For this purpose, it is *the* perfect control construct.
+
+What you're proposing above sounds to me like it will take much more than two lines of code to implement.  Ergo, it's more complex, and much harder to follow, I find.  In fact, I openly challenge you to produce code even remotely close to being as capable and as succinct and easy to follow as the code published above.  You'll find that re-implementing Yet Another Stack both introduces opportunities for increased error and consumes more space (and runs slower -- an important consideration for heavily visited websites) and time complexity than the published solution.  And that's just the stack implementation.  That's not counting the remainder of your proposal.
+
+Don't re-invent the wheel.  Forth already has a perfectly good mechanism of retaining "current state" information -- the return stack.
+
+-- SamuelFalvo
+
+----
+Stacks are pretty simple constructs, They do not require pages of code, not even in Forth. Your reasoning of "extra stack will run slower" is flawed, double flawed even:
+* i hold against that requiring to move stack elements from one to another stack, only to be able to manipulate them, and move them back afterwards, has a higher overhead potential than using a dedicated stack with no data shuffling required.
+* Would you cycle-optimize a bubble-sort ?? More likely, you would choose a better sort algorithm. Same applies here: you can try to save a few cycles, by optimizing the markup interpreter, but on a - as you write - heavily visited website, you are unlikely to produce the HTML page from wiki page over and over again for each read request. It suffices to translate the page once after each edit, and cache the resulting HTML file. I can't imagine a better waste of CPU cycles then having to interpret and translate a page source whenever it is requested, and wouldn't do that on a heavily loaded server, lest i wanted to demonstrate that it needs an upgrade.
+----
+ \ here's an implementation of stack and tag pairing:
+ : )      ( a1 -- a2 )       1- dup 1 untag ;
+ : markup ( a1 c -- a2 )     over c! dup 1 tag 1+ ;
+----
+ \ used for implement the markup stuff:
+ : (b    'b markup ;
+ : (u    'u markup ;
+ : (i    'i markup ;
+----
+ \ demonstration:
+ \ rather than creating a named stack, for purpose of this demo i only allocate memory for the stack:
+
+ here ( stack pointer )  16 allot  ( stack data space )
+  (b  ." bold"  (i ." italics" (u  ." underscore" ) ) )
+ drop  ( stack pointer )
+----
+ \ The missing tag and untag are included from library:
+
+ \ split second string, enclose first string with it.
+ \ if odd number of chars, the extra char goes to beginning.
+ : enclose  ( a1 n1 a2 n2 -- ) dup 2/ dup >r - 2dup type + -rot type r> type  ;
+
+ : untag  ( a n -- )  s" </userdefined>" enclose ;
+ : tag    ( a n -- )  s" <>"  enclose ;
+
+
+----
+
+  i hold against that requiring to move stack elements from 
+  one to another stack, only to be able to manipulate them, 
+  and move them back afterwards, has a higher overhead potential
+  than using a dedicated stack with no data shuffling required.
+
+I'll note that the code you posted does a lot more stack manipulations than mine. In fact, you do move things to the return stack, only to move them back later, in addition to using dup 2dup -rot and over. So in the end you have *more* stack shuffling than I do with 'later'.
+
+  Would you cycle-optimize a bubble-sort ?? More likely,
+  you would choose a better sort algorithm. Same applies
+  here: you can try to save a few cycles, by optimizing
+  the markup interpreter, but on a - as you write - heavily
+  visited website, you are unlikely to produce the HTML page 
+  from wiki page over and over again for each read request. 
+  It suffices to translate the page once after each edit,
+  and cache the resulting HTML file. I can't imagine a
+  better waste of CPU cycles then having to interpret and
+  translate a page source whenever it is requested, and
+  wouldn't do that on a heavily loaded server, lest i
+  wanted to demonstrate that it needs an upgrade.
+
+You are right about translating pages once, after each edit, rather than dynamically, at least for heavily visited sites. But even then, performance does count. If it ties the server up, there's fewer resources to devote to each visitor. And on a popular site, longer translation times can add up quickly.
+
+For me though, it's more about the clarity of the code. I often go back to old code months, or even years later to do mainentance work, or to add something new. In those cases, I don't have a lot of time to reorient myself with the code. A few good comments in the source and documentation, and concise source make it pretty easy for me to work on these old apps when I need to.
+
+I'll accept that 'later' isn't the easiest word to understand initially. It does play tricks with the return stack, but it is very powerful. With minimal stack useage, it makes it possible to write words that execute, partially now, and the rest later on. I leveraged this in FML 2.0, with the nice side effect that:
+
+ : later r> r> swap >r >r ;
+ : ) r> r> swap >r >r ;
+ : (b ." <b>" later ." </b>" ;
+ : (i ." <i>" later ." </i>" ;
+ : (u ." <u>" later ." </u>" ;
+
+ (b ." bold, " (i ." italics, " (u ." underlined
+
+will still generate valid html, including closing tags, in the proper order. 
+
+- CharlesChilders
+
+----
+
+  ... look at the stack use: a (call inherent) parameter is
+  passed on the return stack, and in order to get that parameter
+  back on the parameter stack when required, you need to move 
+  return addresses to parameter stack, get the parameter, and 
+  move the return addresses back. ...
+
+That's not what 'later' does. 'later' rearranges the return stack, forcing control to return to the parent word sooner than it normally would. Later, when the parent function exits (or when ')' is called), control returns to the called word.
+
+Looking at an example (please forgive any minor mistakes in my diagram):
+
+  : (b ." <b>" later ." </b>" ;
+  : (i ." <b>" later ." </b>" ;
+  : foo (b (i ." hello" ) ."  world!" ;
+
+  foo
+    call (b
+      ." <b>"
+      return to foo
+      ." </b>"   <------------+
+      real exit --------------)---- this is the real exit point of 'foo'
+    call (i                   |
+      ." <i>"                 |
+      return to foo           |
+      ." </i>"   <-------+    |
+      return from "(i)---)----)---- control passes down to ." hello"
+   ." hello"             |    |
+   call to )             |    |
+      Control passed to -+    |
+   ."  world!"                |
+   return (control passes to -+)
+
+
+- CharlesChilders
+
+----
+I decided to do a more traditional syntax in RetroWiki 2 (I'll save my FML stuff for later). Here's the core of my new wiki engine:
+
+  create wi 'w 1, 'i 1, 0 1,                : set wi 2 + c! wi 3 ;
+  : display 2drop wi 2 + c@ emit ;
+  : handler set find ?if execute ;; then display ;
+  : wiki for dup c@ handler 1+ next drop ;
+  : opening 1 swap ! 2drop type ;
+  : closing 0 swap ! type 2drop ;
+  : choose dup @ 0 =if opening ;; then closing ;
+  
+  : variables for variable next ;
+  4 variables bold italic underline heading
+  : wi* s" <b>" s" </b>" bold choose ;
+  : wi/ s" <i>" s" </i>" italic choose ;
+  : wi_ s" <u>" s" </u>" underline choose ;
+  : wi= s" <h1>" s" </h1>" heading choose ;
+  : wi[ ." <a href=" ;       : wi] ." </a>" ;        : wi| ." >" ;
+  : wi\ ." <br>" cr ;
+
+A simple test page looks like:
+
+  =This is a header= \ Normal, *bold*, /italics/, _underlined_ \
+  [pageToLinkTo|this is a link]
+
+The generated html is:
+
+  <h1>This is a header</h1> <br>
+  Normal, <b>bold</b>, <i>italis</i>, <u>underlined</u> <br>
+  <a href=pageToLinkTo>this is a link</a>
+
+I expect this syntax to help people who want to edit pages since they no longer have to use my earlier, oddball markups.
+
+- Charles Childers
+----
+I like this latest approach best of all. It's clean and it looks like it should be easy to port to oddball Forths too. (Although the ones that your LATER wouldn't work with tend to be strange ones, like 32-bit Forths with 16-bit return stacks or vice versa, things that would tend not to need a Wiki anyway.)
+
+My natural approach to do the same thing as LATER without affecting the resturn stack was something like ' INTERPRET EXECUTE and then continue when it was done. This lets you get the same final result with more overhead -- you'd use more return stack items and more calls/returns to get the result.
+
+Jonah Thomas
+----
+
+=== Another Forth Wiki Engine ===
+demo at  http://fwiki.logilan.com, with its WikiPage under
+WikiMarkupProcessor

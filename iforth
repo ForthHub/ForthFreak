@@ -1,0 +1,11 @@
+http://home.iae.nl/users/mhx/iforth.JPG
+ 
+iForth's most important goal is to define a computer interface that combines the ease of use and flexibility of an interpreter with the run-time execution speed expected of a modern optimizing compiler. The iForth command line gives access to all features provided by the host Operating System. iForth has many system-dependent libraries like e.g. graphics and sound, where the API's are layered such that they stay the same on all supported OS's (Windows, Linux and MSDOS).
+
+Distinguishing features of iForth are its scientific computation support (BLAS, LaPACK), its electrical engineering toolsets (plotting and visualization, interfaces to Matlab, MathCAD, Mathematica, Excel), and its over 4000 example programs.
+
+Read more [http://home.iae.nl/users/mhx/index.html here.]
+
+Note that iForth is [https://order.kagi.com/?AMP not free], but once you acquire it, it is allowed to distribute applications that include 'open' interpreters without any copyright restrictions whatsoever.
+
+ForthSystems

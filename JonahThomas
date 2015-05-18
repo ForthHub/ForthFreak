@@ -1,0 +1,6 @@
+I'm currently interested in Forth bytecode systems that could run like java.
+
+http://forthfreak.net/index.cgi?SparseBitCounting
+no jonah, not iterating once for each bit. only per bit which is set.
+
+i.e.  10000100001  does 3 iterations

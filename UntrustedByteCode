@@ -1,0 +1,11 @@
+We should carefully consider how a token-compiler could be built to handle untrusted code.
+
+Some parts of that could be done by the token-compiler itself while other parts must be done by the Forth system or the OS.
+
+It would be very hard for the token-compiler to handle stack overflows. It would be very hard for the token-compiler to arrange some sort of scheduled multitasking so that an applet that got into an infinite loop would not hog the system.
+
+The token-compiler could make sure that the applet never called a routine that wasn't on the primitives list. The token-compiler could make sure that the applet never accessed any memory outside the particular dataspace it allotted. If the applet is allowed file access the token-compiler could make sure it never calls any other file than the one it creates, and never makes that file too big.
+
+If the applet never calls an unsafe routine, and if the safe routines it does call always check that the memory is within bounds before using it, and never make an important file error, the only remaining errors are to overflow or underflow a stack, or fail to complete, or send garbage to the default output.
+
+It will typically be possible to design a byte-code system that is unsafe even for token-compiler/Forth systems that are designed to be safe. For example, a byte-code system that includes FIND or SEARCH-WORDLIST or EVALUATE will be able to find commands to execute that aren't in the list of approved primitives, unless all other commands are locked away where these commands can't access them. A byte-code system that includes SET-ORDER could unlock other commands so they could be accessed. Etc. So it's particular token-compilers that could be safe, and we can't expect to arrange it so that all byte-code systems can be safe. Probably we can't create an automated system that will tell whether a byte-code system can be safe. Further, some parts of the safety issue can be handled only by the underlying Forth system (or OS) and would be very hard for a token-compiler to handle on its own.

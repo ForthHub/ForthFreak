@@ -1,0 +1,14 @@
+In the tradition of [jsforth] and [BashForth], here is (comes) now PerlForth, which is just as multiple platform
+capable as the former two, without requiring compilation, as it was written in [Perl].
+
+Execution speed surpasses [BashForth] by factor of about 50, while access to local resources is far easier than with [jsforth], though PerlForth appears to be slower than [jsforth]. 
+
+This is actually work in progress. The source URL below is kept very up to date.
+* [http://scarydevilmonastery.net/pf.perl PerlForth source code]
+* ForthCoreWords monitors the implementation state.
+
+ToDo:
+* file I/O  (simulates a file in perl source now, and loads during boot)
+** minimal file interface added. can only include source, non-nested. This is not a limitation of the compiler (evaluate) which supports source nesting, but rather of the file interface which at this point uses one single file handle only (standard in). from" and from are the words for compiling source from file.
+
+ForthSystems

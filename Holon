@@ -1,0 +1,20 @@
+Holon is a new interactive integrated programming tool based on Forth. 
+* Holon combines all parts of a powerful development tool -- browser, editor, assembler, compiler, linker, debugger and interpreter -- in one closely integrated optimized program. There is nothing to set up among the parts, you can start to develop immediately.
+* The user interface of Holon provides a permanent view of your program. All development occurs in the browser: design, editing, compilation, testing, debugging and incremental changing.
+* Holon presents the source code as a hierarchical structure of modules, groups and "words". Words are the actual program elements. You enjoy a clearly ordered presentation as well as direct access to every word.
+* Holon works interactively on a separate target. Create, test, debug and change the code online in the target system.
+* If you add or change a program word in Holon, the executable code is instantly updated in the target. You can change a running program.
+
+http://holonforth.com/
+
+http://holonforth.com/tools/java/holonj.gif
+
+Holon is a MultiPlatformForth, supporting many chips including:
+
+* 68HC11 (Holon11 -- Holon 11 is an "UmbilicalForth" development system for 68HC11 micro controllers)
+* x86 embedded PCs (Holon86)
+* Rabbit 2000 microprocessors (HolonR2k)
+* the 68300 family (Holon68k)
+* the Java Virtual Machine (JVM) (HolonJ creates Java class files from Forth source text)
+
+ForthSystems

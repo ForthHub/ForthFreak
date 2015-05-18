@@ -1,0 +1,32 @@
+Here you will find interesting, strange, and nice Forth code fragments, aimed to perform all sort of things.
+
+* ForthArtificialIntelligence
+* ForthDataStructures
+* ForthDevelopment (Assembly, MetaCompiler, etc)
+* ForthFragmentsAndTools
+* ForthGamesAndSolvers
+* ForthLibraryCandidates
+* ForthNetworkCode
+* ForthProjects
+* Forth embedded systems examples [http://www.forth.hccnet.nl/downloads/egel3.03.pdf 'Egel workbook] (ByteForth)
+* OuterInterpreter
+
+* Forth applications
+** [VIBE], a VI-like Block Editor
+** [MiniSpreadsheet]
+** [Forth2HTML]
+** [http://excamera.com/sphinx/docforth.html docforth]
+
+* Other sources
+** [http://www.figuk.plus.com/codeindex/index.html FIG UK Forth Code collection]
+** [http://home.earthlink.net/~neilbawd/tool2002.txt Wil Baden's tool belt]
+** [http://ftp.uni-bremen.de/pub/mirrors/Taygeta-Archive/  The Bremen mirror of the Taygeta archive]
+** the ForthScientificLibrary
+** [FKT] FKT-Algorithm implementation using Gforth
+** [HMSL] Hierarchical Music Specification Language
+** [http://www.figuk.plus.com/codeindex/index.html Forth Code Index at figuk]
+** [http://ccreweb.org/software/kforth/kforth4.html Programming examples for kforth]
+** [http://www.forth.hccnet.nl/downloads/egel-avrcode.zip AVR ByteForth 'Egel workbook programming examples]
+** the [http://code.google.com/p/ffl/ Forth Foundation Library]
+** GreatComputerLanguageShootout
+** CompLangForth archives

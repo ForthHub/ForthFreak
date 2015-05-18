@@ -1,0 +1,215 @@
+This version has been expanded to handle any board size up to the number of bits in a cell.
+
+ \ 8 queens
+
+ \ Triangular array of bitmasks, one bit per square
+ \  recursion depth 0, ranks 0..N-1 are at offsets 0..N-1
+ \  recursion depth 1, ranks 1..N-1 are at offsets N..N+(N-1)-1
+ \  etc.
+ 12 constant maxN
+ 8 value N
+ create ranks maxN dup 1+ * 2/ cells allot
+ : init_ranks
+   1 N lshift 1-  N 0 do dup ranks I cells + ! loop drop ;
+
+ : lowBit  ( mask -- bit ) dup negate and ;
+ : lowBit- ( mask -- bits ) dup 1- and ;
+
+ : .sq   1 and if [char] Q else [char] . then space emit ;
+ : .rank ( mask -- ) N 0 do dup .sq 2/ loop drop cr ;
+ : .solution	\ a solution is encoded in ranks
+   N ranks begin
+     dup @ lowBit .rank
+     over cells +  swap 1- swap
+   over 0= until 2drop cr ;
+ : .ranks ( addr count -- )
+   0 do dup I cells + @ .rank loop drop cr ;
+
+ : dmask ( fm r -- fdm ) \ mask for file and diagonals
+   >R  dup R@ lshift or  dup R> rshift or ;
+
+ \ Copy the square availability from the current ranks
+ \ to the next ranks, excluding attacks by the new queen
+ \ at nextBit of ^rank.
+ \ Aborts if there is no possible solution from here.
+
+ variable excludes  \ N=8 should be 4380
+ variable nodes     \ N=8 should be 1073
+ variable solutions \ N=8 should be 92
+
+ : exclude ( ranksLeft ^rank -- tf )
+   over 1- cells over + swap rot ( dest src ranksLeft )
+   1 do   1 excludes +!
+     2dup dup @ lowBit ( dest src mask ) \ file
+      dup I lshift or		\ left diagonal
+      dup I rshift or invert	\ right diagonal
+     swap I cells + @ and        ( dest masked )
+     dup 0= if 2drop 2drop unloop false exit then
+     swap I cells + !
+   loop 2drop true ;
+
+ : tryRank ( ranksLeft ^rank -- ) 1 nodes +!
+   begin
+     over 1- if
+       2dup exclude if
+         over 1- 2dup 1+ cells + recurse
+       then
+     else ( .solution)  1 solutions +! then
+     dup @ lowBit-  dup
+   while  over !
+   repeat drop 2drop ;
+
+ : queens ( n -- ) to N  cr
+   init_ranks  0 solutions ! 0 nodes ! 0 excludes !
+   N ranks tryRank
+   N . ." queens: " solutions @ . ." solutions, "
+   nodes @ . ." nodes, " excludes @ . ." exclude loops" ;
+
+ : test-queens   maxN 0 do I 1+ queens loop ;
+
+----
+
+Here is a version that fits the whole chessboard into two 32-bit cells.
+
+ \ 8 queens, bitboard version (requires 32-bit cells)
+
+ : 2AND ( d d -- d ) rot and >R and R> ;
+ : 2lshift ( d 0..7 -- d ) tuck lshift >R lshift R> ;
+
+ : .sq ( n -- n/2 )
+   dup 1 and if [char] Q else [char] . then space emit 2/ ;
+ : .rank ( n -- n>>8 )
+   .sq .sq .sq .sq .sq .sq .sq .sq  cr ;
+ : .halfboard ( n -- ) .rank .rank .rank .rank drop ;
+ : .board ( bh bl -- ) .halfboard .halfboard  cr ;
+
+ hex
+ \ Masks for eliminating possible queen positions from future tries
+ \ indexed by rank, then shifted by file
+ create attacks
+  090503ff invert 81412111 invert 2,
+  0503ff03 invert 41211109 invert 2,
+  03ff0305 invert 21110905 invert 2,
+  ff030509 invert 11090503 invert 2,
+  03050911 invert 090503ff invert 2,
+  05091121 invert 0503ff03 invert 2,
+  09112141 invert 03ff0305 invert 2,
+  11214181 invert ff030509 invert 2,
+ decimal
+
+ variable solutions variable nodes \ 92 1965
+
+ \ Try placing queens (q) along file and recurse to subsequent files.
+ \ boardL/H accumulates a solution, dleft on stack tracks
+ \  possible future queen positions
+
+ variable boardL variable boardH
+ variable file
+ defer tryFile
+
+ : nextFile ( dleft att q -- dleft att q )
+   file @ 7 < if
+     2over 2over drop 2@ file @ 2lshift 2and ( dleft' )
+     1 file +!  tryFile  -1 file +!
+   else
+     boardH @ boardL @ .board  1 solutions +!
+   then ;
+ : nextRank ( att q -- att++ q<<8) >R 2 cells + R> 8 lshift ;
+ : tryRankL ( dleft att q -- dleft att++ q<<8 )
+   2over DROP over and if
+     dup boardL +!  nextFile  dup negate boardL +!
+   then nextRank ;
+ : tryRankH ( dleft att q -- dleft att++ q<<8 )
+   2over NIP  over and if
+     dup boardH +!  nextFile  dup negate boardH +!
+   then nextRank ;
+ : (tryFile) ( dleft -- ) 1 nodes +!
+   attacks 1 file @ lshift  ( dleft att q )
+   tryRankL tryRankL tryRankL tryRankL
+   drop 1 file @ lshift
+   tryRankH tryRankH tryRankH tryRankH
+   2drop 2drop ;
+
+ ' (tryFile) is tryFile
+
+ : queens
+   0 solutions ! 0 nodes ! 0 boardH ! 0 boardL !
+   cr 0 file ! -1. tryFile
+   solutions @ . ." solutions, " nodes @ . ." nodes" cr ;
+----
+This version is inspired by an elegant approach on the [http://c2.com/cgi/wiki?EightQueensInManyProgrammingLanguages Portland Pattern Repository] written in MCPL. Instead of tracking all future ranks in memory, the attacks of placed queens along the files and both diagonals relative to the current rank are carried forward on the stack through the recursion.
+
+ 8 value N
+ variable solutions variable nodes \ N=8: 92 1965
+ : .sq   1 and if [char] Q else [char] . then space emit ;
+ : .rank ( mask -- ) N 0 do dup .sq 2/ loop drop cr ;
+ : .sol ( fn ... f1 x x f0 -- unchanged )
+   dup N 0 do
+     I 3 * 4 + pick ( fi fi+1 )
+     2dup xor .rank nip
+   loop drop cr ;
+ : lowBit  ( mask -- bit ) dup negate and ;
+ : lowBit- ( mask -- bits ) dup 1- and ;
+ : third ( a b c -- a b c a ) 2 pick ;    \ >r over r> swap ;
+ : poss ( a b c -- a b c a&b&c ) dup 2over and and ;
+ : next3 ( dl dr f Qfilebit -- dl dr f dl' dr' f' )
+   invert >r third r@ and 2* 1+  third r@ and 2/  third r> and ;
+ : try ( dl dr f -- )
+   dup if 1 nodes +!  poss
+     begin ?dup while
+       dup >r lowBit next3 recurse r> lowBit-
+     repeat
+   else .sol 1 solutions +! then drop 2drop ;
+ : queens ( n -- )   dup to N 0 solutions ! 0 nodes ! cr
+   1 over lshift 1-  -1 dup rot try
+   . ." queens: " solutions @ . ." solutions, " nodes @ . ." nodes" ;
+
+----
+
+This is a simple brute force approach, only interesting because it codes checking for vertical and diagonals attack positions with the same logic and loop:
+
+ \ ===== depict board and queens =====
+
+ : .border  ( -- )     cr 8 0 do  ." +---" loop [char] + emit ;
+ : |        ( -- )  [char] | emit ;
+
+ : .fields  ( pos -- )
+    cr 8 0 do  | space
+       bl over i = if drop [char] Q then emit space
+    loop | drop ;
+
+ : .board  ( board -- )
+    8 0 do  .border
+       8 /mod swap .fields
+    loop drop
+    .border ;
+
+
+ \ ===== test whether board is solution =====
+
+ create attackline 16 allot
+
+ : solution? ( board -- f )
+    0 3 0 do                \ test vertical, diagonal1, diagonal2
+       attackline 16 erase
+       over 8 0 do      
+          8 /mod swap   
+          j if i j 1- if - 8 then + then attackline +
+          dup c@ if drop -1 or leave then        
+          1 swap c!                               
+       loop
+       or dup ?leave     
+    loop nip 0=  ;  
+
+ \ ===== run through all boards, display results =====
+
+ 8 base !                            
+ 100000000 constant #boards
+ decimal
+
+ : 8queens
+   0 #boards 0 do 
+      i solution? if
+         1+ cr ." solution #" dup . i .board cr
+      then
+   loop drop ;

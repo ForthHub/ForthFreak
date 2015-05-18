@@ -1,0 +1,22 @@
+== Wiki that discuss Forth ==
+
+''(list moved to WikiNode)''
+
+== Wiki written in Forth ==
+Are there any WikiWrittenInForth?
+
+Almost. Most Forth systems lack the string processing needed for a real Wiki engine, but there are a few semi-wikis written in Forth.
+
+There is one in the making, which is online while it is worked on. The progress can be monitored at  http://fwiki.logilan.com, where there's also the source code available. This is pre-alpha software though, unfinished but working pretty well as far. Its
+wiki markup is cloned from kwiki (this wiki runs kwiki), with some extensions, like links being allowed in headers, as well as attributes, the names in named links may be image urls, for clickable images. also line breaks can be inserted. String precessing functionality is added by loading StringStack 
+
+
+
+B.Paysan has a forth script for converting a Wiki-like markup language into html at http://www.jwdt.com/~paysan/wf.fs, and sample code at http://www.jwdt.com/~paysan/index.wf. It's ugly code though, and doesn't work all that well.
+
+A more whimsical approach to the problem is http://sk.nvg.org/forth/execmarkup/ It is mostly an experiment, but perhaps the CGI code could be of use for someone.
+
+CharlesChilders is working on a WikiWrittenInForth. It's been in use on RetroForth.org for nearly a year, during which it's been rewritten four times. Currently it uses [FML] and RetroForth to generate the HTML from a simple, forth-like markup language and a set of thin PHP wrappers to call the Forth interpreter and edit the files. Someone with more experience in CGI might be able to port [FML] to gforth and use the CGI code mentioned in the paragraph above to get a pure Forth wiki engine working.
+----
+see also
+ForthCommunities

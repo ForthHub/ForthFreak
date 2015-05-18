@@ -1,0 +1,17 @@
+Brainless is a chess playing programm written in ANS Forth.  It uses the Forth prompt as user interface to play chess.  Type 'look' to see the chess board, type 'e2 e4 m' to make your move, type 'cm' to let the computer move.
+
+Although ANS conforming, it uses some non-standard functionality if it detects certain Forth systems.  Especially on GForth it uses 'ansi.fs' for colored terminal output.  Also it can use Unicode chess-piece glyphs if the user requests it.
+
+It is available [http://sourceforge.net/projects/forth-brainless/ from Sourceforge].  Or get the latest sourcecode via SVN:
+
+  svn co https://forth-brainless.svn.sourceforge.net/svnroot/forth-brainless
+
+Then run (for example) via:
+
+  gforth-fast brainless.fs
+
+(Any ANS-conformant Forth system should be ok)
+
+More information is provided by the accompanying [http://forth-brainless.svn.sourceforge.net/viewvc/forth-brainless/trunk/README README file].
+
+License: GPL

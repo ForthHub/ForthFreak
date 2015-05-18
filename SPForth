@@ -1,0 +1,10 @@
+ANS Forth for Win32 and POSIX compliant systems (Linux, BSD,..).
+It is used to compile the following projects:
+* [acWEB], [acFTP], ac!FreeProxy, Forth-Script, acSMTP, acIMAP (Andrey Cherezov & al.)
+* [http://www.nncron.ru/ nnCron & nnBackup] (Nicholas Nemtsev)
+* DragonForth
+
+* http://sourceforge.net/projects/spf/
+* http://wiki.forth.org.ru/SPF
+
+ForthSystems

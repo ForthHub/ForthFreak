@@ -1,0 +1,168 @@
+This is my virtual machine implementation for the [http://www.icfpcontest.org/ 2006 ICFP Programming Contest]. I got it to the point where it can decrypt the codex in a reasonable amount of time. It can also start up UMIX.
+
+Contest instructions and codex [http://www.icfpcontest.org/task.shtml here].
+
+I'm using [GForth]. gforth-fast is getting about 2 mips.  It did the Sandmark.umz test in about 30 minutes on my 1.5 GHz PPC laptop.  MarcelHendrix's [iForth] UM implementation did it in about 4 minutes.
+
+Oh, and I'm on a PPC Mac, so I'm not worrying about endianness.
+
+*Update* : I ran out of steam after accessing all the accounts on Saturday afternoon.  The six problems revealed really are more amenable to functional programming approaches. I'll probably try brute-forcing one of them before giving up.
+
+I've put up [http://www.quirkster.com/icfp/ materials] for those problems, in case anyone is curious.
+
+-- IanOsgood
+
+ \ Universal Machine for ICFP contest 2006
+
+ \ eight registers
+ create reg 8 cells allot
+
+ \ as long as pointers are 32-bit, we can simply use the allocated addr
+ \ BUT: address 0 is a special case
+   \ mem[0] holds the program
+
+ variable program			\ 0 mem@
+
+ : mem@ ( addr -- data )
+   dup if CELL+ else		\ first cell is size
+     drop program @
+   then ;
+
+
+ variable ef    \ execution finger (index into program)
+
+ \ ascii console
+ \ network byte order
+
+ : init ( program -- )
+   program !
+   0 ef !
+   reg 8 cells erase ;
+
+ \ decode
+ : >op ( instr -- code0-14 ) 28 rshift ;
+ : >reg ( field -- reg ) 7 and cells reg + ;
+ : >A ( instr -- A ) 6 rshift >reg ;
+ : >B ( instr -- B ) 3 rshift >reg ;
+ : >C ( instr -- C )          >reg ;
+
+ \ operations all ( instr -- )
+ : ?mv
+   dup >C @ if
+     dup >B @ swap >A !
+   else drop then ;
+  
+ : array@
+   dup >C @ cells  over >B @ mem@ + @  swap >A ! ;
+  
+ : array!
+   dup >C @  over >B @ cells  rot >A @ mem@ +  ! ;
+  
+ : r+
+   dup >B @ over >C @ + swap >A ! ;
+
+ : r*
+   dup >B @ over >C @ * swap >A ! ;
+  
+ : r/
+   dup >B @ over >C @ 0 swap um/mod nip swap >A ! ;
+
+ : rnand
+   dup >B @ over >C @ and invert swap >A ! ;
+  
+ : halt bye ;
+
+ : new-array  \ C cells -> addr to B
+   dup >C @ 1+ cells dup allocate throw swap ( i addr len )
+   2dup erase
+   over !     \ save size for later use by pload
+   swap >B ! ;
+  
+ : free-array
+   >C @ free throw ;
+  
+ : cout
+   >C @ emit ;
+  
+ : cin		\ TODO: 0-255, -1 on EOF (not working right; use EKEY ?)
+   ekey dup -1 <> if 255 and then
+   dup #cr = if drop #lf else  \ to get line endings to work right
+   dup #lf = if drop #cr else
+   dup 4 = if drop -1 then then then	\ EOF on ^D
+   dup 0> if dup emit then	\ echo
+   swap >C ! ;
+  
+ : pload			\ duplicate ==> arrays know their size
+   dup >B @ if		\ if referencing 0 already, just change ef (jump)
+     \ resize then copy
+     program @ over >B @ @ resize throw program !
+     dup >B @ dup cell+ swap @ cell - program @ swap move
+   then
+   >C @ ef ! ;
+
+ \ special decode for ortho (immediate load)
+ 32 7 - constant ortho-reg-pos
+
+ : ortho
+   dup [ 1 ortho-reg-pos lshift 1- ] literal and
+   swap ortho-reg-pos rshift >reg ! ;
+
+ create ops
+   ' ?mv , ' array@ , ' array! , ' r+ ,
+   ' r* , ' r/ , ' rnand , ' halt ,
+   ' new-array , ' free-array , ' cout , ' cin ,
+   ' pload , ' ortho , ' drop , ' drop ,
+
+ : dispatch ( instr -- )
+   dup >op cells ops + @ execute ;
+
+ \ 2variable start
+ \ 2variable mips
+
+ : step ( -- )
+   ef @ cells program @ + @ ( instr )
+   1 ef +!
+ \  mips 2@ 1. d+  over $ffffff and 0=
+ \  if cr 2dup cputime d+ start 2@ d- d>s um/mod 5 U.R ." ." 0 <# # # # #> TYPE ."  gips" then
+ \  mips 2!
+   dispatch ;
+
+ : run ( program -- )
+ \  0. mips 2! cputime d+ start 2!
+   init begin step again ;
+
+ \ gforth slurp-file ( filename -- contents length )
+ \ s" codex.umz" slurp-file drop run
+ s" codex.um" slurp-file drop run
+
+
+ \ debugging and exploration
+
+ : .decode ( instr -- )
+   dup >op cells ops + @ >name .name #tab emit
+   dup >op 13 = if
+     'A emit dup ortho-reg-pos rshift 7 and .
+     '# emit dup 1 ortho-reg-pos lshift 1- and
+       dup . dup bl 127 within if '' tuck emit emit emit else drop then
+   else
+     'A emit dup 6 rshift 7 and .
+     'B emit dup 3 rshift 7 and .
+     'C emit dup 0 rshift 7 and .
+   then drop ;
+
+ : (.ef) ( i -- )
+   cr dup . ." : " cells program @ + @
+   HEX dup 8 u.r #tab emit DECIMAL
+   .decode ;
+
+ : .ef  ( -- )   ef @ (.ef) ;
+
+ : .efs ( n -- ) ef @ + ef @ do i (.ef) loop ; 
+
+ : .step  step .ef ;
+ 
+ : .steps ( n -- ) 0 do .step loop ;
+
+ s" codex.um" slurp-file drop init
+ \ <off> ef !        \  to start at an offset
+ \ reg 8 cells dump    \ to show the registers

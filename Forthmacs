@@ -1,0 +1,74 @@
+ Title:			FORTHMACS
+ Author:			Mitch Bradley
+ Version:		3.1
+ Title From:		Documentation
+ Author From:		Documentation
+ Version From:		Documentation
+ Supplier:		Hanno Schwalm   (support@4thware.winnet.de)
+ Date:			26/02/96
+ Keywords:		Programming languages ; Forth
+ Shareware:		Yes
+ Machine:		Archimedes
+ Operating system:	RISCOS
+ Memory requirements:	
+ Peripherals needed:	
+ Other s/ware needed:	
+ Directory:		micros/arch/riscos/c073
+ Date mounted/updated:	27/02/96
+ File names:		docs.zip
+ 			htmldocs.zip
+ 			serial.zip
+ 			server.zip
+ 			spread.zip
+ 			tools1.zip
+ 			workarc.zip
+ 			workdisc.zip
+ Unarchived files:	246
+ Unarchived size:	2034 kbytes
+ Omissions:		
+ See also:		TILEFORTH (a111), AFORTH (a293)
+----
+Acquiring the package:
+
+Download the archive file(s) and extract using SparkPlug 2
+(see the "tools_help" file in micros/arch/riscos/tools for further info).
+
+The workdisc.zip holds the complete environment, all other files are tools.
+You should include them as described in Forthmacs !Help file.
+
+
+Description:
+
+RiscOS Forthmacs 3.1 is a port of the long-existing workstation FORTH
+dialect Forthmacs. It has been widely used on Sparc, Sun-68k, Macintosh,
+Atari-ST., OS9 and other workstations for a number of years.  It's
+exeptionally stable and has been the basis of the Open Boot architecture.
+
+RiscOS Forthmacs is an optimized, direct threaded code port for ARM based
+computers and comes with the a complete software developing environment.
+
+* html & ascii docs
+* assembler (bi-endian, macros, extentable, structures)
+* debuggers (highlevel, machine-code)
+* disassembler, decompiler
+* object-handling (multiple-code fields)
+* local variables
+* shelled applications with Forthmacs swapping in/out
+* expect history
+* command-completion
+* SWI compiler interface
+* runtime profiler
+* rs-232 interface using !SerialDev
+* multitasking
+* spreadsheet
+* mail-server
+etc.
+
+Users are asked to register (40 Pds), they will get a printed 200p manual,
+complete online documentation & support.
+
+The METAcompiler including all sources plus more tools for cross-platform
+developing is also available (40pds), additional assemblers will be given
+on request. This is ONLY available for registered users.
+
+ForthSystems

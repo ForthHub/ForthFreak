@@ -1,0 +1,8 @@
+!SEDForth is a compiler for a subset of an old version of RetroForth. It consists of a small library written in assembly, a SED script, and some shell script wrappers. It was intended to be used to compile small, standalone applications. Two versions were developed.
+
+!SEDForth is no longer being updated, however the code is still provided as a reference for those who may wish to pursue it or similar tools.
+
+* Original (NASM): http://retro.tunes.org/SEDForth/sedforth.tar.gz
+* Updated (FASM): http://retro.tunes.org/sedforth-fasm.tar.gz
+
+ForthSystems

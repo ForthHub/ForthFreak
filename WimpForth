@@ -1,0 +1,24 @@
+WimpForth (for ARM/Archimedes/riscos) runs under the desktop and is a freeware Forth system,
+object orientated in the Wimp part and has full source included.
+
+Important features of WimpForth:
+* ANS compliant
+* source level debugger, decompiler
+* ARM assembler/disassembler
+* object orientation like Yerk on the Macs teached the forthers
+* window, icon, control, dialog, menu... classes to make programming them as easy AND controllable as possible
+* variable number of threads in vocabularies
+* strong WORDS implementation
+* easy invocation of CLI commands, time control, system variables
+* local labels
+* Wimp interface
+* Drag and drop Filer->Forth window will load forth files.
+* reads normal text files with 16K buffer
+* full source included
+
+WimpForth supports many Win32Forth features.
+
+http://www.drobe.co.uk/archives/index.php?directory=/ftp.uni-stuttgart.de/pub/systems/acorn/acornet/long/development/forth/
+A version updated to work on the Iyonix and StrongARM RiscPC can be found at http://www.leginda.com 
+
+ForthSystems

@@ -1,0 +1,16 @@
+!JForth is a subroutine threaded Forth for the Amiga Computer. It was written by Mike Haas, Phil Burk, Brian Donovan and Jim King. It features:
+    * fast native code generation,
+    * easy access to Amiga libraries and structures,
+    * CLONE - for standalone executables,
+    * ODE - object oriented development environment,
+    * source level debugger,
+    * floating point support,
+    * ARexx support,
+    * IFF, ANIM support,
+    * Motorola style 68000 assembler,
+    * complete documentation in RTF format including tutorials.
+!JForth was sold commercially by Delta Research from 1986 to 1993.  It is now available as Freeware!  !JForth is available "as-is". Technical support is not available.
+
+http://home.tampabay.rr.com/jforth/
+
+ForthSystems

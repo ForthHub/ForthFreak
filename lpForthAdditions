@@ -1,0 +1,71 @@
+a shell script which regenerates the whole interpreter, by first metacompiling the kernel sources, then extending the new kernel to the full interpreter, is this:
+----
+
+ #!/bin/sh
+ # expecting lpForth files to reside in the same directory as the script
+
+ ./lpforth fload meta.f             # metacompile the kernel
+ mv lpforth lpforth.prev            # keep the previous system 
+ chmod +x lpforth.new               # make new kernel executable
+ echo "fload mkernel.f              # load extensions
+       fsave lpforth                # write new system
+       bye "  | ./lpforth.new       # exit kernel
+ chmod +x lpforth                   # make new system executable
+----
+
+*m word*   or  *modify word*  allows opening the source file in your editor, and positioning the cursor on the definition. This would work with most editors, code has been provided only for *joe* . modifications to get it working with emacs, xemacs, vi, zed, nedit etc are trivial.
+
+
+first, we need StringStack running, and for that, lpForth throw needs fixing:
+
+
+ : u>=   ( u1 u2 -- f )                    u< 0= ;
+ : 0<=   ( n -- f )                        0> 0= ; 
+
+ handler constant catchframe
+ catchframe @ constant bottomcatchframe \ to detect throw without  catch
+
+ : throw   ( n -- )
+   ?dup if                              \ throwing <> 0
+      catchframe @
+      bottomcatchframe -                \ catchframe exists
+      if
+         throw                          \ throwing as before
+      else                              \ throw w/o catch:
+         ." exception " .               \   report
+      then
+   then ; 
+
+\ you must have downloaded StringStack, for this to work:
+ fload stringstack.f
+
+ create (null$) 1 c, 0 c,
+ : null$  ( -- a n )    (null$) count ;
+
+ \ hard coded editor name right now.
+ \ This is what needs to be modified for a different editor.
+ \ joe is called     joe +linenumber filename , a different
+ \ editor requires a different invocation line.
+ : modify  ( <stream> -- ) 
+    .viewinfo swap                   \ file name , line number
+    s" joe +" push$                  \ push editor name, with goto-line option
+    0 <# bl hold #s #> push$ merge$  \ append line number
+    count push$ merge$               \ append file name
+    null$ push$ merge$               \ append terminating null string
+    pop$ drop os
+    free$  ;                         \ clean up string stack
+
+
+
+ : edit ( <stream> -- )
+    s" joe " push$
+    0 word count  push$ merge$
+    null$ push$ merge$
+    pop$  drop os
+    free$  ;
+
+
+ : m modify  ;
+ : e edit  ;
+
+----

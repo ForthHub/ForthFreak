@@ -1,0 +1,80 @@
+FunForth (short for Functional Forth) implements some simplified
+aspects of the [http://www.haskell.org Haskell] language,
+in particular, algebraic data types and pattern matching.
+
+You can see my [http://groups.google.com/group/comp.lang.forth/browse_thread/thread/8bd3fc4fded00e0c/9c9419a3a6700cff original posts] about it on comp.lang.forth.
+
+-- GeorgeMorrison
+
+  \ FunForth: Functional Forth
+  \ Haskell inspired data types and pattern matching.
+  \
+  \ Disclaimer: This code doesn't pretend to be
+  \ pretty, clever, useful or documented.
+  
+  \ memory allocation -- allocate, memory shouldn't leak
+  : reserve  ( n -- a )  cells allocate drop ;
+  : release  ( a -- )  free drop ;
+  
+  : @#  ( a n -- x1 .. xn )
+    tuck 1- cells + swap 0
+    do dup @ swap [ 1 cells ] literal - loop drop ;
+  : !#  ( x1 .. xn a n -- )  0 do tuck ! cell+ loop drop ;
+  
+  : constructor:  ( arity "name" -- )
+    create ,
+    does> dup @ if dup @ 1+ dup reserve dup >r swap !# r> then ;
+  : deconstruct  ( ref -- x1 .. xn )
+    dup >r dup cell+ swap @ @ @# r> release ;
+
+  : (||0)  ( constructor -- )
+    s" literal over = if drop" evaluate ;
+  : (||)  ( constructor -- )
+    s" literal over @ = if deconstruct" evaluate ;
+  : ||  ( "constructor" -- )
+    ' >body dup @ if (||) exit then (||0) ;  immediate
+  : ;;  ( -- )  s" exit then" evaluate ;  immediate
+
+For an example of how to use it see FunForthLists.
+
+A data type is defined by a number of constructors. Here is the definition of a linked list. The number passed to 'constructor:' is the arity, the number of arguments the constructor takes.
+  0 constructor: nil   ( -- list )
+  2 constructor: cons  ( list1 x -- list2 )
+
+We can create a list using the constructors:
+  nil 3 cons 2 cons 1 cons
+When the constructor is applied it allocates memory, moves the arguments to that memory and leaves a pointer to it on the stack.
+ 
+Words which act on data types follow the same pattern; an action is supplied for each constructor. Actions have the form
+  || <constructor> .. ;;
+Here's a disection of 'lmap'.
+  : lmap  ( xt list1 -- list2 )
+    || nil  ( xt -- nil )  drop nil ;;
+    || cons  ( xt list1 x -- list2 )
+       -rot over swap 2>r execute 2r> recurse swap cons ;;
+    ;
+
+The data item we're applying this word to has to be on top of the stack. Note that the original data item is consumed; the result is a completely new list.
+  : lmap  ( xt list1 -- list2 )
+
+The action for 'nil' is pretty simple; applying the xt to an empty list gives us an empty list. We drop the xt and return 'nil'.
+    || nil  ( xt -- nil )  drop nil ;;
+
+Upon entry to an action, the data item is deconstructed (contents placed on the stack) and it's memory released.
+    || cons  ( xt list1 x -- list2 )
+
+Shuffle the stack and store away the tail and a copy of the xt for later recursion.
+       -rot over swap 2>r
+Apply the xt to the head.
+       execute
+Apply the xt to the tail.       
+       2r> recurse
+Construct the list result and return it.
+       swap cons ;;
+
+End of lmap.
+    ;
+
+== References ==
+* [http://research.microsoft.com/Users/simonpj/Papers/pj-lester-book/ Implementing Functional Languages] -- Simon Peyton Jones and David Lester
+* Henry Baker's [http://home.pipeline.com/~hbaker1/LinearLisp.html Linear Lisp]

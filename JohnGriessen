@@ -1,0 +1,5 @@
+John Griessen engineers wilderness solar powered sensor networks and instrumentation modules that run on them-- see [http://ecosensory.com ecosensory].
+
+*pSOC based*  instrumentation seems natural for analog sound processing unless using a digital mic like [http://www.akustica.com  Akustica] makes...then you need your own sigma-delta converter DSP loop in hardware or code.  Is there a pSOC good at that?  An all digital blocks one?
+
+Just found the forth on pSOC project wanting developers on Jan 23 2007, and also have plans to use pSOC chips.

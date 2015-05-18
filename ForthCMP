@@ -1,0 +1,13 @@
+ForthCMP is the Forth language compiler for computers running MS-DOS. It has the following major features:
+* Compiles Forth into machine code -- not interpreted
+* Written in Forth so that Forth code can be executed during compilation
+* Very fast compilation -- compiles into an executable file in a single pass
+* Very compact -- over 110 primitive words compiled in-line. Many optimizations
+* Built-in assembler
+* Libraries in source format
+* Memory models include COM, EXE, SYS, and ROM-able
+* Many demonstration programs provided
+
+http://www.almy.us/forthcmp.html
+
+ForthSystems

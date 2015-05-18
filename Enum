@@ -1,0 +1,57 @@
+ : enum ( start n "names" -- )
+   ' -rot 0 ?do
+      2dup constant execute  
+   loop 2drop;
+
+
+ 0 8 enum 1+    black red yellow green blue magenta cyan white
+ 1 4 enum 2*    bit0 bit1 bit2 bit3
+ 1 5 enum 1+    one two three four five
+
+Or if you don't want to count the names by hand:
+
+ : remaining  ( -- n )          source nip >in @ - ;
+ : enum ( start "names" -- )
+   ' swap begin remaining while
+      2dup constant execute
+   repeat 2drop ;
+
+   1 enum 1+    one two three four five
+   1 enum 2*    bit0 bit1 bit2 bit3
+ $10 enum 2*    bit4 bit5 bit6 bit7 bit8 bit9
+
+----
+
+Parsing multiple names is usually a questionable idea. At least on a standard system, both of the above require that all the names are on the same line as [=enum]. A more serious problem is that the second definition of [=enum] causes that entire line to be handled differently than the normal interpreter.  Consider this, for instance:
+
+ 1 enum 2*  {immediate} {compile-only}  \ Forth interpreter flags
+
+This will enumerate [=\], [=Forth], [=interpreter], and [=flags], which is probably not what you want.  And afterwards, [=\] will not comment out the rest of the line, but will instead push the value 4 on the stack.  And sure, /you/ know about it and can easily avoid it, but it's one more thing you have to remember.  And it's not terribly friendly to an unsuspecting programmer who might try to modify your code later without looking at the definition of [=enum].
+
+--JoshGrams
+
+----
+
+Usually you see a more verbose syntax, with an [=enum] which only defines one name at a time, like this:
+
+ : enum ( n "name" -- n+1 )  dup constant 1+ ;
+
+ 1
+   enum one
+   enum two
+   enum three
+ drop
+
+Extending this syntax to handle all the above examples, we get:
+
+ : enum ( xt n "name" -- xt n' )  2dup constant execute ;
+
+ ' 2* 
+ 1 enum bit0
+   enum bit1
+   enum bit2
+ 2drop
+
+Or if you prefer the other argument order:
+
+ : enum ( n xt "name" -- n' xt )  over constant dup >r execute r> ;

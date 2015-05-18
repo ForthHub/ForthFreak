@@ -1,0 +1,5 @@
+An ANS and Forth 2012 system designed for performance. VFX Forth compiles Forth source to optimized, native code. The compiled code can be turnkeyed saving VFX along with the program. Available for Windows, OS X, Linux and DOS. The systems are supplied with many examples in source code form.
+
+Evaluation versions are free to download at [http://www.mpeforth.com mpe] for Windows and Linux. Conceptually similar to [iforth].
+
+ForthSystems

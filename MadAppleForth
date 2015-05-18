@@ -1,0 +1,7 @@
+Mad Apple Forth originated in Madison, Wisconsin, USA (hence the reference to "Mad" - Madison was also refered to as "Mad Town" or "Mad City").  It was derived from FigForth for the 6502, and was modified by the FORTH Interest Group of the Madison Apple II User's Group.  The code was modified to approximate FORTH-79 compatability.  The source was meta-compiled from Forth into 6502 code.
+
+Eventually, it was reverse-engineered into assembly language (using the Merlin assembler) and was converted to 65816 code (used in the Apple IIgs) as well as being ported to Apple's ProDOS operating system.
+
+http://ground.ecn.uiowa.edu/apple2/Mirrors/uni-kl/disk_images/
+
+ForthSystems

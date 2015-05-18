@@ -1,0 +1,3 @@
+[ftp://ftp.taygeta.com/pub/Forth/Applications/ANS/tester.fr tester.fr]
+
+Also has a test suite to check whether your Forth system is more or less standard compliant: [ftp://ftp.taygeta.com/pub/Forth/Applications/ANS/core.fr core.fr]

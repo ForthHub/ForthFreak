@@ -1,0 +1,7 @@
+IndirectThreadedCodeSlideshow8 IndirectThreadedCodeSlideshow10
+
+http://www.forthfreak.net/slides/slide17.jpg
+
+while doing so, IP has been incremented, and points to the body of HILEVEL2.
+NEST must allow UNNEST to return to the former (current) execution context,
+by putting IP on a stack, before proceeding with NEXT.

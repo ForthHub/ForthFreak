@@ -1,0 +1,10 @@
+[http://www.forthfreak.net/bashforth BashForth] is a ForthInterpreter, written entirely in the bash scripting language. It requires bash v3.xx or higher. Its [http://www.wikipedia.org/wiki/Virtual_machine virtual machine] makes use of StringThreadedCode. Because its [http://www.forthfreak.net/bashforth source code] doesn't need to be compiled, it is highly portable (to any platform running bash). Previous versions can be found in the [http://forthfreak.net/bashforth.versions versions archive].
+
+here is a screen shot, taken from a !BashForth session:
+
+http://www.forthfreak.net/bashforth.jpg
+
+
+There comes now Object-Oriented programming right to the input line of your bash prompt, through an [http://www.forthfreak.net/misc/bashforth.examples/SmallOOPS.bashforth OOPS extension for Bashforth]. In the same place, [http://forthfreak.net/misc/bashforth.examples some more trivial examples] can be found too.
+
+ForthSystems

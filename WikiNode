@@ -1,0 +1,66 @@
+Welcome to ForthFreak, the wiki obsessed with Forth.
+Some people say Forth is a programming language.
+We think it is a little more.
+
+This wiki supports the ForthCommunities by offering a platform for information, knowledge, and code exchange.
+
+== key points of interest ==
+
+* ForthSystems in a variety of implementations
+* ForthProjects
+* ForthRobots and other hardware controlled with Forth
+* ForthTutorials - learn how to write in Forth
+* ForthBestPractices - how to write good code in Forth.
+
+== neighbors ==
+
+Wiki that discuss Forth:
+
+* [http://wiki.forthfreak.net The Forthfreak wiki]
+* [http://c2.com/cgi/wiki?ForthLanguage Forth on the c2 wiki] - Forth philosophy, code, language comparison etc
+* SleeplessNight mostly talks about !PalmOS development (including QuartusForth), also has some stuff on [colorForth]
+* [http://gaos.org/moin/ForthLanguage the GAOS wiki] (german)
+* [http://www.wikipedia.org/wiki/Forth_programming_language Wikipedia has some pages on Forth]
+* [http://www.wlug.org.nz/Forth a Forth page on the Newseelandian WLUG wiki]
+* PortlandPatternRepository: the original wiki; talks about just about every programming language.
+* [http://wiki.forth.org.ru the Russian FIG Wiki] (uses PhpWiki, but runs on the webserver written in Forth - Eserv, [acWEB])
+* [http://cliki.tunes.org/Forth tunes wiki, Forth language page]
+* [http://jasonwoof.org/forth Jason Woofenden's Forth and computing wiki]
+* the PicForth wiki mostly talks about embedded microcontroller development
+* [http://ronware.org/reva/wiki/index.php/Main_Page RevaWiki], related to [Reva]
+* [http://www.codepoetics.com/wiki/index.php?title=Topics:SICP_in_other_languages:Forth:Chapter_1#About_Forth_and_SICP  Structure and Interpretation of Computer Programs in other languages: Forth]
+
+For wiki written in Forth, see ForthWiki.
+
+neighbors interested in programming:
+
+* [http://jasonwoof.org/ Jason Woof] programming in Forth
+* [http://wiki.forth.org.ru/ RuFIG Wiki] programming in Forth (in Russia)
+* [http://www.codepedia.com/1/Forth Codepedia] programming in Forth and other languages
+* [http://c2.com/cgi/wiki the original wiki: the Portland Pattern Repository]: programming [http://c2.com/cgi/wiki?ForthLanguage in Forth] and other languages, and some [http://c2.com/cgi/wiki?ForthWikiProjects Forth wiki projects]
+* [http://communitywiki.org/odd/SoftwareBazaar/WikiNode the Software Bazaar]: software people want, programmers who want something interesting to program.
+* the TUNES wiki sometimes [http://tunes.org/wiki/Forth mentions Forth] and [http://tunes.org/wiki/Forth_OSes "Forth OSes"]
+* the [http://wiki.laptop.org/go/WikiNode "One Laptop per Child" wiki] includes [http://wiki.laptop.org/go/Forth_Lessons a series of lessons on the Forth programming language and Open Firmware.]
+* the [http://forth.org/forthincwiki.html Forth Inc. wiki] ... is, alas, offline as of 2007-09-04.
+* Wikibooks has books on a variety of languages, [http://en.wikibooks.org/wiki/Forth including Forth]
+* the [http://piksel.no/pwiki piksel wiki for sound and video artists] supports the [http://www.piksel.no/pwiki/GoForth CAT/PURRR dialects of Forth on the Microchip PIC 18F microcontroller]
+* the [http://forthlinks.com/ Forth links wiki] links to [http://forthlinks.com/index.php3?more=177 ForthFreak wiki] and a variety of other forth-related web sites.
+* Atari programmers [http://strotmann.de/twiki/bin/view/APG/LangForth occasionally talk Forth].
+* [http://swik.net/forth Forth at the Swik wiki]
+* [http://retroforth.net/wiki/ RetroForth wiki] describes the public-domain RetroForth implementation of Forth
+* [http://jasonwoof.org/herkforth herkforth wiki] describes the herkforth implementation of Forth (GNU GPL). The herkforth mission is to make computer use dramatically more productive and peaceful.
+* [http://quartus.net/cgi-bin/twiki/view/Main/ the Quartus wiki] is focused upon development of Palm OS software using Quartus Forth. Also, lots of people talk about colorForth there.
+
+neighbors interested in the sorts of embedded systems that often use Forth:
+* [http://opencircuits.com/WikiNode Open Circuits]
+* [http://en.wikibooks.org/wiki/Embedded_Systems the Embedded Systems wikibook]
+* [http://sensorwiki.org/ the sensor wiki]
+* [http://wiki.duskglow.com/ The Open Graphics Project (OGP) is developing graphics cards with fully published specs and open source drivers.] (Yes, but will it include Open Firmware Forth code?)
+* [http://pminmo.com/wiki/ the PMinMO.com wiki describes an open-source CNC machine -- software, electronics, motors, hardware, etc.] (uses RS-274D, also known as G-Code)
+* [https://devel.goto10.org/packets/wiki The Packets project wiki] and [http://zwizwa.goto10.org/ Zwikizwaki] discuss "PacketForth", a scripting language for audio/video media processing, and CATkit, an open hardware project. CATkit is designed as a standalone interactive Forth computer for audio sound artists. The PURRR18 Forth dialect is designed to run on the Microchip PIC 18F in the CATkit.
+* the [http://docwiki.gumstix.org/Forth gumstix wiki describes how to run gForth on the gumstix], which weighs 8g (1/4 oz) -- less than 2 teaspoons of water.
+
+/Have you heard about the [http://wikiindex.org/WikiProject:Wiki-Noding wiki node network] ?/
+----
+*I am evaluating [http://www.usemod.com/cgi-bin/wiki.pl Usemod wiki], which supports*
+"out of the box" diff displays, interwiki links (wiki nodes), version control, and consider migration. Probably using two style sheets, one for a conventional dark-on-white look, the other one with more darkishly shaded, [http://wiki.verhau.de/wiki.pl?ForthFreak looking like this]. *Also [http://moinmoin.wikiwikiweb.de/ the MoinMoin wiki]* is looked at. ikiwiki, which was also in consideration, has been dumped, containing still too many bugs.

@@ -1,0 +1,186 @@
+= Starting FORTH
+===     by
+= Leo Brodie
+----
+
+                               About the Author
+http://forthfreak.net/startingforth/sf0/leobrodie.jpg
+
+Leo Brodie's inability to express even the most complex technical concepts without adding a twist of humor comes from an early love of comedy. He specialized in playwriting at UCLA and has had several comedies produced there and in local theater. He has also written freelance magazine articles and has worked as a copywriter for an add agency. When a company he was working for installed a computer, he became inspired to try designing a microprocessor-based toy. Although he never got the toy running, he learned a lot about computers and programming. He now works at Forth, Inc. as a technical and marketing writer, where he can play on the computers as the muse determines without having to be a fanatical computer jockey, and is allowed to write books such as this.
+
+Leo's other interests include singing, driving classic Volvos, and dancing to 50's music.
+----
+
+== Foreword
+
+http://forthfreak.net/startingforth/sf0/cmnraos.jpg
+
+The Forth community can celebrate a significant event with the publication of Starting Forth. A greater effort, talent, and commitment have gone into this book than into any previous introductory manual. I, particularly, am pleased at this evidence of the growing popularity of Forth, the language.
+
+I developed Forth over the period of some years as an interface between me and the computers I programmed. The traditional languages were not providing the power, ease, or flexibility that I wanted. I disregarded much conventional wisdom in order to include exactly the capabilities needed by a productive programmer. The most important of these is the ability to add whatever capabilities later become necessary.
+
+The first time I combined the ideas I had been developing into a single entity, I was working on an IBM 1130, a "third-generation" computer. The result seemed so powerful that I considered it a "fourth-generation computer language." I would have called it FOURTH, except that the 1130 permitted only five-character identifiers. So FOURTH became FORTH, a nicer play on words anyway.
+
+One principle that guided the evolution of Forth, and continues to guide its application, is bluntly: Keep It Simple. A simple solution has elegance. It is the result of exacting effort to understand the real problem and is recognized by its compelling sense of rightness. I stress this point because it contradicts the conventional view that power increases with complexity. Simplicity provides confidence, reliability, compactness, and speed.
+
+Starting Forth was written and illustrated by Leo Brodie, a remarkably capable person whose insight and imagination will become apparent. This book is an original and detailed prescription for learning. It deftly guides the novice over the thresholds of understanding that all Forth programmers must cross.
+
+Although I am the only person who has never had to learn Forth, I do know that its study is a formidable one. As with a human language, the usage of many words must be memorized. For beginners, Leo's droll comments and superbly cast characters appear to make this study easy and enjoyable. For those like myself who already know Forth, a quick reading provides a delightful trip and fresh views of familiar terrain. But I hope this book is not so easy and enjoyable that it seems trivial. Be warned that there is heavy content here and that you can learn much about computers and compilers as well as about programming.
+
+Forth provides a natural means of communication between man and the smart machines he is surrounding himself with. This requires that it share characteristics of human languages, including compactness, versatility, and extensibility. I cannot imagine a better language for writing programs, expressing algorithms, or understanding computers. As you read this book, I hope that you may come to agree.
+
+ Charles H. Moore
+ Inventor of Forth
+----
+
+== About This Book
+Welcome to Starting Forth, your introduction to an exciting and powerful computer language called Forth.
+
+If you're a beginner who wants to learn more about computers, Forth is a great way to learn. Forth is more fun to write programs with than any language that I know of. (See the "Introduction for Beginners.")
+
+If you are a seasoned professional who wants to learn Forth, this book is just what you need. Forth is a very different approach to computers, so different that everyone, from newcomers to old hands, learns Forth best from the ground up. If you're adept at other computer languages, put them out of your mind for now, and remember only what you know about computers. (See the "Introduction for Professionals.")
+
+Since many people with different backgrounds are interested in Forth, I've arranged this book so that you'll only have to read what you need to know, with footnotes addressed to different kinds of readers. The first half of Chap. 7 provides a background to computer arithmetic for beginners only.
+
+This book explains how to write simple applications in Forth. It includes all standard Forth words that you need to write a high-level single-task application. This word set is an extremely powerful one, including everything from simple math operators to compiler-controlling words. 
+[http://www.forthfreak.net/dpans/dpans.htm (ANS Forth standard online)]
+
+Excluded from this book are all commands that are related to the assembler, target compiler and other specialized utilities. These commands are available on some versions of Forth such as Gforth and most commercial implementations. [http://isc.faqs.org/faqs/computer-lang/forth-faq/part3/ (Forth vendors)]
+
+I've chosen examples that will actually work on a Forth system with a terminal and a disk. Don't infer from this that Forth is limited to batch or string-handling tasks, since there is really no limit to Forth's usefulness.
+
+Here are some features of this book that will make it easy to use:
+
+All commands are listed twice: first, in the section in which the word is introduced, and second, in the summary at the end of that chapter.
+
+Each chapter also has a review of terms and a set of exercise problems, with answers.
+
+Several "Handy Hints" have been included to reveal procedural tips or optional routines that are useful for learners but that don't merit an explanation as to how or why they work.
+
+A personal note: Forth is a very unusual language. It violates many cardinal rules of programming. My first reaction to Forth was extremely sceptical, but as I tried to develop complicated applications I began to see its beauty and power. You owe it to yourself to keep an open mind while reading about some of its peculiarities. I'll warn you now: few programmers who learn Forth ever go back to other languages.
+
+Good luck, and enjoy learning!
+
+
+ Leo Brodie
+ FORTH, Inc.
+----
+== Acknowledgements
+I'd like to thank the following people who helped to make this book possible:
+
+For consultation on Forth technique and style: Dean Sanderson, Michael LaManna, James Dewey, Edward K. Conklin, and Elizabeth D. Rather, all of FORTH Inc.; for providing insights into the art of teaching Forth and for writing several of the problems in this book: Kim Harris of the Forth Interest Group; for proofreading, editorial suggestions, and enormous amounts of work formatting the pages: Carolyn A. Rosenberg; for help with typing and other necessities: Sue Linstrot, Carolyn Lubisich, Kevin Weaver, Kris Cramer, and Stephanie Brown Brodie; for help with the graphics: Winnie Shows, Natasha Elbert, Barbara Roberts, and John Dotson of Sunrise Printery (Redondo Beach, CA); for technical assistance: Bill Patterson and Gary Friendlander; for constructive criticism, much patience and love: Stephanie Brown Brodie; and for inventing Forth: Charles H. Moore.
+----
+
+== Comments on the Web Edition
+Starting Forth, First Edition is from 1981. These web pages were entered from memory in 2003, when it became apparent that SF might never be re-issued by the copyright holder. A small supply of about 500 books is all that was [http://theforthsource.com/catalog.html  available] in April 2003.
+
+When you can get hold of the original, do so.
+
+This transcript is inaccurate. Forth code has been ANSified. All code should run on, at least Gforth and iForth. Where necessary, statements that were valid in 1981 have been exchanged with statements more appropriate for 2003.
+
+Starting Forth is full of very difficult to reproduce graphics. These enormously enhance the text's mnemonic value, and are invaluable for a first-time Forth user. I have therefore added "substitute" graphic elements, roughly at the same spot where they are in the original. The original graphics are, of course, much better.
+
+In this transcript I have assumed a 32-bit, byte-addressing Forth, with 8-bit characters. Multitasking issues are ignored (e.g. no >TYPE, just TYPE). Division is symmetric, not floored, and two's complement is assumed throughout. Gforth and iForth work splendidly with it, but other Forths will work too. Chapter 7 exploits extended uses of number conversion. Most Forths are broken in this respect, but iForth and SwiftForth support these neat features.
+----
+                                 Introductions
+
+Introduction for Beginners: What is a Computer Language?
+
+http://forthfreak.net/startingforth/sf0/puppeteer.jpg
+
+At first when beginners hear the term "computer language," they wonder, "What kind of language could a computer possibly speak? It must be awfully hard for people to understand. It probably looks like:
+  976#!@NX714&+
+
+if it looks like anything at all."
+
+Actually a computer language should not be difficult to understand. Its purpose is simply to serve as a convenient compromise for communication between a person and a computer.
+
+Consider the marionette. You can make a marionette "walk" simply by working the wooden control, without even touching the strings. You could say that rocking the control means "walking" in the language of the marionette. The puppeteer guides the marionette in a way that the marionette can understand and that the puppeteer can easily master.
+
+Computers are machines just like the marionette. They must be told exactly what to do, in specific language. And so we need a language which possesses two seemingly opposite traits:
+
+On the one hand, it must be precise in its meaning to the computer, conveying all the information that the computer needs to know to perform the operation. On the other hand, it must be simple and easy-to-use by the programmer.
+
+Many languages have been developed since the birth of computers: Fortran is the elder statesman of the field; COBOL is still the standard language for data processing; BASIC was designed as a beginner's language along the road toward languages like Fortran and COBOL; C and Java are the general purpose application languages of the 90's. This book is about a very different kind of language: Forth. Forth's popularity has kept constant over the past several years, and its popularity is shared among programmers in all fields.
+
+All the languages mentioned above, including Forth, are called "high-level" languages. It's important for beginners to recognize the difference between a high-level language and the computer it runs on. A high-level language looks the same to a programmer regardless of which make or model of computer it's running on. But each make or model has its own internal language, or "machine language." To explain what a machine language is, let's return to the marionette.
+
+Imagine that there is no wooden control and that the puppeteer has to deal directly with the strings. Each string corresponds to exactly one part of the marionette's body. The harmonious combinations of movements of the individual strings could be called the marionette's "machine language."
+
+http://forthfreak.net/startingforth/sf0/flow.jpg
+
+Now tie the strings to a control. The control is like a high-level language. With a simple turn of the wrist, the puppeteer can move many strings simultaneously.
+
+So it is with a high-level computer language, where the simple and familiar symbol "+" causes many internal functions to be performed in the process of addition.
+
+Here's a clever thing about a computer: it can be programmed to translate high-level symbols (such as "+") into the computer's own machine language. Then it can proceed to carry out the machine instructions. A high-level language is a computer program that translates humanly understandable words and symbols into the machine language of the particular make and model of computer.
+
+What's the difference between Forth and other high-level languages? To put it very briefly: it has to do with the compromise between man and computer. A language should be designed for the convenience of its human users, but at the same time for compatibility with the operation of the computer.
+
+Forth is unique among languages because its solution to this problem is unique. This book will explain how.
+
+Introduction for Professionals: Forth in the Real World
+
+Forth enjoyed a rising tide of popularity up to around 1994, (ANS and ISO Forth standards), perhaps most visibly among enthusiasts and hobbyists. After 1996 or so Forth's popularity has stayed relatively constant. But this development is only a new wrinkle in the history of Forth. Forth has been in use from 1972 on, in critical scientific and industrial applications. In fact, if you use a mini- or microcomputer professionally, chances are that Forth can run your application--more efficiently than the language you're presently using.
+
+Now you'll probably ask rhetorically, "If Forth is so efficient, how come I'm not using it?" The answer is that you, like most people, don't know what Forth is.
+
+To really get an understanding of Forth, you should read this book and, if possible, find a Forth system and try it for yourself. For those of you who are still at the bookstore browsing, however, this section will answer two questions: "What is Forth?" and "What is it good for?"
+
+Forth is many things:
+* a high-level language
+* an assembly language
+* an operating system
+* a boot loader and device driver layer for operating systems
+* a chip design CAD system
+* a set of development tools
+* a software design philosophy
+
+As a language, Forth begins with a powerful set of standard commands, then provides the mechanics by which you can define your own commands. The structural process of building definitions upon previous definitions is Forth's equivalent of high-level coding. Alternatively, words may be defined directly in assembler mnemonics, using Forth's assembler. All commands are interpreted by the same interpreter and compiled by the same compiler, giving the language extreme flexibility.
+
+The highest level of your code will resemble an English-language description of your application. Forth has been called a "meta-application language"--a language that you can use to create problem-oriented languages.
+
+As an operating system, Forth does everything that traditional operating systems do, including interpretation, compilation, assembling, virtual memory handling, I/O, text editing, etc.
+
+But because the Forth operating system is much simpler than its traditional counterparts due to Forth's design, it runs much more quickly, much more conveniently, and in much less memory.
+
+What is Forth good for? Forth offers a simple means to maximize a processor's efficiency. For example:
+
+Forth is fast. High-level Forth executes as fast as other high-level languages and between 20 to 75% slower than equivalent assembly-language programs, while time-critical code may be written in assembler to run at full processor speed. Without a traditional operating system, Forth eliminates redundancy and needless run-time error checking.
+
+Forth compiled code is compact. Forth applications require less memory than their equivalent assembly-language programs and consume less power (important for hand-helds and portable gadgets!) Written in Forth, the entire operating system and its standard word set reside in less than 8K bytes. Support for a target application may require less than 1K bytes.
+
+Forth is transportable. It has been implemented on just about every mini- and microcomputer known to the industry. Most microcontrollers and DSPs, even tiny ones, also have a Forth implementation.
+
+Forth has been known to cut program development time by a factor of ten for equivalent assembly-language programming and by a factor of two for equivalent high-level programming in C or Java. Productivity increases because Forth epitomizes "structured programming" and because it is interactive and modular.
+
+Here are a few samples of Forth in the real world
+[http://www.forth.com/Content/Products/CaseHist.htm (FORTH, Inc.)],
+[http://www.mpeltd.demon.co.uk/forth.htm (MPE)]:
+* AVCO/Textron Systems, building automation and auxiliary services for [http://www.riyadh-today.com/arrival%20in%20riyadh/ar(60).htm King Khaled International Airport] (Saudi Arabia). System contains nine PDP 11/44s, 378 8086-based computers, and 320 8085-based security processors,collectively monitoring and controlling over 36,000 points.
+* Eastman Kodak Company, quality control system monitoring photographic film density. Includes film motion control, automatic recognition of film density steps, and custom IEEE-488 bus interface.
+* Federal Express, hand-held tracker SuperTracker, carried by every FedEx delivery agent. Contains bar-code reader, keyboard, 2x20 line display. Performs extensive package entry and tracking functions, including cross index from airport code to all 10,000 US zip codes. Includes smart power-off sequencing to extend battery life.
+* NASA Goddard Space Flight Center:
+0 Control of 50-foot long, six-joint arm for Space Shuttle simulator. Extensive math routines convert two three-axis joystick commands robot arm into required joint velocities in six different co-ordinate systems.
+0 Multitasking operating system, Forth language compiler, and libraries for UT69R000 radiation-hardened microprocessor used in Space Shuttle instrumentation.
+0 Development of the Forth-based Small Payload Accomodations Interface Module (SPAIM), which interfaces the Shuttle Solar Backscatter Ultraviolet (SSBUV) instrument to the Space Shuttle's avionic systems. The SSBUV instrument is used to calibrate ozone-measuring instruments aboard NOAA satellites.
+* Owens-Corning Fiberglas, Owens-Corning has used Forth for many years as the basic firmware in its distributed industrial controllers. These controllers perform a wide variety of functions, managing winders, weighing devices, etc., used in the manufacture of various fiberglass products. Plants in Korea and Mexico also use FORTH, Inc.'s EXPRESS to provide supervisory control and reporting functions.
+* Saturn Corp, distributed HVAC system for entire Saturn automobile assembly plant, controlling over two hundred 40 hp. heating - cooling - humidifying units (with Z-80s) over a two-tier network using PCs as text and graphical system monitors. Outside air sensors provide inputs for intelligent set-point control and economic use of gas heating and chilled-water cooling systems.
+* Sacramento Municipal Utilities District (California) SMUD : photovoltaic arrays in the state capitol feature EXPRESS to provide user-configurable live trending, historical trending, alarm/exception reporting, rule-tracking, I/O system exerciser, class-based real-time database, graphical process displays, simultaneous multiple vendor I/O system scanning, I/O and process simulation for development, and multiple remote terminal access with full graphics. Custom drivers for the Digitronics Sixnet(TM) I/O system were provided in one week; EXPRESS already supports Modicon, Allen-Bradley, OPTO-22 OPTOMUX and PAMUX, plus others.
+* University of Minnesota, PC-based system for telescope control and data taking (over IEEE-488 bus), data analysis and graphics display. Includes provision for remote observing, using a custom protocol to multiplex packets from three independent data streams over a single telephone line.
+* VertexRSI (Div. of Tripoint Global), software for custom satellite tracking receivers.satellite tracking receivers Includes frequency synthesizer control, remote RS-232 command port, vacuum fluorescent graphics display.
+* A mobile phone manufacturer is introducing a new games engine derived from the SENDIT project. This uses a Forth-based virtual machine to reduce the size of games in the phone, and to permit more functionality to be provided in the phone without increasing memory size.
+* A recent consultancy project based on MPE 8051 and ARM hardware, will introduce a new range of vending machines to the market.
+* Construction Computer Software (CCS) in Cape Town produce the MARS and CANDY applications which are a standard all over the world. The CCS software is an example of a large-scale Windows application written in ProForth for Windows, and the VFX Forth version already consists of over 850,000 lines of code. CCS software was used to plan the new Chai Tak airport in HongKong. The [http://www.ccssa.com/ CCS web site is here].
+* Barefoot Auditor is used by Microsoft for collecting information about their own PCs, and was written using one of MPE's Forth systems. Barefoot Auditor has been available on several magazine cover disks recently, and more information is available from Pathfinder.
+* laundry strip [http://www.micross.co.uk/ Micross Electronics], use MPE's ProForth for Windows at the heart of their commercial laundry control systems, and MPE's Forth 6 cross compilers for the PLCs performing real time control. These systems are installed in many countries, and you may have slept in sheets washed by the Micross Tracknet control systems.
+* Forth virtual machine runs payment terminals: Europay International's Open Terminal Architecture (OTA). OTA uses a virtual machine (VM) architecture to deliver payment terminal applications directly to payment terminals regardless of their hardware or CPU. The OTA VM has been installed on a range of CPUs and is now being deployed. The OTA project involved up to 30 programmers working in several locations on two continents. [http://www.europay.com/ OTA is described here].
+
+There's a catch we must admit. It is that Forth makes you responsible for your computer's efficiency. To draw an analogy: a manual transmission is tougher to master than an automatic, yet for many drivers it offers improved control over the vehicle.
+
+Similarly, Forth is tougher to master than traditional high-level languages, which essentially resemble one another (i.e., after learning one, it is not difficult to learn another). Once mastered, however, Forth gives you the capability to minimize CPU time and memory space, as well as an organizing philosophy by which you can dramatically reduce project development time.
+
+And remember, all of Forth's elements enjoy the same protocol, including operating system (sometimes), compiler, interpreters, text editor, virtual memory, assembler, and multiprogrammer. The learning curve for Forth is much shorter than that for all these separate elements added together.
+
+If all of this sounds exciting to you, turn the page and start Forth.
+----

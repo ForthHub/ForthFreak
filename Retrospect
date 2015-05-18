@@ -1,0 +1,19 @@
+Retrospect is a debugger written in RetroForth. It's not quite complete yet, but already does quite a bit of useful things. It isn't likely to run on other Forths without (possibly significant) changes.
+
+Users of !RetroForth (Release 8) can load it by doing the following:
+
+  load lib/retrospect e
+
+If you'd like to [http://retro.tunes.org/repos/retroforth/_darcs/current/common/lib/retrospect view] the code, you can do so. Please note that this is a BlockFile. 
+What's complete:
+
+* Hexdump a word
+* Resolve addresses to names
+* Decompile (disassemble) words to their assembly equivilents, with comments and names of words.
+* Inspect registers
+
+What's coming:
+
+* Single step execution
+* Mini hex editor
+* Better integration with the RetroEditor

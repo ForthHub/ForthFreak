@@ -1,0 +1,27 @@
+Currently, in very general terms the specs are dividing up into:
+
+* Legacy version control system   
+** Store diffs. 
+** Provide files for display or modification.
+** Provide diffs for analysis.
+
+
+* Trees   Arranged precisely analogous to a tree of wiki pages. 
+** Load files 
+** Run tests.
+** Refine specifications. 
+Perhaps only a small addition to wiki code.
+
+* User interface   Probably look like a wiki. 
+** Do searches. 
+** Follow links. 
+** Observe diffs. 
+** Write to pages.
+** Create links.
+** Compile code.
+** Run tests.
+** Convert bug reports into tests, place in test tree. 
+** Upload changes.
+** Download what looks interesting. 
+
+Make the mechanism transparent enough that users can easily put in their own preferred development systems -- their own text editors, their own search functions, whatever.

@@ -1,0 +1,10 @@
+Features:
+* Subroutine-threaded: The Forth definitions compile directly to compiled Perl subroutines.
+* Interactive access to Perl from Forth.
+* Not much else :)  It doesn't actually DO very much, but it was a fun hack.
+
+A design goal was to implement the working Forth kernel in a mininal amount of Perl code, then bootstrap the remainder of the language in the context of the working interpreter/compiler. Note that much of this bootstrap code is Perl ``assembly code''; but just being able to compile it on the Forth side seemed to me a worthwhile distinction.
+
+!http://members.cts.com/crash/b/billk/pforth/  dead link
+
+ForthSystems

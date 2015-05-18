@@ -1,0 +1,60 @@
+ \ test token compiler on simple bytecode compiled by tokenizer
+
+ MARKER SENT
+ S" SENDCOMPATIBLE.F"   INCLUDED
+ S" SENDBYTECODE.F"     INCLUDED
+ S" SENDWORDLIST.F"     INCLUDED
+ S" SENDTOKENS.F"       INCLUDED
+ S" SENDCOMPILER.F"     INCLUDED
+ S" SENDSIMPLETOKENS.F" INCLUDED
+ S" SIMPLEWORDS.F"      INCLUDED
+ S" SENDCOMPLEXWORDS.F" INCLUDED
+ S" SENDFILE.F"         INCLUDED
+ S" DECODER.F"          INCLUDED
+ S" SENDTOKENNAMES.F"   INCLUDED
+
+
+ TOKENNAMES
+ LAST-TOKEN ?
+
+ \ simple code to convert to bytecode
+ TO-FILE
+  T| 13546 CHAR apple S" aqua" .( stable)
+ CREATE TEST 3 CELLS ALLOT TEST U. 5 TEST ! TEST @ .
+ VARIABLE TEST1 TEST1 U. 6 TEST1 ! TEST1 @ .
+ 7 CONSTANT TEST2 TEST2 .
+ :NONAME 8 . ; EXECUTE
+ : TEST3 9 . ; TEST3
+ N: TEST4 10 . ;
+ |T
+
+ SHOW
+ SENT
+
+ S" GETCOMPATIBLE.F"   INCLUDED
+ S" GETBYTECODE.F"     INCLUDED
+ S" GETTOKENS.F"       INCLUDED
+ S" GETSIMPLETOKENS.F" INCLUDED
+ S" GETCOMPILER.F"     INCLUDED
+ S" SIMPLEWORDS.F"     INCLUDED
+ S" GETCOMPLEXWORDS.F" INCLUDED
+ S" GETFILE.F"         INCLUDED
+ S" COMPLEXWORDS.F"    INCLUDED
+
+ SETUP-INPUT DROP
+
+ TOPARSETOKENS
+
+ \ read and execute bytecode
+ CR .( test lit           13546 -> ) HANDLE-TOKEN .
+ CR .( test CHAR              a -> ) HANDLE-TOKEN EMIT
+ CR .( test interpreted S" aqua -> ) HANDLE-TOKEN TYPE
+ CR .( test .(           stable -> ) HANDLE-TOKEN
+ CR .( CREATE            addr 5 -> ) 12 HANDLE-TOKENS
+ CR .( VARIABLE          addr 6 -> ) 11 HANDLE-TOKENS
+ CR .( CONSTANT               7 -> ) 6 HANDLE-TOKENS
+ CR .( :NONAME             xt 8 -> ) 4 HANDLE-TOKENS DUP U. HANDLE-TOKEN
+ CR .( : working?             9 -> ) 5 HANDLE-TOKENS
+ CR .( LNAME:                10 -> ) 4 HANDLE-TOKENS TEST4
+
+ \ test compiled lit, compiled CHAR, [CHAR] S"

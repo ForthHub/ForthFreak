@@ -1,0 +1,3 @@
+Also called "address interpreter" : the mechanism which enables a ForthInterpreter to execute an address list. High level Forth words are commonly expressed as address lists (with [http://wiki.forthfreak.net/index.cgi?DirectThreadedCodePseudoCode Direct Threaded Code] and [http:?IndirectThreadedCodePseudoCode Indirect Threaded Code])
+
+see also  ForthImplementation

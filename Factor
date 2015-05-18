@@ -1,0 +1,19 @@
+Factor is a dynamic programming language drawing inspiration from Forth, Joy, and LISP. Some key features include:
+
+* Postfix syntax
+* Image-based environment
+* Dynamic typing
+* Dynamic scoping
+* Primary compound data types are linked lists, vectors, and namespaces (lists of name/value pairs)
+* Rich math library including floating point, ratios, complex numbers
+* Continuations
+* Integrated HTTP server and image/documentation browser
+* Focus on interactive and test-driven development 
+
+There are two implementations of Factor. An interpreter written in C, and an interpreter/compiler written in Java. The C implementation requires GCC running on a Unix-like operating system (or Windows with Cygwin). 32-bit and 64-bit CPUs of both byte orders are supported. The Java implementation requires Java 2 version 1.4. The Java version can also be integrated with JEdit, providing a nice, cross-platform environment for developing programs.
+
+Website: http://factorcode.org/
+
+IRC: #factor on irc.freenode.net
+
+ForthSystems

@@ -1,0 +1,102 @@
+pseudocode for an outer interpreter could be:
+(this is pseudocode because it ignores to balance the ParameterStack)
+
+ : interpreter ( ??? addr cnt -- ??? )
+    begin
+       nextword                \ parse next word from input
+    while
+       find if                 \ word exists in dictionary
+          immediate? 0=        \ immediate words refuse to be compiled, but execute instead
+          compiling? and       \ reads a switch, used to put system in interpreting or compiling mode
+          if
+             ,                 \ compile word reference to memory
+          else
+             execute           \ execute word now
+          endif
+       else                    \ word is not in dictionary
+          number? if
+             compiling? if
+                literal        \ compile number to memory
+             endif             \ otherwise, leave number on stack
+          else                 \ not a number, not a word in dictionary
+             error
+          endif
+       endif
+    repeat
+   ;
+
+
+----
+=== a "real" outer interpreter ===
+This one uses several non-standard word. It has been lifted out of a stand-alone implementation of Forth, 
+
+
+ \ want to change the interpreter? here's the equivalent of the interpreter 
+ \ which is included in the kernel, so you can use this as a base for your
+ \ own custom interpreter.
+ : myinterpret  ( ??? <stream> -- ??? )
+     begin
+        kick                            \ watchdog kick
+        bl word                         \ read word to here
+        here count
+     dup while                          \ yes, word has more than 0 chars
+        find                            \ can word be found in dictionary?
+        ?dup if                         \ yes:
+           dup immediate? not           \ if it's not an immediate word...
+           compiling? and               \ ...and compiler is turned on...
+           if
+              name> ,                   \ ...then compile the word...
+           else
+              name> execute             \ ...otherwise execute the word.
+           endif
+        else                            \ (word can't be found in dictionary)
+           here 
+              dup number?               \ is it a number ?
+              if                        \ yes:
+                 number                 \    convert string to number
+                 compiling?             \    if compiling:
+                 if
+                    lit,                \    compile the number...
+                 endif                  \    ...otherwise leave number on stack.
+              else                      \ (not in dictionary, no number):
+                 count                  \ name of word
+                 undefined              \ maybe user code can deal with word.
+              endif
+           endif
+       depth 2 shl 0<                   \ negative depth ?
+       " stack underflow" ?error        \ indicate disapproval.
+    repeat
+    2drop ;
+
+----
+=== Outer interpreter in [jsforth]: ===
+ var x_interpret = colon("interpret") ;                     // ( -- )
+   BEGIN() ;
+      compile(x_bl,x_parse,x_dup) ;
+   WHILE() ;
+      compile(x_2dup,x_search,x_qdup) ;
+      IF() ;
+         compile(x_nip,x_nip,x_dup,x_qimm) ;
+         IF() ;
+            compile(x_execute) ;
+         ELSE() ;
+            compile(x_compiling) ;
+            IF() ;
+               compile(x_comma) ;     
+            ELSE() ;
+               compile(x_execute) ;
+            THEN() ;
+         THEN() ;
+         compile(x_depth,x_0less) ;
+         IF() ;
+            compile(x_stackunderflow) ;
+         THEN() ;
+      ELSE() ;
+         compile(x_interpretnumber,x_0equ) ;
+         IF() ;
+            compile(x_notfound);
+         THEN() ;
+      THEN() ;
+   REPEAT() ;
+   compile(x_2drop) ;
+ semicolon();

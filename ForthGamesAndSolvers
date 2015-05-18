@@ -1,0 +1,9 @@
+* AnagramFinder using the DirectedAcyclicWordGraph
+* BoggleGame, spell checker, unique string list, and utilities to use the DirectedAcyclicWordGraph
+* EightQueens
+* ForthChessProgram
+* GameOfLife
+* MeteorPuzzle
+* [http://www.retroforth.org/projects/RxChess RxChess] for RetroForth
+* SudokuSolver
+* TilingPuzzle

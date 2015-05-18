@@ -1,0 +1,59 @@
+This is the progress report of a project, currently under development, to implement a Forth compiler, which generates stand-alone ELF executables for x86 Linux. An empty program:
+
+    program" nothing"
+   : main  ( -- ) ;
+
+compiles to 93 bytes, which is mainly the ELF header. The size of 
+
+   program" hello"
+   : main ( -- ) ." Hello, world" cr  ;
+
+is currently 305 bytes, while compiling from library  /emit type cr (dotquote) main init/
+
+[http://forthfreak.net/dumphex.tgz dumphex.tgz] is an archive with [http://forthfreak.net/dumphex.f source] and executable of a test program which outputs a hex dump of some of the compiled program code.Should you dare to run it on an x86 non-celeron machine,  and it should fail,  please report back the problem.
+
+[http://wiki.forthfreak.net/index.cgi?ByteSieveBenchmark byte magazine sieve benchmark] compiles to 422 bytes. the executable runs 1000 iterations of finding the first 1899 primes in 0.86 seconds on an intel celeron 1800. generated (nonoptimized) code executes about 2..4 times faster than gforth interpreted code. note: versions 1.30 to ... generate code which executes considerably slower. major difference in generated code is that it uses lea much more. I still have to examine the reasons for the sudden speed drop.
+
+The compiler is influenced by Tom Almy's [CFORTH]/[ForthCMP], by building up forward references of those words for which the compiler itself has no code, and which need to be resolved from a library. The main program source is compiled before the library is included, and the forward-referenced words are compiled from the lib. These may create new forward references, to be resolved at a later point during library inclusion.
+This makes it easy to compile just the required code from lib, und leave out all cruft which isn't used by the main program, or the words included from the library.
+
+/u./ , used in the main program, causes /u./ to be compiled from the library, which in
+turn forward references /<# #s #> space type/. When /#s/ is compiled, # gets forward referenced, and so on, down to words which are either compiled from primitives only, or code words (none of those create new forward references). The library is therefore organized such that the lowest level words are located towards the end. The penalty for a single-pass compiler, such as this one, is that the call to the forward reference can not easily be optimized for size, as the call destination is first unknown, and therefore, the worst case (very far away) is assumed. I might consider patching the calls against their shorter counterpart, but the gain would probably be neglectable, as code execution will continue at the byte following the call. As most programs would be less than 64 KB anyway,
+an initial choice between 16 or 32 bit branch/call offsets would gain more. I'm not even considering a conventional multi-pass approach, but i might think about a two-pass, where
+the first pass would, by compiling the program, serve only to generate the list of words included from the library. These words are in pass 2 compiled in reverse, last word first, before the main program. When the main program is compiled at the end, no more forward references incur, and the call addresses of all words are known, as well as the call frequency. Upon the latter the decision can be based whether to inline or compile calls to library words. Such a scheme would still allow to render executable code with a single pass, and use the (optional) second pass merely to gain a few bytes/cycles, for the expense of doubling compilation time.
+
+I suppose i'm not trying to get deep into optimizing the generated code at this point. Possible Forth to host the compiler: [lpForth], currently GForth is used.
+
+* NativeCodeCompilerWorkingExample
+* [http://forthfreak.net/compiler.f compiler.f rcs snapshot]
+** [NativeCodeCompilerSource] wikified version of the above
+* [http://forthfreak.net/library.f library.f rcs snapshot]
+* [http://forthfreak.net/testbench.f test cases for compiler output verification]
+
+
+status:   inactive
+* forwards references and resolving from library works for code and colon words. variables and constants are not forward resolvable yet.
+* primitives compile into main program and library words.
+* if then   do loop    begin until     flow control words are available
+* number output words compile from library
+* if else then   begin while repeat   begin again  are available
+* for next style loops work
+* ."  s"   work
+* run time , c, allot here
+* < > min max umin umax move 
+* compiling test bench creates a program which tests generated code.
+* improved linkage code generation
+* added ?do and leave
+* added +loop
+* constants, variables, creates generate in-line code now. as consequence, those cannot be forward referenced now
+* improved assembler, partial implementation
+* linkage code generation tunable by statements like  1 1 in/out   primitive 
+* factored some of the assembler a bit
+
+
+next:
+* extend assembler, factor out
+
+
+Working on:  
+* [Speuler]

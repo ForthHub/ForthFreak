@@ -1,0 +1,4 @@
+
+' and ['] and FIND and SEARCH-WORDLIST look up names and return execution tokens.  We should not use command names anywhere except in the original list of primitives.  So they will find the token for the following word and send that to the token compiler, which will return the xt it uses.
+
+But this means they don't actually do their defined functions, they do something else using bytecode.  So we have two versions, the one that will later find an xt from source and the one that now finds an xt from a token in bytecode.  At every step the tokenizer must know which of them to use.  There's room for a lot of trouble there, and it might be best to simply not implement these words.  A bytecode that needs them could use two different names and programmers who specifically write code for it can use the commands they prefer.

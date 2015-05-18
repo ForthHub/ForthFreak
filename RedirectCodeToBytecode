@@ -1,0 +1,31 @@
+\ ----------- sending bytes to byte code ---------
+
+ \ No telling where you'll actually want to send bytecode, to a file or
+ \ directly to a socket or serial port or what, so we redirect it.
+
+ ( G: OUTPUT-CHAR sends one token or character to byte code.)
+ DEFER OUTPUT-CHAR ( S: byte -- )
+
+ ( G: copy string into byte code )
+ : OUTPUT-CHARS ( S: caddr len -- )
+    OVER + SWAP ?DO I C@ OUTPUT-CHAR 1 CHARS +LOOP ;
+
+ ( G: copy string-and-count into byte code )
+ : OUTPUT-COUNTED-STRING ( S: "string" char -- )
+    PARSE DUP OUTPUT-CHAR OUTPUT-CHARS ;
+
+ ( G: copy char-delimited string into byte code as char-delimited string. )
+ : OUTPUT-STRING ( S: "string" char -- )
+    DUP PARSE OUTPUT-CHARS OUTPUT-CHAR ;
+
+ ( G: copy number into output as counted string. )
+ : OUTPUT-NUMBER ( S: "number" -- )
+    BL WORD COUNT 2DUP NUMBER? 0= ABORT" undefined name"
+    DUP OUTPUT-CHAR OUTPUT-CHARS ;
+
+ ( G: copy unsigned number from stack )
+ : OUTPUT-UNSIGNED ( S: u -- )
+    0 <# #S #> DUP OUTPUT-CHAR OUTPUT-CHARS ;
+ ( G: copy signed number from stack )
+ : OUTPUT-SIGNED ( n -- )
+    S>D <# DUP 0< >R DABS #S R> SIGN #> DUP OUTPUT-CHAR OUTPUT-CHARS ;

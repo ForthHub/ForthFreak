@@ -1,0 +1,82 @@
+=== porting to different wiki software ===
+As kwiki, the wiki software we are running, is pretty much dead nowadays,
+and the wiki is starting to fall apart - recent upgrade of operating system
+version didn't pass without leaving traces. For example, editing pages is
+turned off now for technical reasons - alternative wiki implementations are
+evaluated and examined for suitability. Currently, sputnik is under review.
+Both wikis, old and new, will probably be online while migration takes
+place. Sputnik is currently 
+[http://fachkurs.de/cgi-bin/sputnik.cgi running in a VM under a different domain
+]
+
+=== adding a Forth system to ForthSystemsAlphabetical ===
+simply put on the last line of the wiki page which describes a Forth system,
+the word *!ForthSystems*. After next update run of ForthSystemsAlphabetical (every 4 hours), the thusly marked system will have been added.
+
+
+=== Page including ===
+ After you install this plugin, your are able to use {include: PageName}
+ wafl phrase in your Kwiki page content, and that will include
+ all content of that page in this one. So it allows you to
+ "modualize" your Kwiki pages. You can give a list of page names
+ sepearated by comma, or space. They will be included in order.
+
+ For example:
+
+  {include: PageOne}
+
+  {include: PageOne,PageTwo}
+
+  {include: PageOne PageTwo}
+
+
+
+
+
+=== Additional, more comprehensive, image linking support ===
+
+      {image:http://www.google.com/images/logo.gif http://www.google.com Google inline}
+
+    will render as:
+
+      <a href="http://www.google.com"><img src="http://www.google.com/images/logo.gif" alt="Google" class="inline" /></a>
+
+    For XHTML compliance, a default alt attribute is included if omitted:
+
+      {image:http://www.google.com/images/logo.gif http://www.google.com}
+
+    will render as:
+
+      <a href="http://www.google.com"><img src="http://www.google.com/images/logo.gif" alt="Image" /></a>
+
+    Another example:
+
+      {image:http://www.nowhere.com/images/fancygraph?type=onthefly}
+
+    will render as:
+
+      <img src="http://www.nowhere.com/images/fancygraph?type=onthefly" alt="Image" />
+
+
+
+* Added wiki sisters support, also called shortcuts.
+** [http://forthfreak.net/shortcuts.yaml show current targets]
+** SuggestAShortcut
+** ShortcutsExamples moved to an own page now
+* The server has moved again
+* The server has moved.  
+* removed the keywords plugin as it hardly served any other purpose than adding spam
+* [http://en.wikipedia.org/wiki/Captcha Captchas] have been installed
+** these are the little pictures with numbers, showing when editing a page.
+** enter the displayed number correctly before saving the page. If wrong,
+** press the "back" button of the web browser, and try again.
+** should the number be too difficult to read, press "reload" for another one.
+* [http://forthfreak.net/index.cgi?action=diff&page_name=WhatIsNew&revision_id=-1 page differences] can be displayed:
+** click on "Revisions" of a page, and "Prev" or "Next" to the wanted revision
+** a new action bar item "Differences" shows, which shows the differences
+* the wiki layout is now unthemed
+* the logo has been changed
+* there are ads at the bottom of the pages
+** these help financing the server
+*** contributed 5% to the server rental last year.
+*** contributed 1.5% to server rental this year.

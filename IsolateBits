@@ -1,0 +1,26 @@
+ \ isolate the highest bit
+
+ cell 8 * constant bits/cell
+
+ : highbit ( u -- mask )
+       bits/cell 1 do
+         dup i rshift or
+       i +loop            \ loop index 1, 2, 4, 8 ...
+       1 rshift 1+  ;
+
+  $1234 highbit .    ( $1000 )
+
+
+ \ isolate the lowest bit
+ : lowbit ( u -- mask )
+       dup dup 1- and xor ;
+
+  $1234 lowbit .     ( 4 )
+
+----
+
+ : lowbit  ( u1 -- u2 )  dup negate and ;
+ : lowbit- ( u1 -- u2 )  dup 1- and ;
+ : highbit ( u1 -- u2 )  begin dup lowbit- ?dup while nip repeat ;
+
+ \ faster if there are usually < 6 bits set

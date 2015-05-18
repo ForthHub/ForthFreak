@@ -1,0 +1,89 @@
+(* Stack variables.
+Each stack variable behaves like a stack.
+You can do 
+ SVARIABLE TEST
+and create one.
+You can treat it like a variable.
+ 5 TEST !
+You can push a value onto it. 
+ 7 TEST VPUSH
+Keep treating it like a variable.
+ TEST @ .  7 OK
+Pop off the value.
+ TEST VPOP .  7 OK  
+ TEST @ .   5 OK
+
+My own Forth uses stack variables for BASE >IN  the other input buffer variables etc. Easy to save the data. Very convenient.
+
+Stack variables are not efficient. They use twice the memory that dedicated stacks would, and they use threaded lists which are slow relative to real stacks. But none of them overflow until they all do. And they are very convenient, for operations that don't have to be the fastest. *)
+   
+ \ need a pool of unused items, a linked list
+
+ : CELL- [ 1 CELLS ] LITERAL - ;
+
+ CREATE SVFREE 0 ,
+ CREATE SVAVAILABLE 4096 CELLS ALLOT
+
+ : LINK-IN ( newlink@ newlink! oldlink -- )
+    DUP @ ROT ! ! ; 
+
+ : LINK-OUT ( addr -- freelink )
+    DUP @ 
+    DUP 0= 496 AND THROW \ delete this if it will never underflow
+    DUP @ ROT ! ;
+    
+ : SVMAKE-AVAILABLE ( a-addr #cells -- )
+    2DUP CELLS ERASE 
+    SWAP CELL+ DUP ROT 2/
+    1 ?DO
+      DUP 2 CELLS + TUCK !
+    LOOP
+    SWAP SVFREE LINK-IN ;
+
+ SVAVAILABLE 4096 SVMAKE-AVAILABLE
+
+ \ Note that you could add a new block of memory to the unused list, any time.
+ \ You could even allocate a block of memory and use it.
+
+
+
+ : VCOPY ( a-to a-from -- )
+    [ 1 CELLS ] LITERAL DUP D- 2@ ROT 2! ;
+
+ \ link address into freelist
+ : VGONE ( addr -- )
+    DUP SVFREE LINK-IN ;
+
+ \ get address from freelist
+ : VGET ( -- addr )
+    SVFREE LINK-OUT ;
+
+ \ copy stack variable into new link
+ \ note that svariable address points to data
+ \ link address points to link
+ : VNEW ( addr -- )
+    CELL+ VGET        \ a1 link
+    2DUP SWAP VCOPY  \ link a1 
+    SWAP ! ;
+
+ : VOLD ( addr -- )
+    CELL+ DUP LINK-OUT TUCK
+    VCOPY VGONE ;
+
+ : VPUSH ( x addr -- )
+    DUP VNEW ! ;
+
+ : VPOP ( addr -- x )
+    DUP @ SWAP VOLD ;
+
+ : VDEPTH ( addr -- u )
+    CELL+ 1 BEGIN
+      OVER @ WHILE
+        1+ SWAP @ SWAP
+    REPEAT NIP ;
+   
+ : SVARIABLE
+    CREATE 0 , 0 , ;
+
+\ It would be possible to add a third field to make a linked list of all the stack variables.
+\ That would make it easier to keep track of them all, in case you wanted to do that.

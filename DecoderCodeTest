@@ -1,0 +1,6 @@
+ S" SENDCOMPATIBLE.F" INCLUDED
+ S" DECODER.F"        INCLUDED
+ S" GETFILE.F"        INCLUDED
+ \ decode whatever file was last encoded
+ SETUP-INPUT
+ DECODE

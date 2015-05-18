@@ -1,0 +1,9 @@
+ATLAST is the /Autodesk Threaded Language Application System Toolkit/. 
+
+John Walker wrote ATLAST in an attempt to make software component technology and open architecture applications commonplace in the mainstream software market. It was based on the FORTH-83 standard and was written in C for maximum flexibility. ATLAST is good, if a little bloated. Generally it's speed is satisfactory and it is quite easy to embed into C applications. One especially nice aspect is the extensive documentation in RTF, PostScript, and TeX formats.
+
+ATLAST has been released into the public domain and is written in C.
+
+http://www.fourmilab.ch/atlast/
+
+ForthSystems

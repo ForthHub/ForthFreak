@@ -1,0 +1,204 @@
+See also ClassifyForthCode
+
+No Forth language standard provides the sort of regimentation that is expected of, say, Java. The latest Forth standard, approved by ANSI and ISO, allows a wide variety of Forth systems to be labeled standard and Forth code must be very carefully written if it is intended to be universally portable.
+
+It would be possible to classify the various types of Forth implementations that are mentioned in the ANS standard, and create a sort of taxonomy of Forth systems. Code could be analysed by its needs and its portability might be somewhat defined.
+
+Here is a third attempt, incomplete:
+
+ 0 Memory
+ 	00 address-unit size 
+  		000 other
+ 		001 8-bit
+ 		002 16-bit
+ 	01 char size
+ 		010 other
+ 		011 8-bit
+ 		012 16-bit
+ 	02 cell size
+ 		020 other
+ 		021 16-bit
+ 		022 32-bit
+ 		023 64-bit
+ 	03 endian  ( mostly matters for C@ from cell data )
+ 		030 other
+ 		031 little-endian
+ 		032 big-endian, cell same size as endian unit
+ 		033 big-endian, cell twice the size as endian unit
+ 		034 big-endian, cell half the size as endian unit
+ 	04 cell alignment
+ 		040 other -- can't ignore alignment but ANS words won't fix it
+ 		041 not aligned
+ 		042 aligned
+ 	05 float alignment
+ 		050 no floating point
+ 		051 not float aligned
+ 		052 float-aligned, double-float-aligned
+ 	06 harvard architecture ( code accessible?  interferes with ALLOT etc?)
+ 		060 headers and/or code mixed with data
+ 		061 headers and code separate from data
+ 	07 Counted string representation
+ 		070  other
+ 		071 no counted strings
+  		072 count is one character, followed by string
+  		073 count is one character, followed by string, followed by null
+  		074 count is another size, followed by string
+  		075 count is another size, followed by string, followed by null
+ 	08 headers
+ 		080 other
+ 		081 no headers
+ 		082 header not accessible
+ 		083 '83 standard headers
+ 	09 I/O buffers
+ 		090 maximum size of keyboard input buffer
+  			0900 other
+ 			0901 no buffer
+ 			0902 <80 chars
+ 			0903 <128 chars
+ 			0904 <1024 chars
+ 			0905 <32767 chars
+ 		091 maximum size of file input buffer
+ 			0910 other
+ 			0911 no buffer
+ 			0912 <128 chars
+ 			0913 <1024 chars
+ 			0914 < 32767 chars
+ 		092 maximum size of <# buffer
+ 			0920 other
+ 			0921 no buffer
+ 			0922 <2*cellsize+2 chars
+ 			0923 <128 chars
+ 			0924 <1024 chars
+ 			0925 < 32767 chars
+ 	0A Other buffers
+ 		0A0 PAD
+ 			0A00 other
+ 			0A01 no buffer
+ 			0A02 <84 chars
+ 			0A03 <1024 chars guaranteed
+ 			0A04 all unused memory
+ 		0A1 blocks
+ 			0A10 other
+ 			0A11 no buffer
+ 			0A12 1 block buffer
+ 
+ 1 Arithmetic
+ 	10 arithmetic type
+ 		100 other
+ 		101 2's-complement
+ 		102 1's-complement
+ 		103 sign-magnitude
+ 	11 division type
+ 		110 other
+ 		111 no division
+ 		112 symmetric
+ 		113 floored
+ 		 
+  2 Return stack ( system stuff interferes with use of stack?  Change system data?)
+ 	20 access to "real" return stack?
+ 		200 other
+ 		201 no access to real return stack
+ 		202 nest-sys available with R>, size of cell
+ 		203 nest-sys available, double size of cell
+ 		204 nest-sys available, half size of cell
+ 	21 where is loop-sys?
+ 		210 other
+ 		211 no loop-sys
+ 		212 loop-sys on return stack, uses 2 cells
+ 		213 loop-sys on return stack, uses 3 cells
+ 	22 switch from interpret to compile implemented as
+ 		220 other
+ 		221 deferred word
+ 		222 branch
+ 		223 call
+
+ 3 Data stack    ( which system behaviors interfere with user data stack?)
+ 	30 where is control-flow stack?
+ 		300 other
+ 		301 no control-flow stack
+ 		302 control-flow stack on data stack
+ 	31 where is colon-sys
+ 		310 other
+ 		311 no colon-sys
+  		312 colon-sys on data stack
+
+ 4 The state-smart mess
+ 	40  How many xt's can a word have?
+ 		400 other
+ 		401 one
+ 		402 two, one for interpreting and one for compiling
+
+ 5 Particular words
+ 	50 Do BEGIN loops allow more than one WHILE?
+ 		500 no BEGIN
+ 	 	501 no
+ 		502 yes
+ 	51 What does DOES> apply to?
+ 		510 other
+ 		511 no DOES>
+ 		512 the last definition made by CREATE
+ 		513 the last named definition
+ 		514 the last definition
+ 	52 What does IMMEDIATE apply to?
+ 		520 other
+ 		521 no IMMEDIATE
+ 		522 the last named definition
+ 		523 the last definition
+
+ 6 True flag
+ 	60 What value do primitives return for a true flag?
+ 		600 other
+ 		601 no true flag
+ 		602 low bit set
+ 		603 all bits set
+ 	61 What value do primitives accept for a true flag?
+ 		610 other
+ 		611 no true flag
+ 		612 low bit set 
+ 		613 any bit set
+
+ 7 Is floating point available?  
+ 	70 no floating point
+ 	71 yes, with floats on data stack
+ 	72 yes, with separate floating point stack of less than 17 items
+ 	73 yes, with separate large floating point stack
+
+ 8 Permanent data storage
+ 	80 other
+ 	81 none
+ 	82 direct Access by Blocks
+ 	83 file System
+
+9 Graphic character types
+ 	90 other
+ 	91 no characters
+ 	92 ascii7 
+ 	93 ISO8
+ 	94 standard 16-bit
+
+ A Number representation
+ 	A0 maximum base   
+ 		A00 no base
+ 		A01 other
+ 		A02 maximum BASE = 36
+ 		A03 maximum BASE = 62
+ 	A1 <# location    ( for nested number output, mostly done when debugging)
+ 		A10 no <#
+ 		A11 other
+ 		A12 a single fixed buffer
+ 		A13 a single transient buffer
+ 		A14 chars stored on data stack
+ 	
+
+I'm supposing I'd never need to know about names longer than 31 chars
+----
+there may be an additional count issue, related to string length:
+does count fetch 8 bit, or 1 chars ? maybe the question should be "how wide is 1 CHARS", assuming that COUNT fetches string length as well as chars from a string.
+----
+Yes, that's the issue.  If the count is the same as a character and a counted string has the count right before the string, then you can use COUNT to step through the string.  If either of those isn't true, you can't.
+
+There's also a question how big a counted string can be.
+----
+according to DPANS, number conversion must be able to work with base in the range of 2...36. it is an implementation issue whether base >36 still gives meaningful results.
+----
+Good point!

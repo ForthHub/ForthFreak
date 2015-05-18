@@ -1,0 +1,6 @@
+IndirectThreadedCodeSlideshow18 IndirectThreadedCodeSlideshow20
+
+http://www.forthfreak.net/slides/slide27.jpg
+
+First UNNEST instruction returns IP to its former value, and drops
+it from the Return stack.

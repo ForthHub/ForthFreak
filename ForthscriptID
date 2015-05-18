@@ -1,0 +1,16 @@
+If we will have an indeterminate number of new ForthScripts, we at least want to be able to tell them apart.
+
+Here is one approach to doing that:
+
+Give each of them a label consisting of the initials of some person involved in creating it, followed by the time it was labeled -- second, minute, hour, day, month, and year similar to the date produced by the Forth TIME&DATE command.
+
+It needs no central control.  The chance of two Forth programmers with the same initials creating alternate byte-code systems at precisely the same second is very small.
+
+This is a 9-byte ID, larger if we want readable characters.  We can compress it.  3 alphabetic chars can compress to 15 bits, date&time compresses to 33 bits if we accept a Y2K year.  The chance of two people with the same initials creating byte-code systems exactly one hundred years apart, with both still in use and this method of identifying them still in use seems slim.
+So that brings it down to 6 bytes.  I doubt a slower compression method would bring it down to 5.
+
+This does require 6 bytes added to each message.  Or perhaps available on request after the first message.  
+
+ForthScriptIDCode
+
+ForthScriptIDCodeTest

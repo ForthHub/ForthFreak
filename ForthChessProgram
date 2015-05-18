@@ -1,0 +1,5 @@
+IanOsgood wrote an ANS Forth chess program named [http://www.quirkster.com/forth/FCP.html FCP] originally based on Tom Kerrigan's TSCP.
+
+Earlier, JeffFox ported a much dumber [http://www.ultratechnology.com/chess.html chess program].
+
+Around 2000 David Kühling wrote a chess-program called [Brainless] in pure ANS Forth 

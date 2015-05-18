@@ -1,0 +1,11 @@
+Imari is a very small bytecode virtual machine written in C++. The author challenged himself one Christmas to write a VM in a page of C, and having achieved that, decided to refine the VM design till it was usable in a more practical sense, with no code-length constraints (though it's still rather small). The result of this refinement was the Imari VM.
+
+Forth principles were used in both versions, particularly the notion of being stack-based, with a data stack and return stack.
+
+After Imari was completed, work began on a small Forth-like language compiler which would target Imari bytecode. The result, called FLCL (for Forth-like control language), also took up only a few pages of C++ code. The aspiration was to create a tiny, embeddable language which could be used for scripting or controlling games.
+
+Current code for Imari and FLCL can be found at http://ii-0-ii.com/parodycheck/software/imari/
+
+Working on it: JeffRead
+
+ForthSystems

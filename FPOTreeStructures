@@ -1,0 +1,25 @@
+Tree structures in a ForthProjectOrganiser
+
+* Specifications   At the top level we have general specs, the sort of thing a customer would understand. As the specs get broken down into smaller more-detailed pieces, they become a tree. And as different developers change the lower-level specs for themselves, that adds more branches to the tree.
+
+* Load files   A top-level load file might load other load files, each representing large divisions in the software. The second-level load files might load other load files, each representing one module of code. Etc.
+
+* Test code   At the lowest level, each source-code file should have one or more corresponding files of tests that demonstrate that each Forth word performs as claimed -- it hsa the proper stack effects etc. A load file for a module should have an associated test file that shows the module does what's claimed of it. A load file for a larger structure would show that this whole section of the program behaves appropriately. At the top level we'd have tests for the complete working system.
+
+Ideally these different trees would grow in parallel. Each level of specs would have a load file that shows which code matches those specs, and at the bottom we'd have specs for specific Forth words and the source code for those words. Meanwhile the test files would match up directly with source code and load trees. Bug reports should turn into tests that would be placed at an appropriate spot on the test tree.
+
+It should be easy to download or upload a tree or a branch of a tree, to any system. FPOMoreAboutTrees
+----
+
+These might as well display like a wiki, and so they might as well use wiki code.
+
+One special consideration is that team members shouldn't be able to modify each other's pages (which could depend on trust to start with). So it should be obvious whether a page is yours or not.
+
+/On the other hand, some people believe that team members/ should /be able to modify each other's pages./
+See
+http://c2.com/cgi/wiki?CodeOwnership
+for some of the controversy.
+
+If there's one official version then you have a conflict. The owner of a page doesn't want things shifting under him, he presumably knows more than anybody else how it's supposed to work. But when someone else needs changes so their stuff can work right, they have a lot of inconvenience waiting on him.
+
+If everybody gets their own versions,the conflict is deferred. Do what you like right now. If the other guy looks over your changes and he chooses to be compatible with you, fine. If he doesn't then everybody else will have to choose. The result will be either two successful alternative projects, or one successful project and one failure, or regrettably two failures, with a lot of code sharing. At some point the people who take one branch might all decide to switch and then the split is healed.

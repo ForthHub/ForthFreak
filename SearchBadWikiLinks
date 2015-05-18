@@ -1,0 +1,18 @@
+[Execute]
+
+ #!/bin/sh
+
+ # http://server/cgi-script?parameter is not well handled if execution of cgi-script w/o pars is refused
+
+ BADLINKS=~/BadWikiLinks     # file name where bad links are written to
+ WIKIDIR=~/forthfreak/wiki   # path to the wiki
+
+ rm -f $BADLINKS
+ cat ${WIKIDIR}/database/* | 
+    tr "[]?" "   " |
+    tr " " "\012" |
+    grep ^http://[A-z] | 
+    sort | uniq |
+ while read LINK ; do
+   wget --spider $LINK || echo $LINK >> $BADLINKS
+ done

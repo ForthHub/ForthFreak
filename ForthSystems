@@ -1,0 +1,34 @@
+There are numerous implementations of Forth. This page is intended to provide an overview of all known implementations. Many Forth systems have been ported to different operating systems and !CPUs. Some run only on specific platforms. 
+----
+
+=== ForthSystemsAlphabetical: Alphabetically sorted list of Forth Systems
+===  
+----
+
+* StandAloneForth stand-alone Forth, Forth-OS, embedded.
+* MultiPlatformForth Forths for different Operating Systems
+* Forths for one specific Operational System:
+** UnixLinuxForth Unix/Linux
+** Atari8BitForth Atari (8Bit, Atari 400/800/XL/XE)
+** Apple2Forth Apple II
+** Apple68kForth Apple Mac/68k
+** PowerPCForth PowerPC
+** WindowsForth Windows
+** PalmOSForth - Forth for PalmOS
+** DOSForth MS-DOS
+** OtherForth other platforms/OS
+* CrossForth Cross compiling and/or "Umbilical" Forths
+* Other Forths, not fitting the above categories
+** [Forthmacs] predecessor of OpenBoot, running on Sparc, !RiscOS, Sun, !MacIntosh, Atari...
+** not (yet) categorized Forths, or missing links
+* Object Oriented Forth or Extensions
+** [http://www.zetetics.com/bj/papers/oofs.htm Overview of Forth OO Systems]
+* [colorForth] is a family of Forths that uses colour to replace punctuation. Mostly meant and implemented as StandAloneForth, some [colorForth]s, mostly for training- and evaluation purposes, are running under a host operating system.
+
+----
+There's also a graphical [http://www.complang.tuwien.ac.at/forth/family-tree/ Forth Family Tree] which (while not covering every Forth system) is quite nice for showing how the various Forths interrelate.
+
+==== Metalinks ====
+* [ftp://ftp.taygeta.com/pub/Forth/Compilers/ Forth archive at Taygeta]
+* [http://www.forth.org/compilers.html list of Forth compilers at Forth.org]
+* [http://www.thefreecountry.com/compilers/forth.shtml free Forth compilers]

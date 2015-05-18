@@ -1,0 +1,8 @@
+!IsForth is a free (LGPL'd) Forth for x86 Linux. It is written in assembly and is primarily developed by I440r. TomNovelli also helped to get it working and had been working on a (now abandoned) FreeBSD port.
+
+http://isforth.clss.net
+
+
+The abandoned freebsd port is now complete :)
+
+ForthSystems

@@ -1,0 +1,426 @@
+One of the challenges for the GreatComputerLanguageShootout is to implement an algorithm to compute the value of pi one digit at a time. Unfortunately for Forth, this algorithm requires arbitrary precision arithmetic. This is usually the purview of research languages such as Lisp and Haskell, but not usually Forth.
+
+AlbertvanderHorst took up the challenge and ported the algorithm to Forth, IanOsgood came up with the heap based memory model shown. Amazingly, even though this code is doing all the big-int arithmetic by hand, it is more compact than many of the other languages which import a big-int library.
+
+This is still much slower (using [GForth]) than most of the other languages in the shootout, and suggestions for making this more efficient would be appreciated.
+
+* http://shootout.alioth.debian.org/debian/benchmark.php?test=pidigits
+
+----
+
+ \ Copyright (2006): Albert van der Horst by GNU Public License
+ \  modifications by Ian Osgood (memory model, shootout format)
+ \ $Id: PiSpigot,v 1.2 2008/01/05 22:19:05 www-data Exp www-data $
+
+ \ read NUM from last command line argument
+ 0. argc @ 1- arg >number 2drop drop constant NUM
+
+ \
+ \ Arbitrary precision arithmetic
+ \ A p-number consists of a count plus count cells, 2-complement small-endian
+ \
+
+ : p-ALLOC ( size -- pn ) DUP 1+ CELLS ALLOCATE THROW TUCK ! ;
+ : p-NUMBER ( n -- pn ) 1 p-ALLOC TUCK CELL+ ! ;
+ : p! ( pn var -- ) DUP @ FREE THROW ! ;
+
+ \ Shorthand.
+ : p>size ( pn -- size ) POSTPONE @ ; IMMEDIATE
+ : [I] POSTPONE I POSTPONE CELLS POSTPONE + ; IMMEDIATE
+
+ \ Give sign of p  ( p -- flag)
+ : 0<p   DUP @ CELLS + @ 0< ;
+
+ \ Trim one cell off p, if superfluous (p --)
+ : TRIM   DUP DUP @ CELLS + { p last }
+   \ If last cell only contains a sign ...
+   last @ 0=   last @ INVERT 0= OR IF
+      \ Trim it off, if that sign is already in cell before.
+      last @ 0<   last 1 CELLS - @ 0<   = p +!
+   THEN ;
+
+ \ Multiply un by p ( un p -- pd )
+ : *p   DUP 0<p OVER p>size 1+ p-ALLOC { n p extend pd }
+     0. pd p>size 1 DO
+         p [I] @    n UM* D+
+         SWAP   pd [I] !   0
+     LOOP
+     extend n UM* D+
+     DROP   pd DUP @ CELLS + !
+     pd TRIM   pd ;
+
+ \ Add p1 and p2 giving p3 ( p1 p2 -- p3 )
+ : +pp
+     OVER p>size OVER p>size > IF SWAP THEN
+     OVER 0<p   OVER 0<p { pshort plong extents extentl }
+     plong p>size 1+ p-ALLOC { pd }
+     0. pshort p>size 1+ 1 DO
+         pshort [I] @ 0   plong [I] @ 0   D+
+         D+ SWAP   pd [I] !   0
+     LOOP
+     plong p>size 1+   pshort p>size 1+ ?DO
+         extents 0   plong [I] @ 0   D+
+         D+ SWAP   pd [I] !   0
+     LOOP
+     DROP   extents +  extentl + pd DUP @ CELLS + !
+     pd TRIM   pd ;
+
+ \ Return the negation of ps giving pd ( ps -- pd )
+ : pnegate
+   DUP 0<p OVER p>size 1+ p-ALLOC { ps extend pd }
+   1. pd p>size 1 DO
+         ps [I] @ INVERT 0
+         D+ SWAP   pd [I] !   0
+   LOOP
+   DROP   extend INVERT + pd DUP @ CELLS + !
+   pd TRIM   pd ;
+
+ : temp(  POSTPONE DUP POSTPONE >R ; IMMEDIATE
+ : )temp  POSTPONE R> POSTPONE FREE POSTPONE THROW ; IMMEDIATE
+
+ \ Subtract p1 from p1 giving p3 ( p1 p2 -- p3 )
+ : -pp   pnegate temp( +pp )temp ;
+
+ \ Multiply (like +!) (  n addr --)
+ : *!p   >R  R@ @      *p   R> p! ;
+
+ \ Add      (like +!) ( pn addr --)
+ : +!p   >R  R@ @      +pp  R> p! ;
+ : -!p   >R  R@ @ SWAP -pp  R> p! ;
+
+ \
+ \ pi-spigot specific computation
+ \
+
+ \ Current z transformation
+ CREATE aq  1 p-NUMBER ,
+ CREATE ar  0 p-NUMBER ,
+     \ "as" identical zero and remains so
+ CREATE at  1 p-NUMBER ,
+
+ \ testing
+ \ : p? ( pn -- ) dup @ 0 do cell+ dup ? loop drop ;
+ : DUMP-AS  \ CR aq @ @ . ar @ @ . at @ @ . CR
+   ;  DUMP-AS
+
+ \ which digit to generate (increments from zero)
+ VARIABLE K
+
+ \ Generate non zero parts of next matrix ( -- q r t )
+ : generate   1 K +!   K @  DUP 2* 1+  DUP 2* SWAP ;
+
+ \ Multiply z from the left (bq br bt -- )
+ : compose<   DUP at *!p   ar *!p aq @ *p temp( ar +!p )temp  aq *!p
+    DUMP-AS ;
+
+ \ Multiply z from the right (bt br bq -- )
+ : compose>   DUP aq *!p   ar *!p at @ *p temp( ar -!p )temp  at *!p
+    DUMP-AS ;
+
+ \ Calculate z at point 3, leaving integer part and fractional part.
+ \ Division is by multiple subtraction until the fractional part is
+ \ negative.
+ \ ( -- pfract n)
+ : z(3)   3 aq @ *p temp( ar @ +pp )temp
+     0 BEGIN SWAP temp( at @ -pp )temp
+         SWAP  OVER 0<p 0= WHILE 1+
+     REPEAT ;
+
+ \ Calculate z at point 4, based on the result for point 3
+ \ and decide whether the integer parts are the same.
+ \ ( pfract n -- n flag)
+ : z(4)same?   SWAP temp( aq @ +pp )temp temp( 0<p )temp ;
+
+ ( -- nextdigit)
+ : pidigit
+     BEGIN z(3) z(4)same? 0= WHILE DROP generate compose< REPEAT
+     1  OVER 10 *  10  compose> ;
+
+ : printcount ( n -- ) .\" \t:" 1 U.R CR ;
+
+ \ ( digits - remaining)
+ : printdigit   pidigit [CHAR] 0 + EMIT
+     DUP 10 MOD 0= IF printcount ELSE DROP THEN ;
+
+ \ Spigot n digits with formatting ( n --)
+ : spigot  DUP 1+ 1 DO I printdigit LOOP
+     DUP 10 MOD IF 10 2DUP MOD - SPACES printcount ELSE DROP THEN ;
+
+ NUM spigot bye
+
+----
+
+Here is an alternate implementation which uses fixed-size buffers and in-place operations.  It is about 20% faster and a few lines shorter. -- IanOsgood
+
+(It's 7 times faster than the code above when you run it on iForth for Windows. It could be even faster when use was made of UM+ ( ud1 u2 -- ud3 ) instead of D+ -mhx)
+
+ \ Great Computer Language Shootout
+ \ http://shootout.alioth.debian.org/
+ \ contributed by Albert van der Horst, Ian Osgood
+
+ \ read NUM from last command line argument
+ 0. argc @ 1- arg >number 2drop drop constant NUM
+
+ \
+ \ Arbitrary precision arithmetic
+ \ A p-number consists of a count plus count cells, 2-complement small-endian
+ \
+
+ \ Shorthand.
+ : p>size ( pn -- size ) POSTPONE @ ; IMMEDIATE
+ : p>last ( pn -- msb ) DUP p>size CELLS + ;
+ : [I] POSTPONE I POSTPONE CELLS POSTPONE + ; IMMEDIATE
+
+ \ Give sign of p
+ : p0< ( p -- flag ) p>last @ 0< ;
+
+ \ Copy a p-number to another buffer
+ : pcopy ( src dst -- ) OVER p>size 1+ CELLS MOVE ;
+
+ \ Check for overflow, extend the p-number if needed
+ : ?carry ( carry p -- ) 2DUP p0< <> IF 1 OVER +!  p>last ! ELSE 2DROP THEN ;
+
+ \ In-place multiply by an unsigned integer
+ : p* { n p -- }
+   p p0<  0. ( sign dcarry )
+   p p>size 1+ 1 DO
+     p [I] @       ( digit )
+     n UM* D+ SWAP ( carry digit )
+     p [I] ! 0
+   LOOP
+   ROT n UM* D+ DROP  p ?carry ;
+
+ \ Ensure two p-numbers are the same size before adding
+ : extend { p n -- }
+   p p0< { sign }
+   p p>size 1+  n p +!
+   p p>size 1+ SWAP DO sign p [I] ! LOOP ;
+ : ?extend ( p1 p2 -- p1 p2 )
+   OVER p>size OVER p>size - ?DUP IF
+     DUP 0< IF >R OVER R> NEGATE
+     ELSE OVER SWAP
+     THEN extend
+   THEN ;
+
+ \ In-place addition of another p-number
+ : p+  ?extend { src p -- }
+   src p0< p p0<  0. ( sign sign dcarry )
+   p p>size 1+ 1 DO
+     p   [I] @ 0 D+
+     src [I] @ 0 D+ SWAP
+     p   [I] ! 0
+   LOOP
+   DROP + + p ?carry ; \ add signs, check for overflow
+
+ \ In-place subtraction of another p-number
+ : p-  ?extend { src p -- }
+   src p0< p p0<  0. ( sign sign dcarry )
+   p p>size 1+ 1 DO
+     p   [I] @ 0 D+
+     src [I] @ 0 D- SWAP
+     p   [I] ! S>D
+   LOOP
+   DROP + + p ?carry ; \ add signs, check for overflow
+
+ \
+ \ pi-spigot specific computation
+ \
+
+ \ approximate upper limit on size required (1000 -> 1166)
+ NUM 2* CELLS constant SIZE
+
+ \ Current z transformation
+ CREATE aq 1 , 1 , SIZE ALLOT
+ CREATE ar 1 , 0 , SIZE ALLOT
+     \ "as" identical zero and remains so
+ CREATE at 1 , 1 , SIZE ALLOT
+
+ \ Generate non-zero parts of next matrix ( K 4K+2 2K+1 )
+ VARIABLE K
+ : generate ( -- q r t ) 1 K +!   K @  DUP 2* 1+  DUP 2* SWAP ;
+
+ \ HERE is used as a temporary p-number
+
+ \ Multiply z from the left
+ : compose< ( bq br bt -- )
+   DUP at p*  ar p*  aq HERE pcopy  HERE p*  HERE ar p+  aq p* ;
+
+ \ Multiply z from the right
+ : compose> ( bt br bq -- )
+   DUP aq p*  ar p*  at HERE pcopy  HERE p*  HERE ar p-  at p* ;
+
+ \ Calculate z at point 3, leaving integer part and fractional part.
+ \ Division is by multiple subtraction until the fractional part is
+ \ negative.
+ : z(3)  ( -- n pfract )HERE  aq OVER pcopy  3 OVER p*  ar OVER p+
+   0 BEGIN SWAP at OVER p-  DUP p0< 0= WHILE SWAP 1+ REPEAT ;
+
+ \ Calculate z at point 4, based on the result for point 3
+ \ and decide whether the integer parts are the same.
+ : z(4)same? ( pfract -- flag ) aq OVER p+  p0< ;
+
+ : pidigit ( -- nextdigit)
+     BEGIN z(3) z(4)same? 0= WHILE DROP generate compose< REPEAT
+     1   OVER 10 *   10   compose> ;
+
+ : .digit ( -- ) pidigit [CHAR] 0 + EMIT ;
+
+ : .count ( n -- ) .\" \t:" 1 U.R CR ;
+
+ \ Spigot n digits with formatting
+ : spigot ( digits -- ) 0
+   BEGIN 10 +  2DUP > WHILE
+     10 0 DO .digit LOOP  DUP .count
+   REPEAT
+   2DUP 10 - DO .digit LOOP  OVER - SPACES  .count ;
+
+ NUM spigot bye
+
+----
+Here is a version of the above, ported to Reva:
+* http://ronware.org/reva/
+
+ | computer language shootout
+ | http://shootout.alioth.debian.org/
+ | contributed by albert van der horst, ian osgood
+
+ needs math/doubles
+ needs util/locals
+
+ | read num from last command line argument:
+ : getnum argc argv >single 0if 2drop 10 then ;
+ getnum constant num
+
+ | arbitrary precision arithmetic
+ | a p-number consists of a count plus count cells, 2-complement small-endian
+
+ inline
+ | same as "dup @ cells +"
+ | mov ebx, [eax]
+ | lea eax, [ebx*4+eax]
+ : p[] [ $048d188b , $98 1, ;
+ forth
+ | give sign of p
+ : p0< ( p -- flag ) p[] @ 0 < ;
+
+ | copy a p-number to another buffer
+ : pcopy ( src dst -- ) over @  1+ cells move ;
+
+ | check for overflow, extend the p-number if needed
+ : ?carry ( carry p -- ) 2dup p0< <>if 1 over +! p[] ! else 2drop then ;
+
+ | in-place multiply by an unsigned integer
+ : p* {  n p --  }
+ p p0< 0. ( sign dcarry )
+ p @ 1+ 1 do
+ p i cells + @       ( digit )
+ n um* d+ swap ( carry digit )
+ p i cells + ! 0
+ loop
+ rot n um* d+ drop  p ?carry ;
+
+ | ensure two p-numbers are the same size before adding
+ 0 value sign
+ : extend { p n -- }
+ p p0< to sign
+ p @ 1+  n p +!
+ p @ 1+ swap do sign p i cells + ! loop ;
+
+ : ?extend ( p1 p2 -- p1 p2 )
+   over @ over @ - ?dup if
+      dup 0 < if
+         >r over r> negate
+      else
+         over swap
+      then
+      extend
+   then ;
+
+ | in-place addition of another p-number
+ : p+  ?extend { src p -- }
+ src p0< p p0<  0. ( sign sign dcarry )
+ p @ 1+ 1 do
+ p   i cells + @ 0 d+
+ src i cells + @ 0 d+ swap
+ p   i cells + ! 0
+ loop
+ drop + + p ?carry ; | add signs, check for overflow
+
+ | in-place subtraction of another p-number
+ : p-  ?extend { src p -- }
+ src p0< p p0<  0. ( sign sign dcarry )
+ p @ 1+ 1 do
+ p   i cells + @ 0 d+
+ src i cells + @ 0 d- swap
+ p   i cells + ! s>d
+ loop
+ drop + + p ?carry ; | add signs, check for overflow
+
+ |
+ | pi-spigot specific computation
+ |
+
+ | approximate upper limit on size required (1000 -> 1166)
+ num 2* cells constant size
+
+ | current z transformation
+ create aq 1 , 1 , size allot
+ create ar 1 , 0 , size allot
+ | "as" identical zero and remains so
+ create at 1 , 1 , size allot
+
+ | generate non-zero parts of next matrix ( k 4k+2 2k+1 )
+ variable k
+ : generate ( -- q r t ) 1 k +!   k @  dup 2* 1+  dup 2* swap ;
+
+ | here is used as a temporary p-number
+
+ | multiply z from the left
+ : compose< ( bq br bt -- )
+ dup at p*  ar p*  aq here pcopy  here p*  here ar p+  aq p* ;
+
+ | multiply z from the right
+ : compose> ( bt br bq -- )
+ dup aq p*  ar p*  at here pcopy  here p*  here ar p-  at p* ;
+
+ | calculate z at point 3, leaving integer part and fractional part.
+ | division is by multiple subtraction until the fractional part is
+ | negative.
+ : z(3)  ( -- n pfract )
+      here  aq
+      over pcopy  3
+      over p* ar
+      over p+ 0
+      repeat
+         swap at over p- dup p0< 0 <>if ;; then
+         swap 1+
+      again ;
+
+ | calculate z at point 4, based on the result for point 3
+ | and decide whether the integer parts are the same.
+ : z(4)same? ( pfract -- flag ) aq over p+  p0< ;
+
+ : pidigit ( -- nextdigit)
+     repeat
+        z(3) z(4)same? dup 0if
+           nip generate compose< 
+        then
+     not while
+       1   over 10 *   10   compose> ;
+
+ : .digit ( -- ) pidigit '0 + emit ;
+
+ : .count ( n -- ) 9 emit ." :"  (.) type cr ;
+
+ | spigot n digits with formatting
+ : spigot ( digits -- ) 0
+    repeat
+       10 +  2dup > dup if
+          >r
+          10 0 do .digit loop  dup .count
+          r>
+       then
+    while
+       2dup 10 - do .digit loop
+       over - spaces  .count ;
+ num spigot bye

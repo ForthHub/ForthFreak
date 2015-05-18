@@ -1,0 +1,17 @@
+* administration:
+** WhatIsNew
+** PagesResistingEasyMigration
+* navigation:
+** WikiColors
+** [http://forthfreak.net/index.cgi?action=search List all pages] (Sorted by name)
+** [http://forthfreak.net/index.cgi?action=recent_changes List all pages] (Sorted by date)
+** [AllForthWords]
+* usage:
+** KwikiQuickRef Quick Reference
+** SandBox (for trying out editing wiki pages)
+** KwikiHelpIndex Help Index
+** KwikiMorePages
+* status:
+** MigrationState
+** [http://uptime.netcraft.com/up/graph?site=wiki.forthfreak.net Netcraft uptime stats for this server]
+** BlockedAddresses

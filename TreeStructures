@@ -1,0 +1,16 @@
+Tree structures in Forth programming: /FIXME: link to example here/
+
+-----
+
+Tree structures in a ForthProjectOrganiser:
+
+These might as well display like a wiki, and so they might as well use wiki code.
+
+One special consideration is that team members shouldn't be able to modify each other's pages (which could depend on trust to start with). So it should be obvious whether a page is yours or not.
+
+/On the other hand, some people believe that team members/ should /be able to modify each other's pages./
+See
+http://c2.com/cgi/wiki?CodeOwnership
+for some of the controversy.
+
+Another is that it should be easy to download or upload a tree or a branch of a tree, to any system. MoreAboutTrees

@@ -1,0 +1,15 @@
+ NEXT:
+    [IP]+ -> W
+    [W]+  -> PC
+
+ NEST:
+    IP    -> -[RP]
+    W     -> IP
+    NEXT
+
+ UNNEST:
+    [RP]+ -> IP
+    NEXT
+
+
+back to ForthImplementation

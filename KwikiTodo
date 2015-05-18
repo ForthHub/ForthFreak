@@ -1,0 +1,26 @@
+Add these features:
+* KwikiSisters
+* Page aliasing
+* Page renaming/refactoring
+* Revision Diff Display
+* Support [=javascript/local] and [=css/local]
+
+
+Most of these features are not specific to ForthFreak.
+They should probably go into the underlying
+Kwiki engine ( http://kwiki.org/ )
+or one of its many plugins ( http://www.kwiki.org/?KwikiPlugins ).
+
+----
+
+Revision diff display:
+
+Isn't this already supported by the "diff" plugin for the Kwiki wiki engine?
+(For example, http://www.kwiki.org/?action=diff&page_name=HomePage&revision_id=-1
+).
+
+How can we get this enabled at ForthFreak ?
+
+''Concur. This used to work. Any wiki which has a lot of source code needs to have a visual diff feature. -- IanOsgood''
+
+----

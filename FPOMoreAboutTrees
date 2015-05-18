@@ -1,0 +1,5 @@
+For uploading/downloading, something similar to Wikit might be good. Wikit was written in TCL and includes a sophisticated database, a virtual file system, and a local viewer. Each page is saved in the database, numbered from page 0 (or 1?) to whatever, and they can be displayed by the TCL viewer or converted to HTML. So the same pages can be a helpfile or a webpage etc.
+
+Synchronising files is no harder than updating records in a database -- the local one or the one on the host. You can have whatever names you like for your pages, and refer to them by those names. But if you expand the virtual file system under your own OS then you get filenames like 5.FTH or 5.HTML and not anything that can be hard for filesystems to handle.
+
+In terms of sheer effort it might likely be easier to adapt Wikit to the job than anything written in Forth. But doing the whole thing in one language has some big advantages.

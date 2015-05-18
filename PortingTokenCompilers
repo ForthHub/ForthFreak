@@ -1,0 +1,11 @@
+When we have a byte-code applet that we want to run on some Forth system, but that Forth lacks the proper token-compiler, somehow we must port the token-compiler to where it's needed.
+
+It's more important that the token-compiler be portable than the tokenizer. If you can run the other guy's token-compiler and he can run yours, you can send each other code. Your tokenizer can be adapted to your system and his adapted to his system -- provided the byte-code they produce will run on other systems.
+
+If we can distribute the token-compiler as byte-code rather than Forth source code then it is more likely to run correctly and it is potentially easier to find any existing incompatibilities. (Also the code will be smaller and should compile faster.)
+
+So it makes sense to build a tokenizer/token-compiler pair that is good at compiling token-compilers. A Forth system which has that particular token-compiler working can then download other token-compilers.
+
+It would make sense to also compile tokenizers as byte-code. However, the code that becomes a tokenizer may do sophisticated parsing, and the tokenizer itself may do sophisticated parsing when it parses source code to make byte-code. So it may sometimes be harder to tokenize tokenizers than to tokenize token-compilers.
+
+Some Forth parsing in source code can be removed from byte-code by the tokenizer. The code can always be rewritten to avoid parsing, with effort. The intention here is to reduce that effort as much as practical.

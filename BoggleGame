@@ -1,0 +1,179 @@
+ \ DAWGDEMO.F - Directed Acyclic Word Graph
+ \
+ \ By Ian Osgood  iano@quirkster.com
+ \
+ \ Top level commands
+ \  tdtrav    - interactively traverse a TRIE/DAWG
+ \  word?     - lookup a word in the dawg
+ \ Boggle sample program
+ \  random-board - fill the board with random letters
+ \  fill-board   - set the board to a particular state
+ \  .board       - show the board
+ \  solve-board  - use the DAWG to find all the words
+ \                 of length min-len or greater
+ include dawg.f
+
+ VARIABLE prefix-len
+ CREATE prefix 16 CHARS ALLOT
+ : prefix-len+  prefix-len @ CHARS + ;
+ : .prefix  ." '" prefix prefix-len @ TYPE ." '" ;
+ 
+ \
+ \ TRIE/DAWG checker
+ \
+
+ : .block ( block -- )
+   CELL- 
+   BEGIN CELL+ DUP @
+         DUP EOW IF [CHAR] A ELSE [CHAR] a THEN
+         OVER Let 1- + EMIT
+         EOB
+   UNTIL DROP ;
+
+ : trav ( index -- command[0^-.] )
+   DUP 0= IF .prefix ."  End of line." CR EXIT THEN
+   CELLS dawg @ + 0  ( block^ command )
+   BEGIN DROP .prefix ."  [" DUP .block ." ^-.] "
+         KEY CR
+         DUP [CHAR] a [CHAR] z 1+ WITHIN 
+         IF   DUP prefix prefix-len+ C!
+              c>let OVER letter-in-block DUP
+              IF   1 prefix-len +!
+                   @ Ind RECURSE
+                   -1 prefix-len +!
+                   DUP [CHAR] - = OVER 8 = OR OVER 127 = OR 
+                   IF DROP 0 THEN
+              THEN
+         THEN
+         DUP [CHAR] ^ =
+         OVER [CHAR] - = OR OVER 8 = OR OVER 127 = OR
+         OVER [CHAR] . = OR
+   UNTIL NIP ;
+
+ : tdtrav
+   0 prefix-len !  BEGIN dawg @ @ trav [CHAR] . = UNTIL ;
+
+ \
+ \ spell check
+ \
+
+ : is-word? ( addr len -- TF )
+   OVER + SWAP ( bounds)
+   dawg @  ( end cur node-addr )
+   BEGIN
+         @ Ind ?DUP 0= IF 2DROP FALSE THEN   \ word too long
+         dawg@i OVER C@ c>Let SWAP letter-in-block
+         ?DUP 0= IF 2DROP FALSE EXIT THEN   \ word not found
+         >R CHAR+ 2DUP = R> SWAP
+   UNTIL
+   @ EOW IF 2DROP TRUE ELSE 2DROP FALSE THEN ; \ word maybe too short
+
+ : word?  BL PARSE is-word? IF ." Yes" ELSE ." No" THEN ;
+
+ \
+ \ Boggle solver
+ \ (start with "random-board" or "fill-board abcd efgh ijkl mnop")
+ \
+
+ 4 VALUE min-len
+
+ 6 5 * 1+ CHARS CONSTANT board-size
+ CREATE board board-size ALLOT
+ \ 0 ,  0 ,  0 ,  0 ,  0 ,
+ \ 0 ,  1 ,  2 ,  3 ,  4 ,
+ \ 0 ,  5 ,  6 ,  7 ,  8 ,
+ \ 0 ,  9 , 10 , 11 , 12 ,
+ \ 0 , 13 , 14 , 15 , 16 ,
+ \ 0 , 0 , 0 , 0 , 0 , 0 ,
+
+ \ random numbers
+
+ HERE VALUE seed
+ : RANDOM ( -- u ) seed  $107465 *  $234567 +  DUP TO seed ;
+ : CHOOSE ( n -- 0 <= u < n ) RANDOM UM* NIP ;
+
+ \ UI
+
+ : .line  CHARS board + 4 TYPE CR ;
+ : .board  CR 6 .line 11 .line 16 .line 21 .line ;
+ 
+ : fill-line ( index "abcd" -- ) board 
+  BL PARSE 4 MIN ROT CHARS board + SWAP CMOVE ;
+ : fill-board  board board-size ERASE
+   6 fill-line 11 fill-line 16 fill-line 21 fill-line .board ;
+
+ : rand-letter ( -- a-z ) 26 CHOOSE 1+ let>c ;
+ : rlc!+ ( sq -- sq+1 ) rand-letter OVER C! CHAR+ ;
+ : rand-line ( index -- )
+  CHARS board + rlc!+ rlc!+ rlc!+ rlc!+ DROP ;
+ : random-board  board board-size ERASE
+   6 rand-line 11 rand-line 16 rand-line 21 rand-line .board ;
+
+ \ results (sorted list, unique words)
+
+ 0 VALUE found-words
+ 0 VALUE size-words		\ allocated size
+ 0 VALUE num-words
+
+ : grow-words
+   size-words 0= IF 16 DUP CELLS ALLOCATE DROP
+   ELSE size-words 2*  found-words OVER CELLS RESIZE DROP
+   THEN TO found-words TO size-words ;
+
+ : allocate-string ( addr len -- c-str )
+   DUP 1+ ALLOCATE DROP DUP >R 2DUP C! CHAR+ SWAP CMOVE R> ;
+
+ : insert-word ( n addr len -- ) num-words size-words = IF grow-words THEN
+   allocate-string
+   SWAP DUP >R CELLS found-words +
+   DUP DUP CELL+ num-words R> - CELLS MOVE
+   !  num-words 1+ TO num-words ;
+
+ : add-word ( addr len -- )         \ / binary search
+   2>R num-words 0 BEGIN 2DUP - WHILE
+     2DUP + 2/  DUP 2R@ ROT CELLS found-words + @ COUNT COMPARE
+     DUP 0= IF 2DROP 2DROP 2R> 2DROP EXIT THEN
+     0< IF ROT DROP SWAP ELSE 1+ SWAP DROP THEN
+   REPEAT DROP 2R> insert-word ;
+ : add-prefix   prefix prefix-len @ add-word ;
+ 
+ : clear-words
+   num-words 0 ?DO
+     I CELLS found-words + @ FREE DROP
+   LOOP  0 TO num-words ;
+  
+ : .words
+   num-words 0 ?DO
+     I CELLS found-words + @ COUNT TYPE SPACE
+   LOOP CR ;
+
+ \ smarts
+
+ : solve-square ( block sq -- block sq )
+   DUP C@ 0= IF EXIT THEN	\ edge or already used
+   \ can traverse to letter on this square?
+   2DUP C@ c>let SWAP letter-in-block ?DUP 0= IF EXIT THEN
+   \ OK: add letter to prefix  ( sq block-node )
+   OVER C@ prefix prefix-len+ C!  1 prefix-len +!
+   \ found a word?
+   DUP @ EOW IF min-len prefix-len @ <= IF add-prefix THEN THEN
+   \ no more suffixes?
+   @ Ind ?DUP 0= IF -1 prefix-len +! EXIT THEN
+   \ continue to surrounding squares
+   dawg@i OVER ( next-block next-sq )
+   0 OVER C!                 \ mark used
+   6 CHARS - RECURSE  CHAR+ RECURSE  CHAR+ RECURSE
+   3 CHARS + RECURSE             2 CHARS + RECURSE
+   3 CHARS + RECURSE  CHAR+ RECURSE  CHAR+ RECURSE
+   2DROP -1 prefix-len +!    \ mark usable again
+   prefix prefix-len+ C@ OVER C! ;
+
+ : solve-line ( root sq -- root sq+5 )
+   solve-square CHAR+ solve-square CHAR+
+   solve-square CHAR+ solve-square CHAR+ CHAR+ ;
+
+ : solve-board
+   0 prefix-len !
+   clear-words  dawg-root  6 CHARS board +
+   solve-line solve-line solve-line solve-line  2DROP
+   CR .words ;

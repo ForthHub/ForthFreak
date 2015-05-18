@@ -1,0 +1,13 @@
+/meta: (greek)  A prefix, meaning "one level of description higher"/
+
+A metacompiler is a compiler which processes its own source code, resulting in an executable version of itself. Many Forth-systems have been written as metacompilers. Forth metacompilers can reduce the porting effort, especially to badly supported platforms, by avoiding the need of assemblers, compilers or tool chains, in order to get a program running on that platform.
+
+A Forth metacompiler must typically add some support for the target platform, such as CPU-specific Forth primitives, or hardware- or OS-specific i/o functions. To avoid the problem of requiring a working Forth system to be able to generate a working Forth-system, a metacompiler can often generate code for another system than the one it is running on.
+----
+Jeff Fox has some information (including several examples on metacompiling at
+* http://www.ultratechnology.com/meta.html ,
+* http://www.ultratechnology.com/meta1.html , 
+* http://www.ultratechnology.com/p21fch12.html .
+Links to some metacompilers are on the ForthDevelopment page.
+
+For an unusual metacompiler, check out the MetaStic page

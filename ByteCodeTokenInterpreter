@@ -1,0 +1,13 @@
+The basic idea is that the token interpreter will get a token, look up an execution token, and execute it. Then do the next one.
+
+Many of the things that you might want that are already done by the Forth compiler are not available. 
+
+IF works on Forth code, not on bytecode. So you must write a byte-oriented substitute.
+
+Similarly for DO EXIT ; etc.
+
+CREATE DOES> works from Forth source to Forth code. Bytecode that did something similar would need a new way.
+
+Etc. Pretty much every Forth word that does something special -- that parses, or compiles, or affects the return stack, or has nondefault compilation behavior -- will need to be rewritten if it is assigned a bytecode.
+
+All that takes a lot of work. On the other hand, you might largely avoid problems with incompatible Forths. If they do something special with compile-only words, or with the return stack etc, it won't affect you unless it affects the code that builds the token intepreter. You do all those things your own way, and if your token compiler works then your bytecode will be portable.

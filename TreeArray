@@ -1,0 +1,270 @@
+ 1 value example
+ 1 value extension1
+ 1 value extension2
+ 1 value norecurse
+
+ 0 [IF]
+An efficient way to arrange a searchable binary tree that does not
+need to be added to or rebalanced often. Not good for trees that change often.
+
+First, an easy example. Say you have six items you want to arrange into
+a searchable tree. We'll number them 1 through 6.
+
+We put the items or pointers to the items into an array. The zero'th
+item will be the number of items, 6. Then we have the middle item, 4.
+Then the middle item of the first three, 2, followed by the middle item
+of the second three, 6. Etc.
+
+Here's the array:
+
+ 6 4 2 6 1 3 5
+
+    values            indices  0 holds 6, the number of items.
+      4                 1
+     / \               / \
+    /   \             /   \
+   2     6           2     3
+  / \   /           / \   / \
+ 1   3 5           4   5 6  (7)  index 7 is out of bounds
+
+Very simple to find the next lowest node in the array. Double the index
+to get the left item. Double the index and add one to get the right
+item.
+
+But the tree must be rebalanced any time you change it. You can make
+many changes and then rebalance once, but you can't make one change and
+use it before you rebalance. 
+
+
+First is to arange an array in the correct order.
+
+If we can  express the order so that we can easily do tree-address
+arithmetic then any sort routine will order the items. But I found that
+approach painful. The sort routine must be written to let you change the
+order of array indices as you prefer.
+
+Easier to first create the array, then build a scratch array that can be
+deleted later, and sort the items into the scratch array. Then copy them
+into the final array in the correct order.
+
+So, n sorted items starting at address a1, move them to the array
+starting at address a2.
+ [THEN]
+
+ extension1 [IF]
+ \ from Speuler http://forthfreak.net/index.cgi?IsolateBits
+
+ \ : lowbit  ( u1 -- u2 )  dup negate and ;
+ : lowbit- ( u1 -- u2 )  dup 1- and ;
+ : highbit ( u1 -- u2 )  begin dup lowbit- ?dup while nip repeat ;
+
+ [THEN]
+
+ 0 [IF]
+
+With a routine that will find the leftmost node that's to the right
+of a given node, we can place them easily.
+
+First check whether you can go down and right. 
+After you go down and right once, then go down-and-left 
+until you run out of bounds. 
+If you can't go down and right, go up.
+ [THEN]
+
+ norecurse [IF]
+ : down-and-left ( bound n -- bound n' )
+    begin
+      2* 2dup < 
+    until
+    1 rshift ;
+
+ : down-and-right ( bound n -- bound n' )
+    2* 1+ 2dup < if 1 rshift then ;
+
+ : up-tree ( n -- n' )
+    begin 
+      dup 1 and while
+      1 rshift
+    repeat
+    1 rshift ;
+
+ : next-node ( bound n -- bound n' )
+    2dup down-and-right
+    nip tuck = if up-tree exit then
+    down-and-left ;
+
+ : fill-barray ( start-array bound tree-array -- )
+    2dup ! -rot     \ tree-array start-array bound
+    dup highbit     \ ta sa b low-node 
+    over 0 do 
+      2over i cells + @ swap \ ta sa b n value ta
+      2over nip cells + ! \ ta sa b n
+      next-node           \ ta sa b n'
+    loop 2drop 2drop ;
+ [THEN]
+
+ 0 [IF]
+Here is an alternate method, provided by Gerry Jackson. It uses a routine that computes the address of the root of the tree, and then recursively computes the root of each subtree.
+ [THEN]
+
+ norecurse 0= [IF]
+ : get-root  ( n -- root )
+    dup highbit tuck 2/ - 1+ min ;
+
+ : rfill-tree  ( src dest idx n -- )   
+    ?dup
+    if
+      dup get-root
+      { src dest idx n root }
+      src root cells + @ dest idx cells + !  \ Copy to tree array
+      src dest idx 2* root 1- recurse                    \ left
+      src root cells + dest idx 2* 1+ n root - recurse   \ right
+    else
+      drop 2drop
+    then ;
+
+ : fill-tree ( src n dest -- )
+   2dup ! 1 rot
+   rfill-tree ;
+
+ [THEN]
+
+ 0 [IF]
+To search the tree, we loop:
+At each level, first check that the index is not too large. ( < 7 in our
+example ) If it is too large, return an index that's out of bounds.
+
+Then check whether the value at the index matches the test value. If so,
+return the index. If not, compute the next index and search the next
+level.
+
+For generality the routine accepts an xt for the comparison. This gives
+us an extra stack item to juggle. The xt needs the stack result (
+test-value tree-value -- -1|0|1 ) If the test value is "larger" return
+-1, if the tree value is "larger" return 1. ) 
+The test value should be the first input, so we can pile the search
+terms on top. 
+ [THEN]
+
+ extension2 [IF]
+
+ : 3dup ( a b c -- a b c a b c )
+    >r 2dup r@ -rot r> ;
+
+ : 4dup ( a b c d -- a b c d a b c d )
+    2over 2over ;
+ [THEN]
+
+ 1 [IF]
+
+ : next-n ( -1|1 n -- 2n|2n+1 )
+    2* swap 2/ - ;
+ 
+ : get-addr ( addr n -- addr' )
+    cells + ;
+   
+ \ xt compares two items ( a b -- -1|0|1) -1 if a<b
+ \ search-tree returns 0 if value is out of range
+ : search-tree ( value start-addr xt -- n' )
+    >r 1 begin
+      over @ over > while
+        3dup get-addr @ r@ execute tuck while
+          next-n
+      repeat
+      nip
+    then
+    rdrop nip nip ;  
+ [THEN]
+
+ 0 [IF]
+Here are a couple of other ways to do the same thing that might be more readable or more efficient on your system. Note that one of them needs its inputs in a different order.
+ [THEN]
+
+
+ 0 [IF]
+ \ tail-recursive approach
+ \ xt compares two items ( a b -- -1|0|1) -1 if a<b
+ \ search-tree returns large number if value is out of range
+ : rsearch-tree ( value xt start-addr n -- n' )
+    over @ over > 0= if
+      0= nip nip nip exit then
+    4dup get-addr @ swap execute tuck 0= if
+      nip nip nip nip exit then
+    next-n recurse ;
+ [THEN]
+
+ 0 [IF]
+ \ locals approach
+ \ xt compares two items ( a b -- -1|0|1) -1 if a<b
+ \ search-tree returns large number if value is out of range
+ : lsearch-tree { value start-addr comparer -- n' }
+    start-addr @ { end-n }
+    1 begin
+      dup end-n < while
+        start-addr over get-addr @ value swap comparer execute
+        tuck while 
+          next-n
+      repeat
+      nip
+    then ;
+ [THEN]    
+
+ 0 [IF]
+Here is a simple example and some simple testing code.
+ [THEN]
+
+ example [IF]
+ 
+  norecurse [IF]
+ \ sample array.
+ create tree 32 cells allot
+
+ : filltest
+    32 1 do i , loop ;
+ create test filltest
+ 
+ test 27 tree fill-barray
+
+ \ debug aid, make trees and eyeball them
+ : cc ( n -- )
+    tree 32 cells 0 fill
+    test swap tree fill-barray
+    tree 32 cells dump ;
+  [THEN]
+ 
+  norecurse 0= [IF]
+ : filltest
+    666 , 32 1 do i , loop ;
+ create test filltest
+ test 27 tree fill-tree   
+
+ \ debug aid, make trees and eyeball them
+ : x ( n -- )
+    tree 32 cells 0 fill
+    test swap tree fill-tree
+    tree 32 cells dump ;
+  [THEN]
+
+ \ sample compare operation to use for sample tree
+ : comp ( a b -- -1|0|1 )
+    2dup < 1 and -rot > or ; 
+
+ CR 9 tree ' comp search-tree   cells tree + @ . .( should be 9 ) 
+ \ CR 9 ' comp tree 1 rsearch-tree cells tree + @ . .( should be 9 ) 
+ \ CR 9 tree ' comp lsearch-tree cells tree + @ . .( should be 9 ) 
+
+ : test
+    28 1 do i tree ['] comp search-tree cells tree + @ i - if i . then loop ;
+ [THEN]
+
+
+ 0 [IF]    Copyright etc
+
+This code is public domain. Anyone is welcome to use it for any purpose.
+Use entirely at your own risk. 
+
+If someone has copyrighted or patented anything in it, I do not yet know
+they have done so. The techniques involved are all described or at least
+hinted at in Knuth's third volume.
+
+ [THEN]

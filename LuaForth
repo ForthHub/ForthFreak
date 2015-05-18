@@ -1,0 +1,20 @@
+Why LuaForth, a Forth interpreter written in Lua?
+* Because my digital camera runs with CHDK which, among other, adds the possibility to load and run Lua scripts from SD card. These scripts are otherwise used to add features to the camera, like time lapse recording, motion detection, recording of picture sequences with varying parameters (as required for HDR photos, or infinite depth of field pictures). I'd like to extend camera functionality by Forth scripts instead of the currently supported languages (besides Lua, scripts can also be written in a tiny BASIC dialect)
+
+Because of the expected similarity of LuaForth to PerlForth, or [jsforth], 
+it is expected that LuaForth will borrow heavily from [jsforth] and PerlForth.
+Therefore the implementation state will reflected on the same page, ForthCoreWords.
+
+[http://scarydevilmonastery.net/lf.lua LuaForth sources]
+
+suspended - bit operators not present, requires installing libs, to provide those as functions. noticed when trying to provide functions for setting reveal- and immediate bits. i don't want to need a bluddy library for oring a bit. nor do i want to do modulo testing, to decide whether the bit value can be added to set it. most shells provide more power than that.  lua = thumbs down. 
+another really suckish bit in lua is: no autoincrement, no monadic increments.
+that is, 
+ w = mem[ip++]
+will no be understood. not even
+ w = mem[ip]
+ ip++
+will be. rather, it needs to be written, clumsily, like
+ w = mem[ip]
+ ip = ip+1
+it appears that lua is not a good choice for general programming, and is better used in the field it has been conceived for: to add some scripting capabilities to computer games, as a toy language, and toy enhancement language.

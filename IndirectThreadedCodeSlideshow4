@@ -1,0 +1,9 @@
+IndirectThreadedCodeSlideshow3 IndirectThreadedCodeSlideshow5
+
+http://www.forthfreak.net/slides/slide12.jpg
+
+because the first address of PRIM pointed to the second address
+of PRIM, host CPU executed now the body of PRIM.
+W has also been incremented. this allows words to locate their own
+body. in case of a variable, for example, W would point now to the
+data part. For execution of this primitive, this is of no concern.

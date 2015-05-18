@@ -1,0 +1,178 @@
+ \ Author GPS
+ \ Written for Ficl 4.0.x (it uses the Johns-Hopkins locals)
+ \ This implements a string structure and various
+ \ words for manipulating and comparing string structures.
+
+ vocabulary string
+
+ also string definitions
+
+ : string->value ;
+ : string->value! ! ;
+ : string->value@ @ ;
+
+ : string->length 1 cells + ;
+ : string->length! string->length ! ;
+ : string->length@ string->length @ ;
+
+ : string-init ( string-bytes length ) { 1:s }
+   dup s string->length!
+   dup allocate if abort" out of memory for string->init" then
+   dup s string->value!
+   swap move 
+   s ;
+
+ : string ( string-bytes length -- string-instance )
+   2 cells allocate if abort" out of memory" then
+   string-init ;
+
+ : string-free ( string-instance )
+   dup string->value@
+   dup if
+     free if S" string-free value failed" type cr then 
+   else 
+     drop
+   then
+   free if S" string-free failed" type cr then ;
+
+ : string-index ( index -- char ) { 1:s }
+   \ first check if the index is within the bounds
+   dup 0 s string->length@ within 
+   if
+     chars s string->value@ + c@
+   else
+     abort" string-index out of range"  ( XXX should we use throw ? )
+   then ;
+
+ : string-emit { 1:s }
+   s string->value@
+   s string->length@
+   type ;
+
+ : string-compare { 1:a 1:b }
+   a string->value@ a string->length@
+   b string->value@ b string->length@
+   compare ;
+
+ : string-equal ( a b -- flag )
+   string-compare 0= ;
+
+ : string-first-from { 1:s 1:c 1:index }
+   -1 ( the default result AKA not found )
+   s string->value@
+   index 0 s string->length@ within
+   if
+     index + ( account for the initial index offset )
+     s string->length@ index do
+       dup c@ c = if drop drop i unloop exit then 1 chars +
+     loop
+     drop
+   else 
+     abort" index out of range in string-first-from"
+   then ;
+
+
+ : string-first ( string-instance char ) 
+   0 string-first-from ;
+
+
+ : string-count { 1:s 1:c }
+   0 ( the count )
+   s string->value@
+   s string->length@ 0 ?do
+     dup c@ c = if swap 1 + swap then 1 chars +
+   loop
+   drop ;
+
+ : string-min-length ( a b ) 
+   string->length@ swap string->length@ min ;
+
+ : string-char-equal ( a-addr b-addr -- flag )
+   c@ swap c@ = ;
+
+ : string-prefix-equal { 1:a 1:b | 1:result }
+   a string->value@ b string->value@
+   a b string-min-length 
+   dup 0 > if true to result else 0 to result then
+   0 ?do 
+     2dup string-char-equal 0 = if unloop 2drop 0 exit then
+     1 chars + swap 1 chars + 
+   loop 
+   2drop
+   result ;
+
+ previous
+
+----
+Code from the test suite:
+
+ S" hello" string 
+ variable mystring
+ mystring !
+ 
+ : test 
+   mystring @ string->length@ 0 do
+     i dup . cr mystring @ string-index 
+   loop ;
+ 
+ test
+ 
+ S" passed test phase 1" type cr
+ 
+ mystring @ string-free
+ 
+ S" passed test phase 2" type cr
+ 
+ S" boingy boingy boingy" string
+ mystring !
+ 
+ S" string value: " type mystring @ dup string->value@ swap string->length@ type cr
+ 
+ S" passed test phase 3" type cr
+ 
+ mystring @ string-free
+ 
+ S" I like cheese!" string  mystring !
+ 
+ mystring @ string-emit cr
+ 
+ S" passed test phase 4" type cr
+ 
+ S" bella" string  S" bellb" string  string-compare -1 <> [if]
+    abort" failed compare 1" [then]
+ 
+ S" bella" string  S" bella" string  string-compare 0 <> [if] 
+    abort" failed compare 2" [then]
+ 
+ S" bellb" string  S" bella" string  string-compare 1 <> [if]
+    abort" failed compare 3" [then]
+ 
+ S" abc" string  S" abc" string  string-equal 1 = [if]
+    abort" failed string-equal" [then]
+ 
+ S" Hello Herbert" string char t 0 string-first-from 12 <> [if]
+    abort" failed string-first-from 1" [then]
+ 
+ S" Hello Herbert" string char H 1 string-first-from 6 <> [if]
+    abort" failed string-first-from 2" [then]
+ 
+ S" Hello Herbert" string char H 0 string-first-from 0 <> [if]
+    abort" failed string-first-from 3" [then]
+ 
+ S" Hello Herbert" string char z string-first -1 <> [if]
+    abort "failed string-first" [then]
+ 
+ S" passed test phase 5" type cr
+ 
+ S" passed all tests" type cr
+----
+Usage:
+ loading string.f 
+
+ ok> also string
+ ok> S" Hello" string
+ ok> 2 over string-index
+ ok> emit cr
+ l
+ ok> dup char l string-count .
+ 2 ok> string-free 

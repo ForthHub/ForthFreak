@@ -1,0 +1,12 @@
+The robot controller made by [http://strobotics.com/ ST Robotics] runs a forth system called Roboforth II.  It appears to be a simple traditional Forth system, with supporting code for running their robots.
+
+One obvious departure from usual is that Roboforth's ' (tick) returns the parameter field address for a word, and FIND performs tick's usual function of returning an execution token for the following name.
+
+----
+
+See:
+
+* [http://strobotics.com/manuals/manuals.htm Manuals]
+* [http://tunes.org/~nef/logs/forth/08.12.16 brief discussion on freenode #forth]
+
+ForthSystems

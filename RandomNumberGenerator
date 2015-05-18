@@ -1,0 +1,16 @@
+= Random Number Generator =
+==== Suggested by C. G. Montgomery on c.l.f.
+
+ hex
+ 10000 0 = [if] 61BF constant rmult      \ 16-bit
+         [else] 7549D83B constant rmult  \ 32-bit
+         [then]
+ decimal
+
+ \ good values for 16-bit systems: 61BF 62DC 6594 6363 5E9B 65E8
+ \             for 32-BIT  7549D83B 07DCB7DC 6A364C22 62AFDC7A
+
+ 2variable rloc  111 rloc !              \ seed with nonzero
+
+ : rndm   ( -- u )        rloc 2@ rmult um* rot 0 d+ over rloc 2! ;
+ : random ( n -- 0..n-1 ) rndm um* nip ;

@@ -1,0 +1,10 @@
+[http://flashforth.sourceforge.net/ FlashForth for PIC 18F, 24F, 24H and dsPIC 30F, 33F and AVR Atmega]
+
+FlashForth is a native Forth OS for the PIC 18F, 24F, 24H and dsPIC 30F, 33F and the AVR Atmega microcontroller families. 
+A Forth interpreter, compiler, assembler, multitasker and user definable interrupts are provided. The idea is to be able interactively develop applications on the uC hardware. The compiler compiles directly into flash memory. All the uC memories (flash, eeprom, ram) can be addressed as a linear address space.
+
+FlashForth is a performance oriented subroutine threaded Forth with a optimising  compiler.
+
+(For the PIC 16F family, see PicForth).
+
+ForthSystems

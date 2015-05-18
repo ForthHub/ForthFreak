@@ -1,0 +1,21 @@
+Join a project, or start a new one. Consider moving the project to [http://code.google.com/hosting/ Google Code Hosting] if it gets popular enough.
+
+----
+
+* a WikiWrittenInForth   (Status: now at version 1.0!)
+** WikiMarkupProcessor, early version, demo here.
+* a NativeCodeCompiler, (status: development) ELF/Linux
+* [jsforth], a ForthInJavaScript (status: development)
+* ForthScripts  (status: refining specs, example code works)
+* ImariProject (status: initial release)
+* Participants for the [http://www.forth.hccnet.nl/pr-ushi.html Ushi] game project (ongoing development).
+** Ushi writing and drawing pictures
+** Ushi playing together in a network
+** Ushi as a maze solver, etc.
+* [minia], a toolkit (status: development http://forthfreak.net/woi.gif) based on the cairo graphics library
+* M8cForth for the Cypress M8C core used in many Cypress PSoC chips.
+* ForthProjectOrganiser (Status: abandoned)
+* Fowser the Forth Browser ( status: vaporware )
+* [FORTAVM] (Virtual-machine for text-adventure games, based on Forth machines)
+* PerlForth, a Forth interpreter, written in Perl.
+* [Brainless], a chess playing programm written in standard ANS Forth

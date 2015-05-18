@@ -1,0 +1,23 @@
+We want a tree of load files that will work on all developers' operating systems.
+
+But there is no standard way to do folders/directories etc in Forth because the standardisers found too much incompatible behavior among operating systems to bridge the gaps. (I think, maybe there was some other reason.) So you can open a file if the OS finds the file, and you can read the contents, and you can write to the file, you can create a new file and read/write to that, and that's about it.
+
+A virtual file system would be a good thing. Have some simple universal way to name files that all OSes can accept. Dump all the files into one folder/directory. Make up a way to organise them that developers' software can handle.
+
+As a first guess, label the files 0.fvf (forth virtual file?) 1.fvf 2.fvf and so on. The software uses the page name and developer name to identify them. So the load tree might have names of files to load like RegisterUsersCode and the OS sees 117.fvf. You could have separate virtual folders or whatever you want, all portable to whatever OS you like provided your own software file system can handle it.
+
+----
+The lowest common denominator with regards to file systems would be  BLOCKs. A sort of virtual file system for Forth, making use of a web server, exists and is used in [http://wiki.forthfreak.net/index.cgi?jsforth jsforth], though it is for now read only. If there is a need to build a more advanced file system, it still can be done on top of blocks.
+
+----
+That's true!
+
+Simple. Easy to manage. If the data is going to be compressed anyway, it might make sense to use 8K blocks or so. That might make sense regardless, storage is cheaper than it used to be and so is RAM.
+
+You could have a method to track authorship of blocks, and names of blocks, and you could organise them any way you wanted. 
+
+Thank you.
+
+
+----
+ANS Forth's READ-LINE is supposed to work on files with DOS or UNIX end-of-line markers. But if we use an established version control system and and wrap our Forth code around it, the code we have no control over may not be as flexible. So I want to suggest that each file be cleaned to Unix EOLs before it gets stored.

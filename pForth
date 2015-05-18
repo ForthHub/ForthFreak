@@ -1,0 +1,7 @@
+!PForth is a  public domain, portable ANS Forth based on a kernel written in ANSI 'C'. This makes it easy to port pForth to multiple platforms. So far, pForth has run on Macs, !PCs, !SUNs, Amigas, Linux, !BeOS, Nokia Communicator, SGI Indys, 3DO ARM systems, 3DO !PowerPC systems, !WebTV systems, Hitachi SH4, !OpenTV prototypes, and some internal projects at Lucent.
+
+!PForth was developed by Phil Burk. Phil Burk is available as a contractor for pForth classes, application development, or porting pForth to new platforms.
+
+http://www.softsynth.com/pforth/
+
+ForthSystems

@@ -1,0 +1,61 @@
+http://forthfreak.net/jsforth-logo-small.png
+=== jsforth abstract:
+[jsforth] is a [Forth] which has been implemented in JavaScript, using a web browser as host platform. Current screen layout works best with screen resolutions of 1024x768 or higher.  Firefox, Mozilla, Netscape are the best-supported browsers at this point.
+* *[http://forthfreak.net/jsforth80x25.html Run jsforth]* (JavaScript required)
+* [http://forthfreak.net/jsforth.js View the source code]
+* ForthCoreWords : implementation status of [Forth] core words in [jsforth]
+* ThePurposeOfForthInJavaScript
+
+----
+
+=== Some jsforth features:
+* interactive terminal emulation
+* blocks file system:
+** client side disk emulation:
+*** cookies
+*** ram drive
+** server side emulation:
+*** remote blocks are loaded dynamically on demand.
+* multi-standard and dialect support
+** [jsforth] personality can be changed easily. Command to switch to a different standard or [Forth] dialect are provided.
+* integrated help and tutorial system (under construction)
+* catch/throw exception handling intercepts JavaScript errors too.
+* Rich set of [Forth] words. Only few words from the ANS core and core ext set haven't been implemented, implementation status documented on ForthCoreWords.
+
+
+==== browser issues overview:
+|problem\browser  |Moz|Fir|Nsc|Epi|Gal|Opr7|Opr9|K331|K332|K355|Saf|IE5|IE6  |Eli|Mmo|kaze|
+|key input        |++ |++ |++ |++(3) |++ |++  |++  |--  |++  |++  |++ |-- |+    |-- |++ |++|
+|web blocks       |++ |++ |++ |++ |+++|--  |o(2)|    |--  |--  |-- |   |--   |   |++ |++|
+|cursor pos       |++ |++ |++ |++ |++ | -  |++  |    | -  | -  | - |   |++   |   |++ |++|
+|backspace        |++ |++ |++ |++ |++ |++  |++  |    |++  |++  |++ |   |--(1)|   |++ |++|
+|errorhandler     |++ |++ |++ |++ |++ |++  |++  |    |++  |++  |++ |   |--   |   |++ |++|
+|#cookies         |?  |4  |?  |?  |4  |?   |?   |    |?   |?   |?  |   |?    |   |?  |5 (+?)|
+||||||||||||||||||
+|overall usability|++ |++ |++ |++ |++ |-   |+   |--  |-   |-   |-  |-- |--   |-- |++ |++|
+ (1) IE backspace: use ctrl-q
+ (2) Opera 9.x web blocks: unreliable. gets wrong blocks sometimes, or none. Opera 10.x doesn't seem to show those problems, and worked well in all respects.
+ (3) Epiphany versions 2.28.x suffer from a javascript problem. 2.29.1-1 works mostly again, but Esc key is not passed to jsforth
+* Moz: Mozilla 1.7.x
+* Mmo: Minimo Embedded Mozilla
+* Fir: Firefox 1.x - 2.x
+* Nsc: Netscape 7
+* (3)Epi: Epiphany 1.4.7 - 2.26.x, 2.29.1-1
+* Gal: Galeon 1.3.x - 2.0.x
+* Opr7: Opera 7.54
+* Opr9: Opera 9.61
+* K331: Konqueror 3.3.1
+* K332: Konqueror 3.3.2
+* K355: Konqueror 3.5.5
+* Saf: Safari, 1.2.4
+* IE: Internet Explorer
+* Eli: elinks 0.10.2
+* kaze: kazehakase 0.5.4 w/gecko 
+
+Minimo (embedded mozilla) can be used too! To my surprise, everything seems to work, including compiling from webserver.
+Blocks, written to cookies, are volatile, because minimo - at least my version - doesn't store cookies persistently. Speed is not excellent, on an ARM based iPAQ PDA, and the screen is a bit small for the default 80x25 size window.
+
+----
+
+=== jsforth screen shot:
+http://forthfreak.net/jsforth.png

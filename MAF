@@ -1,0 +1,5 @@
+ftp://ftp.taygeta.com/pub/Forth/Applications/ANS/maf1v02.zip
+
+MAF is a minimal ANS Forth. It is written as an educational tool for anyone planning to implement a Forth and includes extensive documentation. MAF builds itself from a small kernel of 48 words and provides all the words from the Core word set together with 25 from extension word sets which are used in the building process. MAF is also portable in confining the key decisions, such as dictionary mechanism, cell size etc., to the kernel, which is detachable. The kernel supplied is implemented in ANS Forth (so that MAF is ready to run) and intended to be replaced by an equivalent kernel in Assembler or C
+
+ForthSystems

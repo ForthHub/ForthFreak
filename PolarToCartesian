@@ -1,0 +1,17 @@
+Convert vector n and angle (of 360 degrees) to x,y . 0 degrees is northwards, 90 degrees is east.
+ 
+ : polar->xy  ( n angle -- x y )
+    swap s>d d>f
+    s>d d>f
+    pi f*  180e0 f/
+    fover fover
+    fsin f* fround f>d drop
+    fcos f* fround f>d drop   ;
+
+----
+
+ : s>f  s>d d>f ;
+ : deg>rad  180e0 f/ pi f* ;
+ : f2dup   fover fover ;
+ : abscissa   fcos f* ;  ( r phi -- x )
+ : ordinate   fsin f* ;  ( r phi -- y )

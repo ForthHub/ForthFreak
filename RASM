@@ -1,0 +1,36 @@
+/This project has been retired. Albert van der Horst contributed a much more complete and powerful assembler to RetroForth, so we no longer see a need to write yet another one./
+----
+ | Retrospect Mini-Assembler
+ | ------------------------------------------------------------
+ | This isn't a full x86 assembler; it just supports some
+ | basic instructions and such used in Retrospect.
+ | ------------------------------------------------------------
+ | When possible, we use a form of:
+ |   <source> <dest> instruction
+ | ------------------------------------------------------------
+   : eax 0 ;        : ecx 1 ;       : edx 2 ;
+   : ebx 3 ;        : esp 4 ;       : ebp 5 ;
+   : esi 6 ;        : edi 7 ;
+ | ------------------------------------------------------------
+ 
+ : push-r $50 + 1, ;               : pop-r $58 + 1, ;
+ : mov-ir $b8 + 1, , ;             : mov-rr swap push-r pop-r ; 
+ 
+ | ------------------------------------------------------------
+   : label create: ;               | Create a label
+   : opcode create: literal, ['] 1, compile exit, ;
+   : opcodes: for wsparse >number opcode next ; 
+ 
+   2 opcodes: $c3 ret  $ad lodsd
+ 
+ | ------------------------------------------------------------
+ | This is a test program:
+ label a
+   100 edx mov-ir
+   edx eax mov-rr
+ ret
+ 
+   200 a 
+
+
+This replaces the older one I was working on with a much cleaner codebase for the same level of functionality. The syntax takes a bit of getting used to, but it's nice to work with once you understand it.

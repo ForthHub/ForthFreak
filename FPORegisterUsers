@@ -1,0 +1,9 @@
+Specs for a ForthProjectOrganiser version management system
+
+Each developer needs his own pages that others can't modify. If you try to modify a page that belongs to someone else then you get a new page that belongs to you. Their page is not affected.
+
+When somebody else links to one of your pages then the link should point to the version they linked to, and not to a later version. If they use your code and you change the code, it's good for them to find out that you changed it and why, but it's bad for the code they use to get changed automatically. You update when you choose to.
+
+We'd want a tool that shows the tree of revisions, where you could click on any node to see the contents and easily diff whatever pairs of them you want. 
+
+Perhaps that tool might show a tree where each developer's name is given by a 3-letter link. Click the link to see the page. That might be done simply and often be clear enough.

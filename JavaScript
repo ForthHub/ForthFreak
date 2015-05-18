@@ -1,0 +1,9 @@
+JavaScript is a prototype-based, dynamically typed scripting language with a syntax based on C. JavaScript is supported inline in many web browsers.
+At least 2 Forth dialects have been implemented in JavaScript:
+* [jsforth]  (this is not a "dialect"  but an ANSForth)
+* FOeRTHchen
+
+To learn more about the JavaScript language, see these wiki:
+* http://javascript-reference.info/
+* http://en.wikibooks.org/wiki/Programming:JavaScript
+* http://developer.mozilla.org/en/docs/A_re-introduction_to_JavaScript A re-introduction to JavaScript, the world's most misunderstood programming language.

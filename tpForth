@@ -1,0 +1,14 @@
+The !TpForth project is an Open Source effort to produce a comprehensive development and run-time environment for industrial systems, based on Forth. The project aims to develop a visual IDE with CASE and project management support, code analysis and native code generation, based on a portable real-time VM supporting distributed and parallel applications. Wide-ranging libraries including MMI, SCADA and networking support are planned, along with comprehensive documentation and tutorials. 
+
+Available Ports
+* Microsoft Windows - 95/98/NT/2000 
+* !UniOP MMI 
+* eCos 
+* Microsoft Windows CE 
+* Linux 
+
+http://www.tpforth.com/english/overview/overview_frame.html
+
+Note: strange. it says "Open Source effort", then "download evaluation", and "click here to buy". The Linux version is mentioned, but only the windows evaluation version seem to be available for download.
+
+ForthSystems

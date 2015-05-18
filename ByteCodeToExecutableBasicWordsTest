@@ -1,0 +1,7 @@
+ S" GETCOMPATIBLE.F"   INCLUDED
+ S" GETBYTECODE.F"     INCLUDED
+ S" GETTOKENS.F"       INCLUDED 
+
+ CR ' NOOP 57 TOKEN>XT @ .( random token set to NOOP, 2 xts equal -> ) . .
+ CR .( 1st token set to ROT 2 xts equal -> ) ' ROT . ' ROT NEW-TOKEN 0 TOKEN>XT @ .
+ CR .( 2nd token set to .( 2 xts equal -> ) ' .( . ' .( NEW-TOKEN 1 TOKEN>XT @ .

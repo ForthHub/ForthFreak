@@ -1,0 +1,18 @@
+ NEXT:
+    [IP]+ -> W
+    W+    -> PC       \ W is incremented by the instruction length at W.
+                      \ A subroutine call is sometimes used, pulling the  
+                      \ return address into W has the desired effect.
+
+ NEST:
+    IP    -> -[RP]
+    W     -> IP
+    NEXT
+
+ UNNEST:
+    [RP]+ -> IP
+    NEXT
+
+
+
+back to ForthImplementation 

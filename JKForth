@@ -1,0 +1,9 @@
+the JKForth compiler, interpreter, and runtime system (which is essentially an extremely primitive disk operating system) occupies well under 10K of RAM. And this is my first significant Intel assembly-language project: I'm sure an experienced x86 coder could do a lot better.
+
+And another thing: if you compile a 61-byte "Hello, world" program in C using GCC, the resulting executable is almost 11K (dynamically linked to libc.so). By contrast, the equivalent JKForth program is 27 bytes long and compiles to 39 bytes of object code.
+
+Even more astonishing, the 2K or so Forth source that implements the JKForth utility and editor package compiles into less than 1K of Forth object code. 
+
+http://www.kneuro.net/jkforth/
+
+ForthSystems

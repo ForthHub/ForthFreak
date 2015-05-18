@@ -1,0 +1,11 @@
+/until/ is a Forth-like language written in C for extreme portability. 
+Versions of Until run on at least four operating systems, compiled with
+five different C compilers. Until has about 95% of the functionality of
+a full Forth system; plus some features available in few if any other
+Forth's. It was designed from the ground up to be embedded in other
+programs and used as a 'macro' language. Both calling other C functions
+and being called by other C functions is extremely easy with Until. 
+
+ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/until25.txt
+
+ForthSystems

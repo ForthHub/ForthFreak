@@ -1,0 +1,15 @@
+4IM is a public domain Forth system for PC and compatibles.
+
+Feature list:
+
+* Public domain,
+* Full source available,
+* Simple minded,
+* Well-featured screen editor (also support text file sources)
+* Written in C; portable, extendable, embeddable.
+* GUI library bindings
+* Sockets/networking
+
+http://www.astrobe.byethost31.com
+
+ForthSystems

@@ -1,0 +1,49 @@
+I came up with a way to do DOES> in bytecode but it doesn't have the same tradeoffs as DOES> in source code.
+
+When DOES> executes, an immediate word, it compiles some things into the current definition and quits, then it starts a new nameless definition.  The execution token of that new definition was saved in the old definition, and this is the first gotcha, you have to get that execution token into the old definition.  If it's a byte-code then you're set -- you know which byte-code you'll use later.
+
+So then when the parent word executes -- the one that DOES> acted on when it was being compiled -- that word applies an action to the latest CREATE word.  You could pretty much get by if you just make a new word with the same name, provided you know the name.  Very occasionally someone might have saved the execution token of the CREATE word and execute it later, getting the old behavior.  But with bytecode that isn't even a problem because you can give the new behavior to the old token.
+
+The body of the child word is always the same.  First compile the CREATE word's body as a literal.  Then compile the execution token of the DOES> fragment (which you saved in the parent) so that it will execute.  Then do ; to complete the child.  That's all it takes.  But there's another gotcha.  The CREATE may be followed by one or more ALLOT but it may expect to do more ALLOT after the DOES> is complete.  If your system intersperses code and data, the new  ( header literal command ; ) will block a new ALLOT .  But you know just how your system works, and you can have room for a standard definition saved already.
+
+One way to do it is to save space for an execution token in every single CREATE definition.  I'm not sure how to describe that so I'll say how you'd implement it in Forth, though when you already have it in Forth you of course don't need to do it again.
+
+ VARIABLE LATEST
+
+ : CREATE
+    CREATE HERE LATEST ! ['] NOOP ,
+    DOES> DUP CELL+ SWAP @ EXECUTE ;
+
+ : DODOES> ( xt -- )
+    LATEST @ ! ;
+
+ : DOES>
+    GET-NEXT-XT POSTPONE LITERAL
+    ['] DODOES> COMPILE, POSTPONE ;
+    :NONAME ; IMMEDIATE
+
+You lose some speed every time you do a CREATE child that doesn't do anything else.  But the only magic is GET-NEXT-XT which finds the xt of a nameless word that hasn't been started yet, and that's completely predictable when you know exactly how DOES> will end the parent and exactly how you'll start a nameless word.
+
+
+The former way is more work, you have to allocate enough space to for :NONAME [ 0 ] LITERAL ['] NOOP COMPILE, ; sometime before you need it, and save the address so you can patch a CREATE >BODY address into the literal and an xt into the NOOP .  Then when you execute a DOES> parent you create the child definition in the old space, and you need a magic way to get the name to point to that instead of to the CREATE code.  As soon as you compile something new -- : CREATE CONSTANT VARIABLE etc you know that you've allotted as much space for the child data structure as you're going to, and you automatically set aside space for another noname literal compile, ; structure in case you need it again soon.
+
+It isn't that hard to handle DOES> with bytecode.  The question is whether it's worth it.  Usually all it does for you is what you'd get from
+
+ : MY-SPECIAL-ACTION .... ;
+
+ CREATE FOO 10 CELLS ALLOT
+ : FOO FOO MY-SPECIAL-ACTION ;
+
+In fact, it's only the clumsy DOES> syntax that causes any problem at all.  If the syntax was 
+
+' MYCODE WILLDO: FOO .... ALLOT ;
+
+Then you could do  
+
+ FOO BAR 
+
+and FOO will create a child named BAR that does basicly
+
+ : BAR lit MAGIC-ADDRESS MYCODE ;
+
+where MAGIC-ADDRESS gives you the first aligned address past the end of BAR .  BAR is the same every time except for the name so you can calculate MAGIC-ADDRESS .  So it's very simple.

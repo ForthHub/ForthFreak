@@ -1,0 +1,73 @@
+FOeRTHchen is a feature reduced, minimalistic language that claims to be a non-nonsense subset of FORTH.
+
+Features:
+* implementations in JavaScript, Perl and x86-Assembly
+* wordset:
+  emit (.) bye word : ." dup drop swap >r r> + * /mod
+  and or xor ( if( >if( )els els( ) -1 @ !
+* embeddable: FOeRTHchen can be embedded in HelFORTH, RetroForth and [Reva].
+
+What next:
+* [http://maschenwerk.de/foerthchen/ See the FOeRTHchen homepage] for more information
+
+Contact Information: HelmarWodtke, http://forthfreak.net/helmwo.png
+
+----
+
+Cool JavaScript implementation! It looks like you implement colon defs via macro substitution? It would be nice if you also included some sample programs to load off of that page, or at least a loop/recursion demo.
+
+Why do you limit symbols to four characters?
+
+Why bother defining -1?
+
+*Suggestions:*
+
+You should probably make d and v Objects instead of Arrays.
+
+Everywhere you do "out=out+..." you can do "out+=..." instead.
+
+Set sem, com, str to the regexes directly. pars2() simplifies to:
+ var sem = /^(([^;]*);)/;
+ var com = /^([^)]*\))/;
+ var str = /^(([^"]*)")/;
+ function pars2(re) {
+   a.substr(p,a.length-p).match(re);
+   p+=RegExp.$1.length;
+   return RegExp.$2;
+ }
+Then if:
+ d["swap"]="s.push(s.pop(),s.pop())";
+ d["!"   ]="v[s.pop()]=s.pop()";
+...you can get rid of "var t".
+
+For debugging:
+ d[".s"  ]="out+=s.join(' ')";
+ d["see" ]="parse();out+=d[n]?d[n]:'?'";
+
+Also to note: there are some parsing gotchas, such as comments containing ';' within a colon def.
+
+-- IanOsgood and my own [http://www.quirkster.com/js/ JavaScript toys].
+----
+Ian, thank you for the suggestions.
+
+/> Why do you limit symbols to four characters?/
+
+This is inherited from the assembler version. There it is easier to implement the dictionary using four characters only.
+
+/> Why bother defining -1?/
+
+I dont have "-" (minus) defined without library. Again that is inherited from the assembler version: it's easier to define -1 instead of writing parsing code for numbers.
+
+Some of the JavaScript suggestions are nice - I've to take a look into alternative Browsers if they understand it. I at least remember that the version of "SWAP" was caused by some problems with a browser. Same for
+   var sem = /^(([^;]*);)/;
+- this was if I remember correctly not possible with Konqueror at that time.
+
+/> Also to note: there are some parsing gotchas, such as comments containing ';' within a colon def./
+
+I know. The same in the assembler/perl versions. The ";"-rule is stronger than the "("...")" rule.
+
+BTW, I've some plans to make the terminal emulator better.
+
+--HelmarWodtke
+
+ForthSystems

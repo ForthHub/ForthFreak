@@ -1,0 +1,3 @@
+FORTAVM is a specification for a virtual-machine designed for text-adventure games. Ideally the same program compiles as runs the story-file. It is based on Forth. Please make a comment of it. Write a interpreter if you want to (but first make a comment of it).
+
+http://zzo38computer.cjb.net/textadv/fortavm/

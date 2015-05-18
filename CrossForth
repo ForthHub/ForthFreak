@@ -1,0 +1,31 @@
+back to ForthSystems
+
+Forth cross compilers are often not self-contained [ForthInterpreter]s. Instead, they run on top of a host ForthInterpreter, converting [Forth] source code to code, executable by the targeted cpu/platform, often microcontrollers.
+
+* Many targets
+** MPE [http://www.mpeforth.com] (commercial) wide range of target CPUs, VFX code generators for performance and code density.
+* Atmel/AVR
+** [http://compas.com.ua/oco/file/avrforth-0.8.tar.gz AvrForth-0.8] Avr Forth New 2012 (write in russian SPF4)
+** [http://amforth.sourceforge.net/faq.html amForth] amForth
+** [http://sourceforge.net/projects/avrforthlike/] AVR Forth (Forth-like) compile (write in Pascal)
+** [http://www.ram-tech.co.uk/avr.htm AVRIRTC] (commercial) by RAM Technology Systems
+** AVR ByteForth costs only system of the Dutch Forth Users Group [http://www.forth.hccnet.nl/pr-bytef.html AVRF 2.08a]
+* MSP430 
+** http://fvm430.sourceforge.net/
+* Microchip PIC
+** PicForth GForth-hosted, to PIC 16F87x
+** [http://mary.pepix.net/index.en mary] (dead link) GPL, GForth-hosted, to PIC 17Cxx
+* InfoForth CrossCompilers for i80x86, i80188, i8080 (K580), i8085 (1821��85), 1801/1806, MCS-51, MCS-251.
+* 8051
+** 8051 ByteForth costs only system of the Dutch Forth Users Group [http://www.forth.hccnet.nl/pr-bytef.html ByteForth 1.70 and a Beta version of 2.00]
+* ARM TDMI
+** RiscyPygness
+** MACroForth
+* Parallax Propeller
+** [http://www.jacobsdesign.com.au/software/jdforth/jdforth.php JDForth] (commercial) by Jacobs Design
+and see topic [http://fforum.winglion.ru/viewtopic.php?f=39&t=9&start=0#wrapheader russian fforum]
+----
+
+See also
+UmbilicalForth,
+StandAloneForth

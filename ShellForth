@@ -1,0 +1,21 @@
+http://sforth.hypermart.net/
+
+!ShellForth is a IA32 forth system which will replace the shell of a linux box. The full release is planned for June 30, 2004.
+
+Hmm. Hypermart gives a 404. Anyone know where else to look for this interesting project? -- FrankCarver
+
+All web references i found point to the same, now offline, URL. I didn't check out all pointers to SForth, which seems to be the new name of ShellForth. -- Speuler
+
+An archived [copy http://web.archive.org/web/20031003145249/sforth.hypermart.net/ ] courtesy of the Internet Archive [Wayback Machine http://www.archive.org/web/web.php]. Unfortunately in the distribuition there are only binaries (BSD, Linux, Sun) for the core.
+
+But this is the content of Readme.sfbin:
+
+ Sat Jun 30 19:51:35 CST 2001
+ 
+ The first binary release of sforth.
+ 
+ Please visit the BBS (telnet://bbs.cynix.com.tw)
+ 
+ Select Forth board for more infomation.
+ 
+ This release doesn't contain anything useful.

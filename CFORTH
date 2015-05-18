@@ -1,0 +1,18 @@
+The cforth compiler (not to confuse with the [cforth] interpreter, written in C) is a commercial Forth system from Laboratory Microsystems, Inc, written by Tom Almy. It was available for Z80 CP/M and MS-DOS. Later it was renamed to [ForthCMP], and distributed as Shareware.
+
+A note from an [http://www.complang.tuwien.ac.at/forth/ftp.dei.isep.ipp.pt/pub/forth/talk/cforth.txt article] discussing it:
+
+CFORTH for Z-80 CP/M and 8086 MS-DOS systems is available from:
+
+Laboratory Microsystems Inc.
+P. O. Box 10430
+Marina del Rey, CA 90295
+
+phone:    (213) 306-7412 (orders)
+          (213) 306-3530 (BBS)  
+
+The price of the CFORTH compiler is $300.00.  Special discounts are available to educational institutions and to quantity purchasers.  Site licenses are also available by special arrangement.
+
+You must also own or purchase LMI's Z-80 FORTH or 8086 FORTH version 3 in order to edit and test your CFORTH source code interactively.
+
+ForthSystems

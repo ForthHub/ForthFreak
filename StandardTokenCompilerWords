@@ -1,0 +1,11 @@
+* TokenCompilerPortabilityWords
+* InputBytecode
+* ByteCodeToExecutableBasicWords
+* ReadInPrimitives
+* CompileTokens
+* ByteCodeSpecialBehaviors
+* TokensForSpecialBehaviors
+* TokenCompilerFileWords
+
+
+* TokenCompilerTests

@@ -1,0 +1,8 @@
+IndirectThreadedCodeSlideshow2 IndirectThreadedCodeSlideshow4
+
+http://www.forthfreak.net/slides/slide11.jpg
+
+because IP pointed to pointer to PRIM, W points to PRIM now.
+memory contents where W points to now will be transferred to
+host CPU Program pointer, which is effectively a JUMP operation.
+ 

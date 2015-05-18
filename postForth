@@ -1,0 +1,5 @@
+postForth is a small, easily ported Forth kernel with deferred binding like postscript, to allow for top-down design outside of the assembly-language core. Its two major design goals for the core are: 400 lines of source, or less, for the x86 version; and 1K or less compiled size. This was accomplished in June of 1997. 
+
+The new home for postForth is https://launchpad.net/postforth-0 . It is again being actively maintained as of September 2008.
+
+ForthSystems

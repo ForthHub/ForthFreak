@@ -1,0 +1,10 @@
+Features, present in the archive:
+* binary ; it works on at least on Alpha Red Hat 5.2
+* assembler source, GPL-ed.
+* indirect threaded 64-bit Forth
+* savesystem and turnkey facility. Make a standalone
+* 60 Kbyte programs, independant of any libraries, resident or not. texinfo documentation. So you have info and PostScript. It can be modified and rebuild from the above assembler source, by the standard assembler that comes with the gcc-compiler.
+
+http://home.hccnet.nl/a.w.m.van.der.horst/aiforth.html
+
+ForthSystems

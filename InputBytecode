@@ -1,0 +1,20 @@
+\ Words connected with getting tokens
+
+ ( G: Get a token from whatever the token source happens to be )
+ DEFER INPUT-TOKEN ( S: -- x ) \ returns single byte
+
+ ( G: put tokens into string until terminating token, return length )
+ : PARSE-TOKENS ( S: addr len char -- addr newlen )
+    >R BEGIN
+      INPUT-TOKEN DUP R@ - WHILE
+        SC!
+    REPEAT
+    R> 2DROP ;
+
+ : TOKENS>STRINGN
+    0 ?DO INPUT-TOKEN SC! LOOP ;
+
+ ( G: append tokens into string, first token is length to add )
+ ( G: no check to prevent buffer overflow, but never more than 255 chars sent )
+ : TOKENS>STRING ( S: addr len -- addr new-len )
+    INPUT-TOKEN TOKENS>STRINGN ;

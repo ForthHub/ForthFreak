@@ -1,0 +1,34 @@
+colorForth is a dialect of Forth that uses color to replace punctuation. It is intended to be used as an operating system, though it has been ported to some of the more popular operating systems as well. 
+
+See http://www.colorforth.com/ for more details and downloads of the original release. The latest version is labeled "July 31", though a newer version is being worked on and will hopefully be released soon.
+
+Other colorForth links:
+* Main colorForth page -- http://www.colorforth.com/cf.html
+* User Guide -- http://www.colorforth.com/user.htm
+* Keys -- http://www.colorforth.com/keys.html
+* Meanings of colors -- http://www.colorforth.com/parsed.html
+* Programmer Guide -- http://www.colorforth.com/program.htm
+* Troubleshooting -- http://www.colorforth.com/trouble.htm
+* Philosophy and Legal Issues -- http://www.colorforth.com/phil.htm
+* Character Set -- http://www.colorforth.com/chars.html
+* Pentium Instructions -- http://www.colorforth.com/forth.html
+* IDE Driver Example -- http://www.colorforth.com/ide.html
+
+* SleeplessNight wiki has many pages about colorForth and EnthFlux.  It also has custom support for easily displaying colorForth code correctly. ( link no longer exist, moved to Quartus Handheld wiki which seams to be temporarily down.)
+* http://personalwebs.oakland.edu/~maslicke/colorforth/ links to several implementations for Linux and windows ( link no longer exists content not replaced on the web anywhere ( note just found it on wayback machine links to follow ))
+* Mailing list archives -- http://www.strangegizmo.com/forth/ColorForth/
+* Quick Start Guide -- http://colorforthray.info
+
+colorForth is in the public domain. The AssemblyLanguage source code is available for download.
+
+As noted above, a few ports for popular operating systems exist:
+* Windows
+* Linux
+** http://www.forthfreak.net/misc/interpreters/XcolorForth.tar.gz
+** http://www.forthfreak.net/misc/interpreters/GLcolorForth.tar.gz
+
+http://www.colorforth.com/cf.png
+
+Several Forths including RetroForth, EnthFlux, HerkForth, and [Map] have drawn inspiration from this excellent Forth.
+
+ForthSystems

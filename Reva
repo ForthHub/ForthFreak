@@ -1,0 +1,22 @@
+Reva is a small, cross-platform (x86: Linux, Mac OS/X and Windows) implementation of Forth. It was based on RetroForth but has diverged significantly since the initial version. It is developed and maintained by RonAaron. At present the current stable version is 9.0.
+
+Reva is not ANS compliant, but does have a simple (and incomplete) compatibility layer which may be accessed by adding the "-a" switch when starting Reva. 
+
+Some of its features are: 
+
+* core in assembly (NASM), final binary around 30K with over 350 words defined
+* extremely fast interpreter 
+* runtime code speed is comparable to un-optimized C 
+* reasonably good documentation, including a tutorial and internal help
+* support for generating binary turnkey executables 
+* quite a few example programs, including for GTK and Windows GUI 
+* library includes sockets, calendar, encryption, sqlite interface and more 
+* native API interface lets you call into any DLL or shared-lib 
+* it is actively developed and maintained, the bug tracking database is open to all for perusal or adding bug-reports 
+
+Reva is public-domain, and all source is released with it.  You can get it at the "Reva discussion board", located at the URL below: 
+
+-- 
+Reva Forth - http://ronware.org/reva/ 
+
+ForthSystems

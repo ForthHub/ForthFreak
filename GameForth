@@ -1,0 +1,8 @@
+There are a couple of Forth systems based on RetroForth, but targeting those who want to write games. *Both of these are Windows-only*.
+
+Glypher is an implementation of a ColorForth using a heavily modified RetroForth core. It was developed by Roger Levey, and was intended to be a commercial work. Due to frustrations with the x86 architecture, it was abandoned and Roger started work on a [http://gcforth.blogspot.com Forth for the Nintendo GameCube].
+
+With Roger's permission, the Glypher system is now available at http://retroforth.com/glypher/ for free to anyone who is interested. No new development is taking place, but it can be a good basis for learning the ropes of a ColorForth, or for exploring 2D game development under Windows.
+
+----
+GiREF is another Forth intended for use in developing games. It uses OpenGL and has some support for audio via fmod.dll. A few examples are included with it. The project may be abandoned, but downloads and screenshots can be found at http://hexcity.com/ref/?lang=en 

@@ -1,0 +1,13 @@
+A variant of Win32Forth 6.01, that has many advantages including absolute addressing (simpler VM in code), a Library Loader called LibLoad that automaticaly resolves file dependencies with lots of other handy features, and a 5-stack system with the ability to import and run code from "C" prototypes such as are found in the sdk documenation with only minor modification. 
+
+30 megs of Win programming docs also available and linked into the editor.
+
+Does the Forth of the future REALLY need 5 stacks? 
+
+See for yourself. Portable solutions ARE possible, but to decide to stay put when the obvious is in front of us is a decision to go nowhere.
+
+Easier to code, algebraic functions and porting C is a breeze. As a learning tool this system CANNOT be beat.
+
+[http://sourceforge.net/projects/win32fx/ Project is hosted on Sourceforge]
+
+ForthSystems

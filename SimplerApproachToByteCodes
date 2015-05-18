@@ -1,0 +1,27 @@
+The central idea is for the tokeniser to take the executable Forth words you want to use and convert them to bytecode tokens. Then later the token compiler on the target will take each bytecode and expand it to a Forth word which can be parsed and then interpreted or compiled.
+
+If that was all that was needed, you could have a buffer no more than 31 characters long, and store each word into the buffer and EVALUATE it.
+
+But for various reasons you will want to include strings within your bytecode and parse the strings. You might want numbers as parsed strings rather than (or in addition to) devoting bytecodes to handle numbers in special formats. You might want to have ." or .( or S" etc. Colon definitions need : to parse the name. Etc.
+
+So all that's needed is a buffer large enough to handle the longest string that one of your bytecode tokens might parse. Standard Forth requires 80 characters for that, though lines from files might need to be 132 characters. For each bytecode, move the name of the bytecode on the target to the buffer. If the bytecode parses, move the string that it parses to the buffer also. Then EVALUATE the string. The Forth compiler does the rest.
+
+But that does not handle numbers. Each named bytecode can lay down a token when its name is executed in source code. But to handle numbers, you must write an interpreter unless you have a word that parses numbers. 
+
+  : TEST ( n -- ) 
+     0 DO I . LOOP ;
+
+: lays down a bytecode and parses TEST . ( discards text. DO I . LOOP and ; all lay down bytecodes. But 0 does not unless it is defined to do so.
+
+  : TEST ( n -- )
+     $ 0 DO I . LOOP ;
+
+If $ says to parse a number and leave it on the stack or compile it as a literal, there's no trouble. One bytecode may be enough. Lay down the $ bytecode and then either include the string or send bytes that you can reassemble into the number.
+
+But code that doesn't have $ or equivalent won't run without the complication of a new parser.
+
+Notice how many of the complications of Forth are avoided. The tokeniser has two kinds of words -- there are words that lay down a bytecode, and then there are words that lay down a bytecode and a string. You could have a third kind of word that lays down a bytecode and a 2-byte or 4-byte number. The tokeniser doesn't have to deal with immediate words or STATE or the return stack or the control-flow stack. It only makes bytecode.
+
+And the token complier likewise only reads the bytecode. It looks up a token and puts the token's name into a buffer. If the token has a string behind it, the token compiler moves the string to the buffer too. Then EVALUATE the buffer. The Forth compiler does almost all of the work. Simple.
+
+But all it gives you is some compression. The bytecode source is smaller than the Forth source. You execute pure Forth source code, and any incompatibilities among Forth compilers will show up. The bytecode will be parsed a little slower than regular Forth source code in exchange for that compactness. But it's simple and easy to do.

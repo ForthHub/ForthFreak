@@ -1,0 +1,213 @@
+There are a big variety of Forth systems, and some of the differences make no difference to code.  Which ones do?  Here's a first attempt at that.
+
+
+----
+
+Some of the biggest differences between Forth systems:
+* HostedForth -- target system has plenty of memory, already has a host operating system, and stores standard ASCII text files on mass storage using that target's file system.
+* StandAloneForth -- all necessary OS functions, such as the file system, implemented in Forth. Since no underlying OS is needed, can run on systems a bit too small to support (what's this called?).
+* UmbilicalForth -- Some functions (the dictionary, some compiler words, ... all the source code) run on a host operating system. Other functions run on the target system. Typically used when the target system has no mass storage, and too little RAM to support a full StandAloneForth. Allows interactive development on systems that don't have the RAM to support any other kind of Forth.
+* CrossForth -- All interative development runs on the host. When the application is "finished", an executable image file is produced and burned into the ROM of the target system.
+
+----
+
+Other differences between Forth implementations:
+
+Usually I figure if you need a specific word then you can use it if it's present.   
+Sometimes there's more than one common usage with the same name, or it's worth pointing out the use.
+
+* 0 Memory
+** 00 Do I need a particular size of address unit?
+*** 000 don't care
+*** 001 8-bit
+*** 002 same as a char
+** 	01 What size char do I need?
+*** 		010  at least 8 bits
+*** 		011 at least 16 bits
+*** 		012 at least 32 bits
+** 	02 What size cell do I need?
+*** 		020 at least 16 bits 		
+*** 		021at least 32 bits
+*** 		022 64-bit
+** 	03 What about big-endian, little-endian?
+         \ matters when doing C@ C! etc on cell-size data
+         \ and when reading cell-data that comes in from outside
+*** 		030 don't care
+*** 		031 big-endian
+*** 		032 little-endian
+** 	04 Do I need a system that doesn't require aligned addresses? 
+*** 		040 don't care
+*** 		041 yes
+ \ I assume that a system that aligns addresses *will* align floats 
+ \ and vice versa
+ \ So the question need only be asked once.  Is this right?
+ \ I'm not sure. Ouch.
+
+**  	05 Do I need the data in dataspace to be contiguous?  
+ \large -ALLOT etc
+ \yes, -ALLOT bigger than allotted since last time code was compiled.
+*** 		050 no
+*** 		051 yes
+*** 		052 sometimes more than an ANS Forth data region
+** 	06 Do I need a nonHarvard architecture with cell-size calls containing xt's? 
+ \ Is hotpatching the only advantage to a nonharvard architecture?
+ \ Some people lay down code as data and then execute it. Some can't.  
+ \ CREATE ] DOES> R> 2>R ;
+*** 		060 no
+*** 		061 yes
+** 	07 How big is my biggest counted string?
+*** 		070  no counted strings
+*** 		071 <256 chars
+***  		072 <65536 chars
+** 	08 Do I need to access Forth83-style headers?
+ \ header magic, printing wordnames etc
+ \ Decompiling, whatever. ANS Forth doesn't provide anything like that.
+ \ Forth83 gives standard words to do it.
+*** 		080 no 
+*** 		081 yes
+*** 		082 I need another kind of header
+** 	09 I/O buffers
+*** 		090 How big a keybord input buffer do I need?
+ \ words like S" that don't do REFILL can be limited by buffer, long paths or urls etc
+****  			0900 don't care
+**** 			0901 <80 chars
+**** 			0902 <128 chars
+**** 			0903 <1024 chars
+**** 			0904 <32767 chars
+*** 	        091 How big is the pictured numeric input buffer?
+ \ 2*cellsize+2 for biggest double number, but with HOLD could be bigger
+ \ If you don't need binary, you'll need less. Or if you don't do doubles or floating.
+ \ Some people use that buffer with special characters, no telling how big they want.
+
+**** 			0920 none, no character numeric output or <#
+**** 			0921 < 2*cellsize+3 chars
+**** 			0922 <129 chars
+**** 			0923 <1025 chars
+**** 			0924 < 32768 chars
+** 	0A Other buffers
+*** 		0A0 How big an area do I need at PAD ?
+**** 			0A00 none
+**** 			0A01 <84 chars
+**** 			0A02 <1024 chars
+**** 			0A03 <32K
+**** 			0A04 other
+*** 		0A1 Do I need blocks?
+**** 			0A10 no 
+**** 			0A11 1 block buffer
+**** 			0A12 I need 2 valid block buffers at once
+ 
+* 1 Arithmetic
+** 	10 Do I care about the form of numbers?  
+       \ bitwise operations on negative numbers
+*** 		100 don't care
+*** 		101 2's-complement
+*** 		102 1's-complement
+*** 		103 sign-magnitude
+*** 		104 other
+** 	11 Do I care about symmetric or floored division?
+       \ matters for division with negative numbers
+*** 		110 no
+*** 		111 symmetric
+*** 		112 floored
+ 		 
+*  2 Return stack 
+** 	20 Do I want to manipulate the return stack with Michael Gassanenko's words?
+            \ might be emulated even when there's a dummy return stack for >R to use.
+*** 		200 no
+*** 		201 yes
+**  	21 Do I want to pass parameters on the return stack into a DO LOOP ?
+             \ usually can't because loop-sys parameters are in the way.
+*** 		210 no
+*** 		211 yes
+** 	22 Do I use POSTPONE ; 
+ \ are there other things that tend to fail when this does?
+ \ Two styles of compiler. defer GO ' interpret is GO ' compile is GO
+ \ change deferred or variable to stop compiling.
+ \ : interpret begin interpret-stuff again ; : ] begin compile-stuff again ;
+ \ execute EXIT to stop compiling. 
+*** 		220 no
+*** 		222 yes
+** 	23 Do I need the compiler to be one level of nesting below the interpreter?
+ \ #22 | #23. You can code so it doesn't matter or you can depend on one way. 
+*** 		230 no
+*** 		231 yes
+ 		
+* 3 Data stack    ( which system behaviors interfere with user data stack?)
+** 	30 Do I pass data on the data stack through control structures while compiling?
+        \  ... [ COMPUTE-VALUE DUP ] LITERAL DO DO-STUFF LITERAL ...
+*** 		300 no 
+*** 		301 yes
+** 	31 Do I pass data on the data stack through defining words?
+        \ 5 : FOO LITERAL ...
+*** 		310 no 
+***  		311 yes
+
+* 4 State-smartness
+**        40 Do I use Anton Ertl's alternative to state-smart words?
+*** 		400 no
+*** 		401 yes
+** 	41 Do I define state-smart words?
+*** 		410 no
+*** 		411 yes
+
+* 5 Particular words
+** 	50 Do I use BEGIN with multiple WHILE ?
+*** 		500 no
+*** 		501 yes
+** 	51 Do I ever use DOES> when the latest-defined word was not by CREATE ?
+*** 		510 no 
+*** 		511 yes, and I expect DOES> to work on the last word defined by CREATE
+*** 		512 yes, and I expect DOES> to work on colon definitions
+*** 		513 yes, and I expect DOES> to work on colon definitions and :NONAME
+** 	52 Do I ever use IMMEDIATE after DOES> or :NONAME ?
+*** 		520 no 
+*** 		521 yes, and I expect it to act on the latest named definition.
+*** 		522 yes, and I expect it to act on each DOES> child.
+*** 		523 yes, and I expect it to have no effect.
+** 	53 Do I use NOT ?
+*** 		530 no
+*** 		531 yes, and I expect it to behave like 0=
+*** 		532 yes, and I expect it to behave like INVERT
+*** 		533 yes, and I expect some other action
+
+* 6 What true flag do I expect words like 0= to return?
+** 	60 don't care
+** 	61 low bit set
+** 	62 all bits set
+
+* 7 Do I use floating point?
+** 	70 no
+** 	71 yes, and I need floats on the data stack.
+** 	72 yes, and I don't care where the floats are.
+** 	73 yes, and I need a floating stack of 8 items or less.
+** 	74 yes, and I need a deep floating point stack.
+
+* 8 Do I need mass storage?
+** 	80 no
+** 	81 direct Access by Blocks
+** 	82 file System
+** 	83 other
+
+* 9 Do I need graphic character output?
+**      90 no
+**      91 ascii7 
+** 	92 ISO8
+** 	93 standard 16-bit
+** 	94 other
+
+* A Number representation
+** 	A0 What is the maximum BASE I use?
+*** 		A00 no numeric string output
+*** 		A01 maximum BASE < 37
+*** 		A02 maximum BASE < 63
+*** 		A03 other
+** 	A1 Do I ever nest <# ?
+ 	 \ mostly used in debugging, print one number while another is being formatted
+*** 		A10 no
+*** 		A11 yes
+*** 		A12 nested recursively
+
+
+----
+See
+ForthImplementation

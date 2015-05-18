@@ -1,0 +1,7 @@
+Purrr is a template for building macro Forth dialects with support for partial evaluation and Scheme metaprogramming. It is part of the Staapl framework.
+
+It currently supports a specialization for the Microchip PIC18 microcontroller, and ports for Microchip's 12 and 14 bit cores are in the pipeline.
+
+http://zwizwa.be/staapl
+
+ForthSystems

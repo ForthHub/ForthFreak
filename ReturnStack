@@ -1,0 +1,1 @@
+When a ColonDefinition is called from another ColonDefinition, the ForthInterpreter places the InstructionPointer onto ReturnStack, akin to a subroutine call. After execution, the InstructionPointer is pulled from ReturnStack again, allowing to resume execution behind the point of the call. This is the call nesting/unnesting mechanism.

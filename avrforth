@@ -1,0 +1,17 @@
+avrforth is a 16-bit subroutine threaded forth kernel for atmel's avr series of microcontrollers. Current development is done for the at90can128 (my cansynth board, to be exact), but it will run on most any mega device with minimal adjustments.
+
+avrforth borrows some ideas from Terry Loveall's [4word]. It is a colorless colorforth. The interpreter only interprets. Words must be compiled explicitly using the ] operator. Numeric input is handled by $, which parses the next word as a hexidecimal number.
+
+avrforth uses null-terminated strings internally against tradition. I may switch to counted strings if they prove easier to deal with.
+
+avrforth supports using the entire 128k instruction address space of the atmega128 and at90can128 for code.
+
+avrforth has an interactive interpreter. It interprets input from the uart and compiles directly to flash. avrforth does not require separate memory to store program tokens.
+
+avrforth has an integrated assembler. Assembly code words can be added without recompiling the kernel.
+
+avrforth is public domain.
+
+http://krue.net/avrforth/
+
+ForthSystems

@@ -1,0 +1,16 @@
+This page strives to document a number of design patterns used with Forth.  There are basically two kinds of Forth [DesignPattern]s:
+
+* Generic design patterns implemented or adapted for use within the Forth language environment, and,
+* Forth design patterns, which are generally not possible to implement in other languages, due to exploitation of Forth's unique run-time environment.
+
+Design patterns present an alternative to code re-use: /idea/ re-use.  ChuckMoore has strongly desired a documentation/publication standard for exchanging Forth programs between different systems.  While example code might be provided for GForth, an ANSI Forth implementation, the /idea/ is generic and documented well enough to be implemented on any Forth environment -- including [colorForth].
+
+ForthDesignPatterns are *not* limited to expressions in the code.  Because of Forth's high degree of malleability, it is hard to say what is application code, what is system code, and what is programmer philosophy.  So, a hypothetical !EditTimeTokenization and !AsciiSourceRepresentation patterns are just as valid as, say, Command or Model-View-Controller patterns.
+
+* ReturnPattern
+* TerseControlStructures
+* UsingVariables
+----
+For a full description of the virtues of DesignPatterns, see the [http://c2.com/cgi/wiki Portland Pattern Repository].
+
+Many of these patterns that have been catching on in the ExtremeProgramming movement have been known about and used in the Forth community for decades, especially many of the refactoring patterns, precepts encouraging simplicity and avoiding over-generalization.

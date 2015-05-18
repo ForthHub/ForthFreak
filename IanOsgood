@@ -1,0 +1,17 @@
+Apprentice.
+
+Major programs:
+* ANS ForthChessProgram FCP.
+* DirectedAcyclicWordGraph utilities
+** BoggleGame program
+** AnagramFinder
+* SudokuSolver
+* GameOfLife
+* most of the Forth benchmarks on the GreatComputerLanguageShootout
+* much of the Forth sample code on PortlandPatternRepository
+* much of the Forth on http://www.rosettacode.org/
+
+Minor programs:
+* [http://www.99-bottles-of-beer.net/language-forth-793.html 99 bottles of beer]
+
+I tried the 2003 ICFP contest, and have some code for the 2006 [ICFP] contest on the wiki.

@@ -1,0 +1,111 @@
+= Tiling Puzzle =
+
+You have nine square cards.  Each edge of each card has half of a symbol.  There are four symbols.  The goal is to arange the cards in a 3x3 grid so that all the symbols match up.
+
+This one was suggested in comp.lang.forth by Charlie Springer:
+http://groups.google.com/group/comp.lang.forth/msg/4826fe0ab2cba56c
+
+It should work on just about any standard Forth system with at 32-bit or larger cells.  I have tried it on bigforth, FICL, gforth, pfe, and pforth.
+
+Note that this prints out eight boards, but they are the four rotations of two unique solutions.
+
+--JoshGrams
+
+    ( cards )
+
+    \ Cards have four symbols on them.  Symbols come in four colors
+    \ (red, green, blue, and yellow), and two types (front and back).
+    \ We represent them by letters, using RGBY and rgby for front and
+    \ back halves, respectively.
+
+    \ symbols match if they are the same letter in different cases.
+    : match? ( char1 char2 -- flag )  xor 32 = ;
+
+    \ a card is a four-character string stored in a cell.
+    : +char ( c-addr x -- c-addr' x' )  8 lshift swap count rot or ;
+    : card" ( "tlbr" -- )  \ that's Top, Left, Bottom, Right.
+        [char] " parse drop  0 +char +char +char +char ,  drop ;
+    create cards
+        card" rBRy"  \ top, left, bottom, right
+        card" gBYR"
+        card" bRGy"
+        card" ybGr"
+        card" yrGB"
+        card" BRYb"
+        card" gbRy"
+        card" yGbB"
+        card" gYgR"
+
+    : card ( u -- card )  1 - cells cards + @ ;
+
+    : top    ( card -- char )  24 rshift 255 and ;
+    : left   ( card -- char )  16 rshift 255 and ;
+    : bottom ( card -- char )   8 rshift 255 and ;
+    : right  ( card -- char )            255 and ;
+
+    : rotate ( card -- card' )
+        dup 8 rshift swap 255 and 24 lshift or ;
+
+    : .card ( card -- )
+        cr space dup top emit space cr
+        dup left emit space dup right emit cr
+        space bottom emit space cr ;
+
+    ( board )
+    create board 9 cells allot
+    variable position
+
+    : complete? ( -- flag )  position @ 9 = ;
+    : board[] ( u -- addr )  cells board + ;
+    : place-card ( card -- )  position @ board[] !  1 position +! ;
+
+    : left-matches? ( card -- flag )
+        position @ 3 mod if left  position @ 1 - board[] @ right  match?
+        else drop true then ;
+    : top-matches? ( card -- flag )
+        position @ 3 < if drop true
+        else top  position @ 3 - board[] @ bottom match? then ;
+    : fits? ( card -- flag )  dup left-matches? swap top-matches? and ;
+
+    : .line ." +---+---+---+" cr ;
+    : | [char] | emit ;
+    : row ( u -- u limit index )  dup 3 + over ;
+    : .row ( u -- )
+        row do | space i board[] @ top emit space loop | cr
+        row do | i board[] @ dup left emit  space  right emit loop | cr
+        row do | space i board[] @ bottom emit space loop | cr drop ;
+    : .board cr
+        .line 0 .row
+        .line 3 .row
+        .line 6 .row .line ;
+
+
+    ( unused cards )
+
+    \ are stored as the digits of a decimal number.
+    variable unused-cards
+    987654321 constant all-cards
+
+    \ the current card is indicated by a power of 10.
+    1 constant first-card
+    : next-card 10 * ;
+
+    : current ( u -- card )  unused-cards @ swap / 10 mod ;
+    : use ( u -- )  unused-cards @ over /mod 10 / rot * + unused-cards ! ;
+
+
+    ( solver )
+
+    : with-card  unused-cards @ position @  2over place-card use ;
+    : undo       position ! unused-cards ! ;
+
+    : (solve)  ( -- )
+        complete? if .board else
+            first-card begin dup current while
+                dup current card 4 0 do
+                    dup fits? if with-card recurse undo then
+                rotate loop drop
+            next-card repeat drop
+        then ;
+
+    : solve  all-cards unused-cards !  0 position !  (solve) ;

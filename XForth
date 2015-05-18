@@ -1,0 +1,9 @@
+Frank Hogg Labs !XForth-09 runs on the Flex-09 operating system, on the Motorola 6809 CPU. it is a 16 bit, indirect threaded interpreter.
+Early versions had a sign problem which prevented !XForth to execute Forth words from addresses greater than $7FFF.
+
+!XForth seems to have disappeared from the FLEX-09 software map, but
+there are other Forth interpreters for FLEX, therefore i leave this link here:
+
+http://www.evenson-consulting.com/flexusergroup/fug20.htm#4TH
+
+ForthSystems

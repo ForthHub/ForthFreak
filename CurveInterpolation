@@ -1,0 +1,143 @@
+= High Accuracy Table Lookup Using Curve Interpolation =
+
+==== Abstract
+
+This algorithm basically trades speed for table size by assuming that the
+line joining points in a lookup table is really a curve. The value in question
+rests on the curve between the two middle points of a four point segment.  The
+curve is assumed to be a third degree polynomial that passes through all four
+points.
+
+Intended for use on small processors, this code uses only integer arithmetic.
+I originally wrote this code to calculate various transcendental functions to
+16-bit precision.  There are more efficient ways to approximate such
+functions, but the general purpose method presented here lends itself to
+arbitrary functions too.
+
+This implemention is in ANS Forth using the CORE and CORE EXT wordsets.
+
+==== Theory
+
+Given points y(0), y(1), y(2) and y(3),
+there is a point f(y) between y(1) and y(2) where the
+region of interest is 0 <= y < 1.
+
+ f(x) = w[0] + w[1]x + w[2]x^2 + w[3]x^3
+
+Here, I use two different ways of constraining the equation.  One method
+forces the curve to pass through all four points:
+
+For four equally spaced points (n = -1,0,1,2), f(n) gives four equations:
+
+ f(-1) = y[0] = w[0] - w[1] + w[2] - w[3]
+ f(0)  = y[1] = w[0]
+ f(1)  = y[2] = w[0] + w[1] + w[2] + w[3]
+ f(2)  = y[3] = w[0] + 2w[1] + 4w[2] + 8w[3]
+
+Simultaneously solving these equations yields the following coefficients
+upon which the algorithm is based:
+
+ w[0] = y[1]
+ w[1] = (-2y[0] - 3y[1] + 6y[2] - y[3]) / 6
+ w[2] = ( 3y[0] - 6y[1] + 3y[2] ) / 6
+ w[3] = ( -y[0] + 3y[1] - 3y[2] + y[3]) / 6
+
+The other method forces the curve to pass through the two middle points and
+the slope of the curve at either middle point to be fixed as the slope between
+its neighbors.
+
+ f(0) = y[1]
+ f(1) = y[2]
+ f'(0) = (y[2]-y[0])/2
+ f'(1) = (y[3]-y[1])/2
+
+By differentiating f(x) a couple of times and applying a little algebra,
+we get the following coefficients:
+
+ w[0] = y[1]
+ w[1] = ( -y[0] + y[2] ) / 2
+ w[2] = ( 2y[0] - 5y[1] + 4y[2] - y[3] ) / 2
+ w[3] = ( -y[0] + 3y[1] - 3y[2] + y[3] ) / 2
+
+This method forces the slopes of each table segment to match up, giving a
+smoother result. Use this one for calibration tables and motion profiles
+where you want more smoothness, and the other for math functions where
+you want better accuracy. Note that one method doesn't use division.
+
+The word CURVE4 does the approximation using four data points at an address.
+CURVE does indexing and scaling so as to be useful in using a lookup table.
+
+The algorithm takes some shortcuts to keep the math simple, so a wildly
+varying lookup table could cause an overflow.  In typical applications, you
+won't come close to this situation.  But, it always pays to test.  
+Also, the SMOOTHER option is less likely to overflow.
+
+The example at the end represents the first quadrant of a sine function using
+19 data points.  This gives better than 16-bit precision.
+
+To find the worst case error, let g(x) be the fourth derivative of f(x).  Find
+the value of x that gives the highest absolute value of g(x).  Feed CURVE4 a
+frac value of maxint/2 and an address pointing to the worst case position.
+Then, compare the result to f(x).
+----
+
+ 1 constant smoother? ( Smoother or more accurate? See above explanation. )
+
+ : d3*  2dup d2* d+ ;                    \ quick multiply by constant
+ : d4*  d2* d2* ;
+ : d5*  2dup d2* d2* d+ ;
+ : d6*  d2* d3* ;
+
+ variable wptr   \ points to the input data
+
+ : yn  ( -- d ) wptr @ @ s>d  1 cells wptr +! ; \ get next point
+ : y[  ( a -- 0.0 ) wptr ! 0.0 ;         \ begin coefficient calculation
+ : ]y  ( d -- n ) d>s ;                  \ end coefficient calculation
+
+ : poly  ( frac n1 n2 -- n3 )            \ n3 = n1 * frac + n2
+    >r m* d2*  [ -1 1 rshift invert ] literal 0 d+ nip  \ round
+    r> + ;
+
+ smoother? [if]
+
+ : w1  ( a -- n )  y[ yn d-     yn 2drop   yn d+            ]y ; \ -y0+y2
+ : w2  ( a -- n )  y[ yn d2* d+ yn d5* d-  yn d4* d+  yn d- ]y ; \ 2y0-5y1+4y2-y3
+ : w3  ( a -- n )  y[ yn d-     yn d3* d+  yn d3* d-  yn d+ ]y ; \ -y0+3y1-3y2+y3
+
+ : curve4  ( frac a -- n )               \ frac = 0..maxint
+ \ perform curve interpolation on 4-cell table at a
+    >r dup dup r@ w3                     \ w3
+    r@ w2      poly                      \ w3*f + w2
+    r@ w1      poly 2/                   \ (w3*n*n + w2*n + w1) / 2
+    r> cell+ @ poly ;                    \ *n + y1
+
+ [else]
+ : w1  ( a -- n )  y[ yn d2* d-  yn d3* d-   yn d6* d+    yn d-  ]y ;
+ : w2  ( a -- n )  y[ yn d3* d+  yn d6* d-   yn d3* d+           ]y ;
+ : w3  ( a -- n )  y[ yn d-      yn d3* d+   yn d3* d-    yn d+  ]y ;
+
+ : curve4  ( frac a -- n )               \ frac = 0..maxint
+ \ perform curve interpolation on 4-cell table at a
+    >r dup dup r@ w3                     \ w3
+    r@ w2      poly                      \ w3*f + w2
+    r@ w1      poly 6 /                  \ (w3*n*n + w2*n + w1) / 6
+    r> cell+ @ poly ;                    \ *n + y1
+ [then]
+
+ : tcurve  ( n1 addr -- n2 )
+ \ perform curve interpolation on table at addr, n1 = 0..2^cellsize-1
+    dup cell+ >r  @                      ( n1 tablesize | addr )
+    um*   >r 1 rshift r>                 ( frac offset | addr )
+    cells r> + curve4 ;
+
+ : CURVE   ( n1 span addr -- n2 )
+ \ perform curve interpolation on table at addr, n1 = 0..span-1
+    >r >r 0 swap r> um/mod nip r> tcurve ;
+
+ create ExampleTable                     \ Sine table (1st quadrant)
+    16 ,                                 ( 16 points plus 3 endpoints )
+ -3212 ,     0 ,  3212 ,  6393 ,  9512 , 12540 , 15447 , 18205 ,
+ 20788 , 23170 , 25330 , 27246 , 28899 , 30274 , 31357 , 32138 ,
+ 32610 , 32767 , 32610 ,                 \ clipped to maxint for 16-bit 4ths
+
+ .( 32768*sin[10degrees] is )  10 90 ExampleTable CURVE .

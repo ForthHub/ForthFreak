@@ -1,0 +1,138 @@
+Here is the latest version of the FML markup language I created for my RetroWiki experiments. For comparision purposes, the older 1.x code is below it. A few notes follow at the end.
+
+----
+
+ | RetroWiki					    Release 2.0
+ | ============================================================
+ | This is the second generation of the FML markups. It uses
+ | 'later' to avoid a lot of messy state variables, and tends
+ | to work far more quickly than either FHTML or FML 1.x did.
+ |
+ | Interwiki linking isn't in place yet, but will come soon.
+ | As this is still early, some things could be factored
+ | better.
+ | ============================================================
+ | Features Include:
+ |   * HTML-like syntax
+ |   * Reduced memory footprint
+ |   * Makes use of the return stack
+ |   * Generated pages are closer to XHTML
+ |   * Easier to follow, modify markups
+ | ============================================================
+ | Changes
+ |   1.00.0 Initial public release, uses inline strings
+ |   1.00.1 Bugfixes to interwiki links, added mb, y2k, and gc
+ |          markups
+ |   2.0    Complete rewrite, not compatible with FML 1.x
+ | ============================================================
+ ' later alias ) 
+
+ : (br)  ." <br/>" cr ;
+ : ---- ." <hr/>" ;
+ : (p   ." <p>"   later  ." </p>" ;
+ : (b   ." <b>"   later  ." </b>" ;
+ : (i   ." <i>"   later  ." </i>" ;
+ : (u   ." <u>"   later  ." </u>" ;
+ : (h1  ." <h1>"  later  ." </h1>" ;
+ : (h2  ." <h2>"  later  ." </h2>";
+ : (h3  ." <h3>"  later  ." </h3>" ;
+ : (h4  ." <h4>"  later  ." </h4>" ;
+ : (pre ." <pre>" later  ." </pre>" ;
+
+ : link type '| parse type ." >" ;
+ : (link s" <a href=" link later ." </a>" space ;
+ : (node s" <a href=?id=" link later ." </a>" space ;
+ : (image ." <img src=" wsparse type ." >" ;
+
+----
+
+ | RetroWiki					Release 1.00.1
+ | ============================================================
+ | This is a FML, a Forth-ish Markup Language for use with
+ | RetroWiki
+ | ============================================================
+ | Features Include:
+ |   * Simplified codebase
+ |   * Easier to use markups
+ |   * Support for local, interwiki, web, and email links
+ |   * Support for inline images
+ |   * Interwiki support (2 interwikis supported so far)
+ |     * TinderBox       tb[
+ |     * MeatBall        mb[
+ |     * Why 2k?         y2k[
+ |     * GreenCheese     gc[
+ | ============================================================
+ | Changes
+ |   1.00.0 Initial public release, uses inline strings
+ |   1.00.1 Bugfixes to interwiki links, added mb, y2k, and gc
+ |          markups
+ | ============================================================
+
+
+ | Variables
+ : variables times create 0 , repeat variables ;
+ 6 variables t-bold t-italic t-underline t-heading t-p t-pre
+
+ : ? @ 1 = ;
+
+
+ | FML Tags
+ : BR ." <br/>" cr ;
+ : ---- ." <hr/>" ;
+
+ : markup dup >r ? if type 0 r> ! ;; then 2drop type 1 r> ! ;
+ : \ s" <p>" s" </p>" t-p markup ;
+ : * s" <b>" s" </b>" t-bold markup ;
+ : / s" <i>" s" </i>" t-italic markup ;
+ : _ s" <u>" s" </u>" t-underline markup ;
+ : = s" <h1>" s" </h1>" t-heading markup ;
+ : == s" <h2>" s" </h2>" t-heading markup ;
+ : === s" <h3>" s" </h3>" t-heading markup ;
+ : ==== s" <h4>" s" </h4>" t-heading markup ;
+ : ~ s" <pre>" s" </pre>" t-pre markup ;
+
+
+ : LINK '] word >r >r ." <a href=" type r> r> 2dup type ." >" type ." </a>" ;
+ : [ s" ?id=" LINK ;
+ : mailto[ s" mailto:" LINK ;
+ : web[ s" http://" LINK ;
+ : image[ ." <img src=" '] word type ." >" ;
+
+
+ | Interwiki links
+ : ff[ s" http://wiki.forthfreak.net/index.cgi?" LINK ;
+ : c2[ s" http://c2.com/cgi/wiki?" LINK ;
+ : tb[ s" http://www.eastgate.com/bin/wiki.cgi?" LINK ;
+ : mb[ s" http://usemod.com/cgi-bin/mb.pl?" LINK ;
+ : y2k[ s" http://clublet.com/c/c/why?page=" LINK ;
+ : gc[ s" http://www.greencheese.org/" LINK ;
+
+ | ============================================================
+ | A remapping layer for compatibility with FHTML 1, 2, & 3
+
+ | FHTML
+ : P: \ ;
+ : ;P \ ;
+
+ | FHTML2
+ : B" * '" word type * ;
+ : I" / '" word type / ;
+ : U" _ '" word type _ ;
+
+ | FHTML3
+ : ** * ;
+ : // / ;
+ : __ _ ;
+ : == = ;
+
+----
+
+FML 2.0 uses 'later'. This is defined in RetroForth as:
+
+ : later r> r> swap >r >r ;
+
+It has many potential uses, but this is the first serious one of I've explored.
+
+The word '|' is used for comments in RetroForth. It's defined as:
+
+ : | lnparse 2drop ;

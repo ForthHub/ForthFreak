@@ -1,0 +1,26 @@
+( John Rogers has suggested looking into tokenized XML.  It would link up to things other people do and there would be lots of tools available they wrote.  I'll look.)
+
+Byte-code itself is, well, a series of bytes. Issues include
+
+* standard -- Which StandardHeaderversion is this?
+* ending -- do we depend on an external file system or IP etc to say when the byte-code is complete? We could have a length listed at the beginning, or we could expend a byte-code that will be used only once, to say when it ends.
+* ForthscriptID -- we could send an ID with each byte-code module. We could have a compressed form to use when size is important.
+* queries -- we could have a standard set of queries and responses. This could be done with bytecodes, but it would consume at least one of our bytecodes when we'll never want to make those queries inside a bytecode program.  In any case we would want a set of standard queries whose answers should be available.
+
+Standard queries should include:
+
+* How can I get a copy of the token-compiler for this code?
+* How can I get a copy of the tokenizer for this code?
+* How can I contact the author of this token-compiler?
+* How can I contact the author of this code?
+* How can I find the expected behaviors of the primitives for this code?
+* What types of Forth systems should run this code correctly?
+* How can I find some Forths that will run this code correctly?
+* What does it do?
+* What is the interface to the Forth system?  (Named words and their stack effects, and their intended behaviors.)
+* Please use the following header version?
+* Please use the following byte-code compiler?
+
+A few of these are things that a Forth system might use.  Others will be text etc that a human being would look at.  So if you have a short list of token-compilers available, and you receive byte-code that uses a tokenizer that none of them can handle, you might automatically go through your list asking them to use one you have.  
+
+If they can't or won't do that, then you would have a chance to automatically download a token-compiler that could use their byte-code.  But this is a security concern and also a portability concern.  If you don't fully trust that their token-compiler will run correctly on your system, or you don't trust that their byte-code will run correctly, better to look it over yourself.

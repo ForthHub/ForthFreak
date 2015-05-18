@@ -1,0 +1,9 @@
+Bytecode is more compact than source code and far more portable -- and sometimes more compact -- than object code.  It can have value wherever code compactness is valued.
+
+ByteCodeSizeSpeed
+
+ByteCodePortability
+
+ByteCodeCongestion
+
+Since no one byte code system will fit all purposes, we can expect to get various different byte code systems for different problem domains. The cost of receiving or storing byte code applets has to include the cost of receiving the various token compilers. So the value of custom compilers must be balanced against the size of the applications they will be used for. A semicustom token compiler may cost several hundred characters beyond the generic one.

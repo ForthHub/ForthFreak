@@ -1,0 +1,15 @@
+back to ForthSystems
+* [PsiForth] for OPL32 (EPOC/Psion-5)
+* [vforth] VAX
+* [tforth] for Transputer
+* [XForth] for Flex-09
+* [aiforth] for DEC Alpha
+* WimpForth for Archimedes/!RiscOS
+* [JForth] for Amiga
+* [PF11] for the 68HC11
+* [pbForth] for LEGO mindstorm
+* [http://volksforth.sf.net volksForth] for MS-DOS, Atari Portfolio, Atari XL/XE, Atari ST, CP/M, Amstrad CPC, Commordore PET, C=64, Plus 4, C16, Apple 1/Replica 1
+* M8cForth for the Cypress M8C core used in many Cypress PSoC chips.
+* [Forth92] for the TI-92 programmable calculator (MC68000 CPU)
+
+See CrossForth, StandAloneForth 

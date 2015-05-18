@@ -1,0 +1,643 @@
+== How To Get Results
+
+In this chapter, we'll dive right into some specifics that you need to know before we go on. Specifically, we'll introduce some of the arithmetic instructions besides + and some special operators for rearranging the order of numbers on the stack, so that you'll be able to write mathematical equations in Forth.
+
+== Forth Arithmetic -- Calculator Style
+Here are the four simplest integer-arithmetic operators in Forth:
+
+ + ( n1 n2 -- sum )  Adds.
+ - ( n1 n2 -- diff ) Subtracts (n1-n2).
+ * ( n1 n2 -- prod ) Multiplies.
+ / ( n1 n2 -- quot ) Divides (n1/n2).
+
+Unlike calculators, computer terminals don't have special keys for multiplication or division. Instead we use * and /. If Math Is Not Your Thing: We'd like to remind you that integers are whole numbers, such as ... -3, -2, -1, 0, 1, 2, 3, ... Integer arithmetic (logically enough) is arithmetic that concerns itself only with integers, not with decimal-point numbers, such as 2.71.
+
+In the first chapter, we learned that we can add two numbers by putting them both on the stack, then executing the word +, then finally executing the word . (dot) to get the result printed at our terminal.
+
+*17 5 + . 22*
+
+_ok_ 
+
+We can use this method with all of Forth's arithmetic operators. In other words, we can use Forth like a calculator to get answers, even without writing a "program." Try a multiplication problem:
+
+*7 8 * . 56*
+
+_ok_ 
+
+By now we've seen that the operator comes after the numbers. In the case of subtraction and division, though, we must also consider the order of numbers ("7 - 4" is not the same as "4 - 7").
+
+Just remember this rule:
+
+*To convert to postfix, simply move the operator to the end of the expression:*
+
+ Infix       Postfix
+ 3 + 4       3 4 +
+ 500 - 300   500 300 -
+ 6 x 5       6 5 *
+ 20 / 4      20 4 /
+
+So to do the subtraction problem:
+
+ 7 - 4 =
+
+simply type in
+
+ 7 4 - .
+
+_3 ok_
+----
+For Adventuresome Newcomers Sitting at a Terminal
+
+If you're one of those people who like to fool around and figure things out for themselves without reading this book, then you're bound to discover a couple of weird things. First off, as we told you, these operators are integer operators. That not only means that you can't do calculations with decimal values, like
+
+ 10.00 2.25 +
+
+it also means that you can only get integer results, as in
+
+ 21 4 / . 5 ok  instead of
+
+_5.25 ok_
+
+Another thing is that if you try to multiply:
+
+ 10000000 1000 * .
+
+or some such large numbers, you'll get a crazy answer. So we're telling you up front that with the operators introduced so far and with . to print the results, you can't have any numbers that are higher than +2147483647 or lower than -2147483648. Numbers within this range are called "single-length signed numbers."
+
+Notice, in the list of Forth words a few pages back, the letter "n," which stands for "number." Since Forth uses single-length numbers more often than other types of numbers, the "n" signifies that the number must be single-length. And yes, there are other operators that extend this range ("double-length" operators, which are indicated by "d").
+
+All of these mysteries will be explained in time, so stay tuned.
+----
+
+The order of numbers stays the same. Let's try a division problem:
+
+ 20 4 / .
+
+_5 ok_
+
+The word / is defined to divide the second number on the stack by the top number.
+
+What do you do if you have more than one operator in an expression, like:
+
+ 4 + (17 * 12)
+
+you ask? Let's take it step-by-step: the parentheses tell you to first multiply seventeen by twelve, then add four. So in Forth you would write:
+
+ 17 12 * 4 + .
+
+_208 ok_
+
+and here's why:
+
+17 and 12 go onto the stack. * multiplies them and returns the result 204. Then the four goes onto the stack, on top of 204. + rolls out the adding machine and adds them together, returning only the result.
+
+4 17 12 * +  would give the same result.
+
+Or suppose you want to add five numbers. You can do it in Forth like this:
+
+ 17 20 +  132 +  3 +  9 +  .
+
+_181 ok_
+
+Now here's an interesting problem:
+
+ (3 + 9) * (4 + 6)
+
+To solve it we have to add three to nine first, then add four to six, then finally multiply the two sums. In Forth, we can write
+
+ 3 9 +  4 6 +  * .
+
+_120 ok_
+
+----
+The picture at the right is showing what happens.
+
+Notice that we very conveniently saved the sum twelve on the stack while we went on about the business of adding four to six.
+
+Remember that we're not concerned yet with writing definitions. We are simply using Forth as a calculator.
+
+If you're like most beginners, you probably would like to try your hand at a few practice problems until you feel more comfortable with postfix.
+
+Postfix Practice Problems (Quizzie 2-a)
+
+Convert the following infix equations to postfix "calculator style." For example,
+
+ ab + c
+
+would become
+
+ a b * c +
+
+0 c(a+b)
+0 (3a - b) / 4 + c
+0 (0.5 ab) / 100
+0 (n + 1) / n
+0 x(7x + 5)
+Convert the following postfix expressions to infix:
+0 a b - b a + /
+0 a b 10 * /
+
+   [1][answer]
+
+Forth Arithmetic -- Definition Style
+
+http://forthfreak.net/startingforth/sf2/4way.gif In Chap. 1 we saw that we could define new words in terms of numbers and other pre-defined words. Let's explore some further possibilities, using some of our newly-learned math operators.
+
+Let's say we want to convert various measurements to inches. We know that
+
+ 1 yard = 36 inches
+
+and
+
+ 1 foot = 12 inches
+
+so we can define these two words:
+
+ : YARDS>IN  36 * ;
+
+_ok_ 
+
+ : FT>IN     12 * ;
+
+_ok_
+
+where the names symbolize "yards-to-inches" and "feet-to-inches." Here's what they do:
+
+ 10 YARDS>IN .
+_360 ok_
+
+ 2 FT>IN .
+_24 ok_
+
+If we always want our result to be in inches, we can define:
+
+ : YARDS  36 * ;
+
+_ok_
+
+ : FEET   12 * ;
+
+_ok_
+
+ : INCHES   ;
+
+_ok_
+
+So that we can use the phrase
+
+ 10 YARDS  2 FEET +  9 INCHES +  .
+_393 ok_
+
+Notice that the word INCHES doesn't do anything except remind the human user what the nine is for. If we really want to get fancy, we can add these three definitions:
+
+ : YARD   YARDS ;
+
+_ok_
+
+ : FOOT   FEET ;
+
+_ok_
+
+: INCH   ;
+
+_ok_
+
+so that the user can enter the singular form of any of the nouns and still get the same result:
+
+ 1 YARD  2 FEET +  1 INCH +  .
+
+_61 ok_
+
+ 2 YARDS  1 FOOT + .
+
+_84 ok_
+
+----
+For Semantic Freaks
+
+In mathematics, the word "argument" refers to an independent variable of a function. Computer linguists have borrowed this term to refer to numbers being operated on by operators. They have also borrowed the word "parameters" to describe pretty much the same thing.
+----
+
+So far we have only defined words whose definitions contain a single math operator. But it's perfectly possible to put many operators inside a definition, if that's what you need to do.
+
+Let's say we want a word that computes the sum of five numbers on the stack. A few pages back we summed five numbers like this:
+
+17 20 + 132 + 3 + 9 + .
+
+_181 ok_
+
+But we can also enter
+
+ 17 20 132 3 9 + + + + .
+_181 ok_
+
+We get the same answer, even though we've clustered all the numbers into one group and all the operators into another group. We can write our definition like this:
+
+ : 5#SUM  + + + + ;
+
+_ok_
+
+and execute it like this:
+
+ 17 20 132 3 9 5#SUM .
+_181 ok_
+
+If we were going to keep 5#SUM for future use, we could enter it into our ever-growing glossary, along with a note that it "expects five arguments" on the stack, which it will add together.
+
+----
+For Beginners Who Like Word Problems http://forthfreak.net/startingforth/sf2/tail.gif
+
+If a jet plane flies at an average air speed of 600 mph and if it flies with a tail wind of 25 mph, how far will it travel in five hours?
+
+If we define
+
+ : FLIGHT-DISTANCE   + * ;
+
+we could enter
+
+ 5 600 25 FLIGHT-DISTANCE .
+
+_3125 ok_
+
+Try it with different values, including head winds (negative values).
+
+Here is another equation to write a definition for:
+
+ (a + b) * c
+
+As we saw in Quizzie 2-a, this expression can be written in postfix as
+
+ c a b + *
+
+Thus we could write our definition
+
+ : SOLUTION   + * ;
+
+_ok_
+
+as long as we make sure that we enter the arguments in the proper order;
+
+ c a b SOLUTION
+
+Definition Style Practice Problems (Quizzie 2-b)
+
+Convert the following infix expressions into Forth definitions and show the stack order required by your definitions. Since this is Quizzie 2-b, you can name your definitions 2B1, 2B2, etc.
+
+0 ab + c would become *: 2B1 * + ;*  which expects this stack order: ( c b a -- result)
+0 (a - 4b) / 6 + c
+0 a / (8b)
+0 0.5 ab / 100
+0 a(2a + 3)
+0 (a - b) / c
+
+
+   [2][answer]
+
+The Division Operators
+
+   The word / is Forth's simplest division operator. Slash supplies only
+   the quotient; any remainder is lost. If you type:
+        22 4 / . 5 ok 
+
+   You get only the quotient five, not the remainder two.
+
+   BIG % If you're thinking of a pocket calculator's per-cent operator,
+   then five is not the full answer.
+
+   But / is only one of several division operators supplied by Forth to
+   give you the flexibility to tell the computer exactly what you want it
+   to do.
+
+   For example, let's say you want to solve this problem: "How many
+   dollar bills can I get in exchange for 22 quarters?" The real answer,
+   of course, is exactly 5, not 5.5. A computerized money changer, for
+   example, would not know how to give you 5.5 dollar bills.
+
+   Here are two more Forth divsion operators:
+
+   /MOD ( n1 n2 -- rem quot ) Divides. Returns the remainder and
+   quotient. slash-mod
+   MOD ( n1 n2 -- rem ) Returns the remainder from division. mod
+
+   These operators are both signed, and "truncating." We'll see what this
+   means in the chapter on computer numbers.
+
+   /MOD gives both the remainder and the quotient; MOD (from "modulo")
+   gives the remainder only. (For /MOD, the stack notation in the table
+   indicates that the quotient will be on top of the stack, and the
+   remainder below. Remember, the rightmost represents the topmost.)
+
+   Let's try the first one:
+        22 4 /MOD . . 5 2 ok
+
+   CAPTION: Samurai /MOD (slash's older brother)
+
+   Mean Samurai Slashing
+
+   Here /MOD performs the division and puts both the quotient and the
+   remainder on the stack. The first dot prints the quotient because the
+   quotient was on top.
+
+   With what we've learned so far, we can easily define this word:
+        : QUARTERS  4 /MOD . ." ones and "
+                    . ." quarters " ;
+
+   So that you can type:
+        22 QUARTERS
+
+   with this result:
+        22 QUARTERS 5 ones and 2 quarters ok 
+
+   The second word in the table, MOD, leaves only the remainder. For
+   example in:
+        22 4 MOD . 2 ok 
+
+   the two is the remainder.
+
+Stack Maneuvers
+
+   If you worked Prob. 6 in the last set, you discovered that the infix
+   equation
+        (a - b) / c
+
+   cannot be solved with a definition unless there is some way to
+   rearrange values on the stack.
+
+   Well, there is a way: by using a "stack manipulation operator" called
+   SWAP.
+
+  SWAP
+
+   The Swap Dinosaur The word SWAP is defined to switch the order of the
+   top two stack items.
+
+   As with the other stack manipulation operators, you can test SWAP at
+   your terminal in "calculator style"; that is, it doesn't have to be
+   contained within a definition.
+
+   First enter
+        1 2 . . 2 1 ok 
+
+   then again, this time with SWAP:
+        1 2 SWAP . . 1 2 ok 
+
+   Thus Prob. 6 can be solved with this phrase:
+        - SWAP /
+
+   with ( c a b -- ) on the stack.
+
+   Let's give a, b, and c these test values:
+        a = 10  b = 4   c = 2
+
+   then put them on the stack and execute the phrase, like so:
+        2 10 4 - SWAP / . 3 ok 
+
+   Here is a list of several stack manipulation operators, including SWAP
+
+   SWAP ( n1 n2 -- n2 n1 ) Reverses the top two stack items. swap
+   DUP ( n -- n n ) Duplicates the top stack item. dupe
+   OVER ( n1 n2 -- n1 n2 n1 ) Makes a copy of the second item and pushes
+   it on top. over
+   ROT ( n1 n2 n3 -- n2 n3 n1 ) Rotates the third item to the top. rote
+   DROP ( n -- ) Discards the top stack item. drop
+
+  DUP
+
+   Copy machine DUPping The next stack manipulation operator on the list,
+   DUP, simply makes a second copy (duplicate) of the top stack item.
+
+   For example, if we have "a" on the stack, we can compute:
+        a^2
+
+   as follows:
+        DUP *
+
+   in which the following steps occur:
+
+   Operation Contents
+   of stack
+     a
+   DUP a a
+   * a^2
+
+  OVER
+
+   Now somebody tells you to evaluate the expression:
+        a * (a + b)
+
+   given the following stack order:
+        ( a b -- )
+
+   But, you say, I'm going to need a new manipulation operator: I want
+   two copies of the "a," and the "a" is under the "b." Here's the word
+   you need: OVER. OVER simply makes a copy of the "a" and leapfrogs it
+   over the "b":
+        ( a b -- a b a )
+
+   Horse jumping OVER the fence Now the expression
+        a * (a + b)
+
+   can easily be written
+        OVER + *
+
+   Here's what happens:
+
+   Operation Contents
+   of stack
+     a b
+   OVER a b a
+   + a (b+a)
+   * a*(b+a)
+
+   When writing equations in Forth, it's best to "factor them out" first.
+   For example, if somebody asks you to evaluate:
+        a^2 + ab
+
+   in Forth, you'll find it quite complicated (and maybe even impossible)
+   using the words we've introduced so far ... unless you factor out the
+   expression to read:
+        a * (a + b)
+
+   which is the expression we just evaluated so easily.
+
+  ROT
+
+   The fourth stack manipulator on the list is ROT (pronounced rote),
+   which is short for "rotate." ROT transforms the top three stack values
+   from ( a b c ) to ( b c a ).
+
+   Corny juggler For example, if we need to evaluate the expression:
+        ab - bc
+
+   we should first factor out the "b"s:
+        b * (a - c)
+
+   Now if our starting-stack order is this:
+        ( c b a -- )
+
+   we can use:
+        ROT - *
+
+   in which the following steps will occur:
+
+   Operation Contents
+   of stack
+     c b a
+   ROT b a c
+   - b (a-c)
+   * b*(a-c)
+
+  DROP
+
+   The final stack manipulation operator on the list is DROP. All it does
+   is discard the top stack value.
+
+   Pretty simple, huh? We'll see some good uses for DROP later on.
+
+   CAPTION: A Handy Hint
+   A Non-destructive Stack Print
+
+   Beginners who are just learning to manipulate numbers on the stack in
+   useful ways very often find themselves typing a series of dots to see
+   what's on the stack after their manipulations. The problem with dots,
+   though, is that they don't leave the numbers on the stack for future
+   manipulation.
+
+   The Forth word .S prints out all the values that happen to be on the
+   stack "non-destructively"; that is, without removing them. Let's test
+   it, first with nothing on the stack:
+        .S <0>  ok
+
+   As you can see, in this version of .S (Gforth's), we see at least one
+   number. This is the number of items actually on the stack.
+
+   Now let's try with numbers on the stack:
+        1 2 3 .S <3> 1 2 3  ok 
+
+        ROT .S <3> 2 3 1  ok 
+
+Stack Manipulation and Math Definitions (Quizzie 2-c)
+
+    1. Write a phrase which flips three items on the stack, leaving the
+       middle number in the middle; that is,
+        a b c   becomes c b a
+    2. Write a phrase that does what OVER does, without using OVER.
+    3. Write a definition called -ROT, which rotates the top three stack
+       items in the opposite direction from ROT; that is,
+        a b c   becomes c a b
+       Write definitions for the following equations, given the stack
+       effects shown:
+    4. (n+1) / n ( n -- result )
+    5. x(7x + 5) ( x -- result )
+    6. 9a^2 - ba ( a b -- result )
+
+   [3][answer]
+
+Playing Doubles
+
+   The next four stack manipulation operators should look vaguely
+   familiar:
+
+   2SWAP ( d1 d2 -- d2 d1 ) Reverses the top two pairs of numbers.
+   two-swap
+   2DUP ( d -- d d ) Duplicates the top pair of numbers. two-dupe
+   2OVER ( d1 d2 -- d1 d2 d1 ) Makes a copy of the second pair of numbers
+   and pushes it on top. two-over
+   2DROP ( d -- ) Discards the top pair of numbers. two-drop
+
+   4-headed dinosaur The prefix "2" indicates that these stack
+   manipulation operators handle numbers in pairs. For Old Hands: They
+   can also be used to handle double-length (64-bit) numbers. The letter
+   "d" in the stack effects column stands for "double." "Double" has a
+   special significance that we will discuss when we talk about "n" and
+   "u."
+
+   The "2"-manipulators listed above are so straightforward, we won't
+   even bore you with examples.
+
+   One more thing: there are still some stack manipulators we haven't
+   talked about yet, so don't go crazy by trying too much fancy footwork
+   on the stack.
+
+   Here's a list of the Forth words we've covered in this chapter:
+
+   + ( n1 n2 -- sum ) Adds.
+   - ( n1 n2 -- diff ) Subtracts (n1-n2).
+   * ( n1 n2 -- prod ) Multiplies.
+   / ( n1 n2 -- quot ) Divides (n1/n2).
+   /MOD ( n1 n2 -- rem quot ) Divides. Returns the remainder and
+   quotient.
+   MOD ( n1 n2 -- rem ) Returns the remainder from division.
+   SWAP ( n1 n2 -- n2 n1 ) Reverses the top two stack items.
+   DUP ( n -- n n ) Duplicates the top stack item.
+   OVER ( n1 n2 -- n1 n2 n1 ) Makes a copy of the second item and pushes
+   it on top.
+   ROT ( n1 n2 n3 -- n2 n3 n1 ) Rotates the third item to the top.
+   DROP ( n -- ) Discards the top stack item.
+   2SWAP ( d1 d2 -- d2 d1 ) Reverses the top two pairs of numbers.
+   2DUP ( d -- d d ) Duplicates the top pair of numbers.
+   2OVER ( d1 d2 -- d1 d2 d1 ) Makes a copy of the second pair of numbers
+   and pushes it on top.
+   2DROP ( d -- ) Discards the top pair of numbers.
+
+   CAPTION: Review of Terms
+     _________________________________________________________________
+     _________________________________________________________________
+
+   Double-length numbers integers which encompass a range of over
+   -18,446,744,073,709,551,615 to +18,446,744,073,709,551,615 (and which
+   we'll introduce officially in Chap. 7).
+   Single-length numbers integers which fall within the range of -2
+   billion to +2 billion: the only numbers which are valid as the
+   arguments or results of any of the operators we've discussed so far.
+     _________________________________________________________________
+     _________________________________________________________________
+
+Problems -- Chapter 2
+
+   problems
+    1. What's the difference between DUP DUP and 2DUP? [4][answer]
+    2. Write a phrase which will reverse the order of the top four items
+       on the stack; that is,
+        ( 1 2 3 4 -- 4 3 2 1 )
+       [5][answer]
+    3. Write a definition called 3DUP which will duplicate the top three
+       numbers on the stack; for example,
+        ( 1 2 3 -- 1 2 3 1 2 3 )
+       [6][answer]
+       Write definitions for the following infix equations, given the
+       stack effects shown:
+    4. a^2 + ab + c ( c a b -- result ) [7][answer]
+    5. (a-b) / (a+b) ( a b -- result ) [8][answer]
+    6. Write a set of words to compute prison sentences for hardened
+       criminals such that the judge can enter:
+        CONVICTED-OF ARSON HOMICIDE TAX-EVASION ok 
+        WILL-SERVE 35 years ok 
+       or any series of crime beginning with the word CONVICTED-OF and
+       ending with WILL-SERVE. Use these sentences
+        HOMICIDE        20 years
+        ARSON           10 years
+        BOOKMAKING       2 years
+        TAX-EVASION      5 years
+       [9][answer]
+    7. You're the inventory programmer at Maria's Egg Ranch. Define a
+       word called EGG.CARTONS which expects on the stack the total
+       number of eggs laid by the chickens today and prints out the
+       number of cartons that can be filled with a dozen each, as well as
+       the number of left-over eggs. [10][answer]
+
+   counted [11]Valid HTML 3.5 
+
+References
+
+   1. file://localhost/home/l/forthfreak/startingforth/sf2/quizzie 2-a.gfs
+   2. file://localhost/home/l/forthfreak/startingforth/sf2/quizzie 2-b.gfs
+   3. file://localhost/home/l/forthfreak/startingforth/sf2/quizzie 2-c.gfs
+   4. file://localhost/home/l/forthfreak/startingforth/sf2/2-1.gfs
+   5. file://localhost/home/l/forthfreak/startingforth/sf2/2-2.gfs
+   6. file://localhost/home/l/forthfreak/startingforth/sf2/2-3.gfs
+   7. file://localhost/home/l/forthfreak/startingforth/sf2/2-4.gfs
+   8. file://localhost/home/l/forthfreak/startingforth/sf2/2-5.gfs
+   9. file://localhost/home/l/forthfreak/startingforth/sf2/2-6.gfs
+  10. file://localhost/home/l/forthfreak/startingforth/sf2/2-7.gfs
+  11. http://validator.w3.org/

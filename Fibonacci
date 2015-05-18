@@ -1,0 +1,13 @@
+ : fib ( n -- fib )
+   0 1 rot 0 ?do  over + swap  loop drop ;
+
+Here's a recursive implementation for RetroForth:
+
+ : fib ( n-m )
+   [ 0 = ] [ 0 ] whend
+   [ 1 = ] [ 1 ] whend
+   [ 1 - fib ] sip 2 - fib + ;
+
+And for ANS forths:
+
+ : fib dup 3 < if drop 1 exit then dup 1- recurse swap 2- recurse + ;

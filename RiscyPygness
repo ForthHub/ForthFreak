@@ -1,0 +1,16 @@
+Riscy Pygness, [Pygmy] Forth for the ARM7 by Frank Sergeant.
+
+Frank's original code was downloaded from this URL:
+
+* http://pygmy.utoh.org/riscy/downloads/riscy2-2005.1.8-1856.zip
+
+Pygmy FORTH is distributed under an MIT-Style license, see the file
+"ORIGINAL-LICENSE.txt" for details.
+
+Riscy Pygness is available under an MIT-style license from this URL:
+
+* http://pygmy.utoh.org/riscy
+
+/What's the best place for a page discussing "versions of Forth for the ARM"? This Forthfreak wiki, or the ARM microcontroller wiki http://www.open-research.org.uk/ARMuC/ ?/
+
+ForthSystems

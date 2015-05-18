@@ -1,0 +1,4 @@
+!CamelForth is a Forth implementation for embedded microprocessors (8051, 8086, Z80, and 6809, with more to come). It is compatible with ANS Forth [see note]. It was originally developed as an educational project for The Computer Journal, but has since become popular for embedded systems programming. For personal use, it is free of charge.
+http://www.zetetics.com/camel/
+
+ForthSystems

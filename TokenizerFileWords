@@ -1,0 +1,32 @@
+\ file I/O for tokenizer
+
+ \ send bytecode to file OUTPUT.PB
+ \ file input should not be much problem, set TOKENS as the only wordlist in the search order,
+ \ have INCLUDED in the TOKENS wordlist along with a word to reset the search order, and put
+ \ the word that starts the tokenizer (currently TOKEN| ) at the start of the file.
+ \ It is also necessary to mark the definitions you want to be in the target dictionary with
+ \ N: to keep their names, and eliminate words that can't be tokenized.
+
+ ( -------------- file words )
+ VARIABLE OUTPUT-FID
+ : OUTPUT ( S: -- addr count )
+    S" OUTPUT.PB" ;
+
+ : OUTPUT-CHAR-TO-FILE ( S: c -- )
+    PAD C! PAD 1 OUTPUT-FID @ WRITE-FILE DROP ;
+
+ \ ' . (IS) OUTPUT-CHAR
+ ' OUTPUT-CHAR-TO-FILE (IS) OUTPUT-CHAR
+
+ ( G: setup output file )
+ : TO-FILE ( S: -- )
+    OUTPUT W/O BIN CREATE-FILE .
+    OUTPUT-FID ! ['] OUTPUT-CHAR-TO-FILE [IS] OUTPUT-CHAR ;
+
+ ( G: display byte code and close output file )
+ : SHOW ( S: -- )
+    OUTPUT-FID @ CLOSE-FILE .
+    OUTPUT R/O BIN OPEN-FILE . OUTPUT-FID !
+    PAD DUP OUTPUT-FID @ FILE-SIZE . .
+    OUTPUT-FID @ READ-FILE . CR DUMP CR
+    OUTPUT-FID @ CLOSE-FILE . ;

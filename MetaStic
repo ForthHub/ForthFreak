@@ -1,0 +1,62 @@
+!MetaStic is the reimplementation of Elastic (which was written in assembly language) as metacompiler. It differs from other Forth metacompilers in that respect that it does not implement a Forth system, which can be extended to become the meta compiler. It rather implements a meta compiler, which can be extended to become Forth. The minimal system (the kernel) can metacompile without any additions.
+
+MetaStic has been split into several archives.
+metastic-stage1.tgz contains the binary kernel executable, the kernel source, and a batch file which loads the source into the kernel, to generate a new kernel. 
+
+http://www.forthfreak.net/metastic/metastic-stage1.tgz
+
+be aware that the resulting executable can't be used for much, except for compiling its own source, until stages 2..4 become available.
+
+(i notice that a tgz file is not the ideal archive format to pack msdos files, and i will change it, but for the moment, you have to bear with it.
+
+[http://www.forthfreak.net/metastic/METASTIC.KERNEL have a look at the kernel source]
+
+other stages still need to be packed and uploaded. there's the screen-interaction stuff (simplified menus - a menu just outputs executable
+statements on screen, you run the cursor to those, and execute by pressing enter. Also, you can move up the screen, scroll back output, and edit, insert new lines etc. the screen history has been implemented with the poor man's oo extensions (which are more a kind of parody on object oriented systems).
+
+full source access through [=MODIFY] which calls an editor on any word for which source is present. similar to [=MODIFY], [=FIX] jumps to the location of an error during load. should no error have occured, [=FIX] knows the meaningful error message /error: no error/.
+an extensible scheme to allow word prefixes, and associate them with actions (such as,  quote, followed by non-space chars is interpreted as string, until the closing quote - this allows for  /"these kind of strings"/, the same scheme is used for >os-command, 'ascii,  ^control, and several more.
+
+
+Interesting may be the simple virtual assembly layer, which is used to implement the [http://www.wikipedia.org/wiki/Virtual_machine virtual machine] and many primitives. It defines a set of operations, looking like:
+ 8086: mov([rp],tos)    $8B C, $5E C, 0 C,        ; \ mov bx,[bp]
+ 8086: rp+              $45 C,  $45 C,            ; \ inc bp inc bp 
+ 8086: mov(tos,wp)      $8B C, $C3 C,             ; \ mov ax,bx
+ 8086: mov([rp],tos)    $8B C, $5E C, 0 C,        ; \ mov bx,[bp]
+ 8086: mov([rp]+,ip)    mov([rp],ip)   rp+        ; \ mov si,[bp]+
+
+which are used for building the kernel:
+
+ l: docolon
+   mov(ip,-[rp])
+   mov([sp]+,ip)
+ endcodel:
+
+ code execute  ( ? addr -- ? )
+   mov(tos,wp)
+   mov([sp]+,tos)
+   bra(wp)
+ endcode
+
+ code dobranch
+   add([ip],ip)
+ endcode
+
+
+
+MetaStic also supports (turned off by default) forward references, with automatic resolving
+The prompt will indicate if there are still unresolved forward references around, 
+[=UNRESOLVED WORDS] or Ctrl-U  shows these.
+
+the [=FORGET] is innovative, as it allows to return the system to an earlier state, which makes forgetting of words possible, which have been referenced by deferred words. forget can also unpatch a patched system , or restore interrupt handlers should you decide to forget an interrupt handler which has been loaded from source.
+
+headers are fully relocatable, header structure can be changed on-the-fly.
+vocabulary support has been created with embedded systems in mind, with the multiple types of memory usually available on those systems. If forward references are disabled, MetaStic should be able to compile directly to flash (i hope it still does, at least Elastic did), by touching the memory location at compile address only once
+
+the required extensions will be put in stages 2, 3 and 4, as soon as i've found a way to test those again (probably need to install a DOS-emulator)
+
+Oh, right, the name:  Elastic was a subroutine threaded system, hence the STIC as acronym of Subroutine Threaded Interpreter/Compiler. What the ELA was for, i can't remember anymore. Even though MetaStic is not subroutine threaded any more, the "Stic" part of the name just stuck.
+
+MetaStic was, is and will be experimental until it's death (to which point it may haven gotten already, given that the last mods date back more than six years). Its development started around 1993.
+
+ForthSystems

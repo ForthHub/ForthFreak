@@ -1,0 +1,27 @@
+David Cary is the first editor at the Visual Wiki ( http://visual.wiki.taoriver.net/ ).
+
+
+I especially like the interactivity of Forth.
+
+=== Is there a Forth for the Parallax Propeller? ===
+
+I see that at least 3 people have had a go at implementing Forth for it ...
+
+=== Is there a Forth for the PSoC? ===
+
+Yes, Christopher Burns wrote M8cForth.
+David Cary took over over maintenance of M8cForth in 2006.
+
+2007: posted M8cForth source to http://en.wikibooks.org/wiki/Forth/PSoC_Forth .
+
+2006:
+I'm now using Cypress PSoC chips (using the "Cypress M8C core processor").
+I'm currently doing mixed C and assembly language on them.
+I'm poised to switch to Forth.
+
+An upcoming project is most likely going to use Atmel AVR chips -- I see that there are several Forth versions that run on the Atmel AVR
+listed at CrossForth:
+ByteForth, [PFAVR], and the "MPE AVR IRTC Forth cross compiler".
+
+2005:
+David Cary is currently doing assembly language programming on PIC processors, and is poised to switch to PicForth.

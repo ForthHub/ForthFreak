@@ -1,0 +1,7 @@
+Open Firmware is processor and system independent boot firmware.  OpenBoot is a specialized Forth system running from ROM of e.g. SUN Sparc systems and Apple MacIntosh systems, used to load an Operating System.  
+
+Among Open Firmware's many features, it provides a machine independent device interface, which can be used to boot plug-in cards without providing OS-specific and/or machine dependent binary programs on the plug-in card. This feature enables plug-in card manufacturers to easily support several independent computer architectures without needing to supply different firmware for each one.
+
+See also [OpenBIOS] and OpenFirmware, IEEE 1575
+
+ForthSystems

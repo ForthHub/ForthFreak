@@ -1,0 +1,21 @@
+Several attempts at writing forth implementations in JavaScript have taken place. These all differ in various ways, but to some extent they are all usable. But this implementation seems to be the only one which implements and complies fully with one of the Forth standards (the latest standard, actually)
+
+----
+
+==== jsforth: Forth interpreter, written in javascript
+
+* Project Page is [jsforth]
+* ForthCoreWords  words implementation status
+
+==== FOeRTHchen
+* Project is at: http://maschenwerk.de/foerthchen/
+* Developed by Helmar Wodtke, author of HelFORTH
+
+==== Others
+* http://home.diphi.com/users/jeffr/forth/jsforth.html (nice but incomplete: no /create/, /constant/, /words/ or /vlist/ ...)
+* RetroForth now has a JavaScript VM with canvas support at http://retroforth.org/canvas
+
+-------
+
+Also:
+[http://c2.com/cgi/wiki?ForthInJava Wiki: Forth in Java].

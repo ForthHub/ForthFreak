@@ -1,0 +1,7 @@
+!OpenFirmware (IEEE 1275-1994) is a standard for a Forth based firmware.
+The first implementation of !OpenFirmware is !SUNs !OpenBOOT.
+
+* [http://www.openfirmware.org/ OpenFirmware home page].
+* [ftp://playground.sun.com/pub/p1275/coredoc/1275-1994/1275.ps.gz Download the OpenFirmware standard document] (FTP)
+* http://www.netneurotic.de/mac/openfirmware.html
+* Mitch Bradley's [http://wiki.laptop.org/go/Forth_Lesson_9 lessons] on the OLPC wiki

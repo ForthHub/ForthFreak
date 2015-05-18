@@ -1,0 +1,29 @@
+\ Needed words that might not be present already
+
+ ( G: do nothing )
+ : NOOP ( S: -- )
+    ;
+
+ : REFILL? ( S: -- 0|~0 )
+    BEGIN
+      >IN @ BL WORD SWAP >IN ! C@ DUP 0= WHILE
+        DROP REFILL DUP WHILE
+          DROP
+      REPEAT
+    THEN ;
+
+ ( G: In case DEFER IS is not present, it's provided. )
+ : NOGOOD -1 ABORT" uninitialised DEFER" ;
+ : DEFER ( S: "name" -- )
+    CREATE ['] NOGOOD ,
+    DOES> @ EXECUTE ;
+ : (IS) ( S: "name" xt -- )
+    ' >BODY ! ;
+ : [IS] ( C: "name" -- ) ( S: xt addr -- )
+    ' >BODY POSTPONE LITERAL POSTPONE ! ; IMMEDIATE
+ \ : (IS) POSTPONE IS ;
+ \ : [IS] POSTPONE IS ; IMMEDIATE
+
+ ( G: helper-word, put char in string , increment length )
+ : SC! ( S: addr len char -- addr len+1' )
+    >R 2DUP CHARS + R> SWAP C! 1+ ;

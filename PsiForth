@@ -1,0 +1,8 @@
+[http://www.forthfreak.net/misc/interpreters/PsiForth.asc PsiForth] has been written in OPL-32, the ROM-resident interpreter of Psion 5. It uses
+a form of byte-token threading for primitives, and indirect threading for user-defined words.
+You can't call machine code from [http://www.forthfreak.net/misc/interpreters/PsiForth.asc PsiForth] , additional primitives would have to be written in OPL, by adding to the source code of [http://www.forthfreak.net/misc/interpreters/PsiForth.asc PsiForth] .
+
+http://www.forthfreak.net/misc/interpreters/PsiForth.asc
+http://www.forthfreak.net/misc/interpreters/PsiForth.tgz
+
+ForthSystems

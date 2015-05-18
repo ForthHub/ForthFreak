@@ -1,0 +1,6 @@
+OpenBIOS will be a free portable firmware implementation. The goal is to implement a 100% IEEE 1275-1994 (Referred to as OpenFirmware) compliant firmware. Among it's features, OpenFirmware provides an instruction set independent device interface. This can be used to boot the operating system from expansion cards without any native binary code. Thus it is OpenBIOS' goal to work on all common platforms, like x86, Alpha, x86-64 and IA-64. Additionally OpenBIOS targets the embedded systems sector, where a sane and unified firmware is a crucial design goal.
+OpenFirmware is found on many servers and workstations and there are several commercial implementations from SUN, Apple, IBM, Codegen and others.
+
+More information on http://www.openbios.org/
+
+ForthSystems

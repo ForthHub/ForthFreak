@@ -1,0 +1,26 @@
+Lex can be used to extract from source statistics on words' usage.
+
+wstat.lex:
+----
+ %option main
+ /* %option stdinit */
+ %option noyywrap
+
+ %{
+ #include<stdio.h>
+ %}
+
+ white   [ \t\r\n\f]+
+ word    [^ \n\t\r\f]+
+
+ %%
+ {white}*        ;
+ "("{white}+[^)]*")"     /* comment */ ;
+ {word}          printf("%s\n",yytext);
+----
+
+Usage:
+
+ cat files | wstat | sort | uniq -c | sort | less
+
+(ASau.)

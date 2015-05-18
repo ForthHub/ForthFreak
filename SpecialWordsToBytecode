@@ -1,0 +1,113 @@
+ ( G: Every TOKEN: word has the stack effect ( S: -- )
+
+\ ------------ making addresses -------------
+
+ ( G: literals will have the token, then a counted string for the number. )
+ TOKEN: LIT ;
+ : LITTOKEN TOKEN- LIT OUTPUT-NUMBER ;
+ ' LITTOKEN (IS) DO-LIT
+ VARIABLE LAST-ADDRESS -1 LAST-ADDRESS !
+ ( G: send CREATE token, make new address doubletoken word )
+ TOKEN: NEXT-ADDRESS ( S: -- colon-sys )
+    [ LAST-TOKEN @ 1+  ] LITERAL LAST-ADDRESS DOUBLE-TOKEN:  ;
+ TOKEN: ADDRESS ;
+
+ \ CREATE child does address token followed by the number of the address.
+ \ The actual address will be assigned by the target.
+ \ Every address is 2 bytes.
+ \ If there are only a few addresses used often, shorter to give them each a short token.
+ \ If there are lots of addresses each used seldom, shorter to do it this way.
+
+ ( G: do 0 CREATE , tokens )
+ : ADDRESS, ( S: -- colon-sys )
+    TOKEN- NEXT-ADDRESS TOKEN- , ;
+
+ TOKEN-WORD
+ : CREATE ( S: -- )
+    [ GET-TOKEN NEXT-ADDRESS COMPILE, ] POSTPONE ; ;
+ ( G: zero followed by CREATE and , )
+ : VARIABLE ( S: -- )
+    TOKEN- LIT 0 OUTPUT-UNSIGNED ADDRESS, POSTPONE ; ;
+ \ VARIABLE does 3 bytes for 0, a byte for CREATE and a byte for ,
+ \ We could do it in one byte by giving VARIABLE its own token.
+ \ Better to use up a token or accept 4 byte penalty for every new variable?
+ \ Use up a token for zero?  Use CHAR token, anyway.  **
+
+ ( G: do CREATE , tokens, make child do @ )
+ : CONSTANT ( S: -- )
+    ADDRESS, [ GET-TOKEN @ ] LITERAL COMPILE, POSTPONE ; ;
+ \ Use 2 bytes to define each new constant, and 3 bytes to call it each time.
+ \ We could reduce either or both of those to 1 byte.
+ \ It would use one token to reduce CONSTANT to 1 byte, and one token per constant
+ \ to reduce the calls. If tokens are scarce this is better, if there are plenty
+ \ of them, short calls are better.
+
+\ We throw away all comments.
+
+ : \
+    SOURCE >IN ! DROP ; IMMEDIATE
+ : (
+    [CHAR] ) PARSE 2DROP ; IMMEDIATE
+ NONTOKEN-WORD
+
+\ display strings
+ ( Copy a right-parend-delimited string. )
+ TOKEN: .(
+    [CHAR] ) OUTPUT-COUNTED-STRING ;
+
+ ( G: S" ABORT" ." all do the same thing, they copy a "delimited string. )
+ TOKEN: S"      [CHAR] " OUTPUT-COUNTED-STRING ;
+ TOKEN: ABORT"  [CHAR] " OUTPUT-COUNTED-STRING ;
+ TOKEN: ."      [CHAR] " OUTPUT-COUNTED-STRING ;
+
+\ CHAR and ![CHAR]
+ ( G: CHAR sends its token.  Interpreting, it also saves a char )
+ TOKEN: CHAR
+    FAKESTATE @ 0= IF CHAR OUTPUT-CHAR THEN ;
+ ( copy a single char )
+ TOKEN: [CHAR]
+    CHAR OUTPUT-CHAR ;
+
+ \ ' and ['] don't work yet.  I have no way to get token without side effects.
+ \ Very bad.  Various possibilities, all complicated.  Sleep on it.
+ \ ( S: ' and ['] get only the token.  compiled ' is a bad idea.)
+ \ TOKEN: [']
+ \    ' >BODY  OUTPUT-CHAR ;
+
+ \ TOKEN: '
+ \    FAKESTATE @ 0= IF GET-TOKEN OUTPUT-CHAR THEN ;
+
+\ compilation of non-immediate words
+ \ We need to track FAKESTATE to know whether to execute : etc.
+ \ Do we need [ ] in byte code?  Only if we have LITERAL . Replace it with LIT
+ \ All other uses of [ ] are for parsing code, which we avoid.
+ \ If you don't need LITERAL then probably remove the [ ] tokens too.
+
+
+ TOKEN: [
+    0 FAKESTATE ! ;
+ TOKEN: ;
+   0 FAKESTATE ! ; IMMEDIATE
+
+ ( G: ] sets state. )
+ TOKEN: ]
+   -1 FAKESTATE ! ;
+
+\ defining words
+ ( G: :NONAME does nothing special, it lays down a :NONAME token and sets state)
+ TOKEN: :NONAME
+     -1 FAKESTATE ! ;
+
+ ( G: : sets state and makes a new word. )
+ TOKEN: :
+    FAKESTATE @ 0= IF TOKEN: POSTPONE ;  -1 FAKESTATE ! THEN ;
+
+ ( G: saves the word name as string in bytecode, for target to use. )
+ TOKEN: N:
+    FAKESTATE @ 0= IF
+      >IN @ BL OUTPUT-COUNTED-STRING >IN !
+      TOKEN: POSTPONE ; -1 FAKESTATE !
+    THEN ;
+
+ \ note that new words are always simple words.  They execute only on the target,
+ \ never on the host.  To execute on the host you must add them to the tokenizer.

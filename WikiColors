@@ -1,0 +1,4 @@
+* black: body text without links
+* blue: unvisited links to wiki pages, web addresses, email addresses or ftp targets
+* purple: visited (cached) links
+* red: links to nonexisting/missing wiki pages

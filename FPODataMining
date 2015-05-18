@@ -1,0 +1,25 @@
+Without a central authority who decides which work to authorise, each developer has to choose for himself what to pay attention to.
+
+There should be software tools to make that easier. I don't know in any detail what would be worth having.
+
+Detailed and less-detailed views of the various trees.
+
+Some sort of search tools. 
+
+A flexible diff, easily used as part of the wiki structure.
+
+What else?
+
+----
+*something akin to* ctags, as in, a cross reference tool/
+quick source lookup.
+
+*a sort of* resolver, which bundles or packages all dependencies of one word you're about to download/synchronize your private code library with.
+----
+Elizabeth Rather recommended [http://www.scootersoftware.com/home.php Beyond Compare], a low-price commercial system that does diffs on whole diretory trees at once.
+
+To do it at the word level, we'd do best with a Forth. Perhaps a tool that compiled Forth words which only report their dependencies instead of doing anything. Execute a word and it lists -- once -- each word that it depends on and the files they came from.
+
+There could be a file tool that would let you point at a source file you were considering downloading, and it would look at the load tree and compare it to your own load tree, and report any files loaded before that one which differed from those on your own load tree. That looks easy to create but not as useful as it could be.
+
+If each individual file somehow pointed to the files it depended on, then it would be easy to make a much more useful tool. But I'm not clear how to do that without requiring different behavior from developers.

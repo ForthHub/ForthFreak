@@ -1,0 +1,25 @@
+Back to ForthSystems.
+
+* Meta compiler
+** [lpForth] Linux/x86
+* Written in Assembly
+** [eForthl] Linux/x86
+** [http://f4forth.berlios.de/bhpf4e.html f4 - fig Forth] Linux/x86
+** [isforth] Linux/x86
+** [lib4th] Linux/x86
+** [lina] Linux/x86
+** [Reva] Linux/x86
+* Written in C
+** [PFE] Linux/x86
+** [4tH] Linux/x86
+** [FICL] Linux/x86
+* Other/Unknown
+** [VFX] Forth for x86 - MPE's interpreter and native code compiler, also for OS X, Windows and DOS
+** [Fork] Linux
+** [SEDForth] (SED) Linux/x86
+* Dead or site moved
+** [ShellForth] probably dead - meant to be an alternative for unix shells
+** [http://www.amresearch.com/v6/ umbilical Forth with optional TCL GUI] - link dead
+** [http://wiki.forth.org.ru/SPF4%20%ED%E0%20Linux SPForth] Linux/x86 - link dead
+
+Check out MultiPlatformForth for more systems which run under Unix/Linux

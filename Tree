@@ -1,0 +1,55 @@
+ create treeroot
+       0 ,   
+
+ : tree ( addr -- )
+       create ,
+       does>
+       recurse  ;
+
+ treeroot tree root
+ root level1a
+ root level1b
+  level1a level2aa
+  level1a level2ab
+  level1b level2ba
+  level1b level2bb
+
+----
+
+This hurts my head.  :)  Could someone single-step through this to show what "tree" and its defined words are doing in some of these invokations?
+
+----
+
+I'll try. :)
+
+ treeroot  \ Fetch the address of treeroot
+ tree root \ Create word root, store address of treeroot as parent
+ root level1a \ Create word level1a store adress of root as parent
+
+Whenever a word is created with tree or one of the words created with tree, it stores the address of the creating word as its parent.
+
+For instance:
+
+ level1a level2ab
+
+ \ First we call the word level1a, that gives us the adress
+ \ of level1a's data on the stack.
+ \ The DOES> action of level1a is a recursion, so we then
+ \ CREATE the word level2ab, allocates a cell and stores
+ \ the address of level1a's into that cell with ,
+
+The word tree is really a cute way of saying "create a word and store a pointer to creating word's data field address in this new word's data field". (Really, the Forth is clearer than my English. :) )
+
+So it seems to be geared towards pointer chasing through something like
+
+ ' level2ab >BODY
+
+Or similiar.
+
+-
+
+a word to the "recursion" : i suppose that's the aspect which caused the headache. /recurse/ simply compiles the xt of the word from which /recurse/ has been called. thus, the word calls itself. remember that create part and does> part are executed at different times: create part when the new word gets compiled, the does> part when the newly compiled word gets executed. Thus, when the new word gets executed, it executes the create part, but NOT the does> part. again, the does> part is only executed when the newly created word is executed.
+
+Result is, a branch or leaf of the tree causes the same code to be executed which has created that leaf or branch before. only now, a branch or leaf is created a level below. its does> action, by referencing the create part, "knows" how - again - to create another branch or leaf one level below.
+
+The practical applications of this code fragment are probably limited - "real" trees one would like to able to create and extend at program run time, in contrast, this tree is created and extended at compile time. I've included this example because of its cuteness factor, or, in your case, its headache factor, as a kind of forth riddle. i might be able to contruct a few scenarios where "static trees" may be useful - maybe a terminal control sequence decoder, running down (up?) the tree one level for each  received character, and associating execution tokens with leaves, but surely the same structure can be implemented in a more efficient manner than this code example would allow.

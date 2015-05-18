@@ -1,0 +1,49 @@
+FPOOverviewOfPages - automatically maintained list of pages related to the project.
+
+Here's the idea -- a collection of tools optimised for multi-developer open-source Forth projects.
+----
+
+On review, it appears that [http://trac.edgewall.org/ trac] provides tools to do everything I intended. It isn't set up to do what I want, but it could be configured to do that easier than I could make something new to do it.
+
+So if a project was to actually do this in Forth, someone using Trac could copy it pretty easily. I tend to believe it isn't worth doing this in Forth without a better vision of what needs to be done, a vision of something that Trac wouldn't do as easily.
+
+---
+The big problem with multiple developers is management. How do you assign tasks? Assess productivity? Enforce standards? My hope is that none of that needs to be done for an open-source Forth project.
+
+With less management, we'd need more tools for communication. Individuals who have more scope have more that needs communicating. And yet we can't require them to communicate either. If they choose to go down unusable blind alleys, nobody has the authority to stop them. People who focus only on their own work might still be useful if someone else figures out how to integrate their results.
+
+And tools that are useful for a high-communication anarchic project might still be quite useful for a more authoritarian system where the choices keep getting pruned.
+
+At this point the general approach starts with a front end for a version control system that allows easy branching and porting among branches, plus an easy way to link code, load files, tests, and specs. Plus an optional user interface that looks like a wiki and allows easy diffs.
+
+More and different user wish lists will be appreciated.
+
+FPODetailedDiscussion
+
+FPOMoreSpecificSpecs
+
+----
+*questions by a potential user*:
+
+Whether having it in Forth is worth it or not may depend on how the FPO is goind to be used. A few examples may be helpful. 
+
+/Great idea./ FPOGreatBigUseStory
+
+Such as, how deep the integration of remote library into the compiler goes. Can I simply include some server hosted code? Or do i need to synchronized my local code library with the server hosted library first? 
+
+/I prefer to have my own copies. It doesn't look like it would be hard to download code and compile it and discard the source, and do it again whenever you like./
+
+I try to imagine the role the server lib might take, and assume it could be something similar to, say, loading code from the [http://www.cpan.org/ Comprehensive Perl archive network] (which is/can be automated). In case of a tighter integration into the compiler, I suspect that the coding effort, doing the FPO in Forth, may be worth the effort, also opening up potential usability to platform for which no implementation of a third-party version control system client is available.
+
+Should we try to inventarize user/programmer requirements, And try to settle for the route to follow only after we know what people could actually associate with a system like the FPO, and its use?
+
+/That sure makes sense. I started with what *I* wanted. Since it's all preliminary specs now, whatever you say you want is likely to have a disproportionate effect./
+
+/I like the idea of not having an official version; let developers change the specs to suit themselves and code to their own specs and use each other's code wherever they can arrange it. But I expect a lot of developers would be more comfortable with one version labeled the official one, and it wouldn't hurt to build in that capability./
+
+*not having an official version* suits me fine. use of a snapshot feature, as provided by many version control system, to freeze a specific combination of versions with - hopefully - predictable behaviour may address the matter of an "official" version for users with higher requirements for milestone versions.
+
+
+/What have been your biggest annoyances using existing group project tools? Is there anything that might be aided by improved software?/
+
+*The complexity of synchronizing common code* once a project has been branched is one of those issues i found troublesome in the past. used control systems used as far, were tlib, rcs, cvs, subversion and some microsoft concoction i forgot the name. codesave, or such.

@@ -1,0 +1,14 @@
+ ( G: Handle the routine words in one gulp. )
+ ( G: use this dummy word to end token list )
+ : ;T ;
+
+ ( G: define list of simple words that only send their token )
+ : T: ( S: -- )
+    BEGIN
+      REFILL? \ make sure there's another input word, ignore end of line
+      WHILE
+        >IN @  BL WORD FIND DROP ['] ;T - \ is it the ending ;T ?
+        WHILE
+          >IN ! TOKEN: POSTPONE ;   \ make word that only adds token to output
+      REPEAT DROP                   \ if ;T then drop >IN
+    THEN ;

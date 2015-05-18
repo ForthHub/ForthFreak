@@ -1,0 +1,58 @@
+ \ generate IDs for tokenizer/token-compiler pairs.
+ \ based on author initials and date, should usually be unique
+ \ with no central registry.
+
+ ( G: make a hopefully-unique ID from 3 initials and date )
+
+ : COMPUTE-ID ( S: 1c 2c 3c s m h d m y -- b1 b2 b3 b4 b5 b6)
+    100 MOD 2* OVER 3 RSHIFT 1 AND OR >R       \ yyyyyyym 
+    7 AND 5 LSHIFT OR >R                       \ mmmddddd
+    3 LSHIFT OVER 3 RSHIFT OR >R               \ hhhhhmmm
+    7 AND 5 LSHIFT OVER 2/ OR >R               \ mmmsssss
+    1 AND 7 LSHIFT SWAP 31 AND 2 LSHIFT OR
+    OVER 3 RSHIFT 3 AND OR >R                  \ s3333322
+    7 AND 5 LSHIFT SWAP 31 AND OR              \ 22211111
+    R> R> R> R> R> ;
+
+ ( G: make ID given only programmer's initials )
+ : MAKE-ID ( S: 1c 2c 3c -- b1 b2 b3 b4 b5 b6 )
+    TIME&DATE COMPUTE-ID ;
+
+ ( G: convert 6-byte ID back to initials and date, 9 bytes )
+ : DECODE-ID ( S: b1 ... b6 -- initials date&time ) \ 9 items
+    >R >R >R >R >R
+    DUP 31 AND [CHAR] @ + SWAP                       \ char1
+    5 RSHIFT R@ 3 AND 3 LSHIFT OR 31 AND [CHAR] @ +  \ char2
+    R@ 2 RSHIFT 31 AND [CHAR] @ +                    \ char3
+    R> 7 RSHIFT 5 LSHIFT R@ 31 AND OR                \ ssssss
+    R> 5 RSHIFT R@ 7 AND 3 LSHIFT OR                 \ mmmmmm
+    R> 3 RSHIFT                                      \ hhhhh
+    R@ 31 AND                                        \ ddddd
+    R> 5 RSHIFT R@ 1 AND 3 LSHIFT OR                 \ mmmm
+    R> 2/ ;
+
+
+ \ a lot of trouble to reduce it from 9 bytes to 6 bytes.
+ \ or we could go the other way and make it
+ \ ABC 15:34:09 23 Mar 2004    24 chars but quite readable
+ \ ABC153409230304             something that looks more like an ID
+ \ ÅÅÅÅÅÅ                      machine-readable and short
+
+ ( G: to use inside a <# #> field to read a 2-digit number )
+ : NEW## ( S: n -- )
+    0 # # 2DROP ; 
+
+ ( G: Convert a 6-byte ID to a readable form in a buffer. )
+ : READABLE-ID ( S: b1 ... b6 -- addr len )
+    DECODE-ID
+    <# NEW## NEW## NEW## NEW## NEW## NEW## HOLD HOLD HOLD 0 0 #> ;
+
+ ( G: Store ID as named string, name returns 6 stack items )
+ : SAVE-ID ( S: "name" 6 items -- )
+    CREATE HERE 6 CHARS ALLOT 5 CHARS + 6 0 DO
+      SWAP OVER C! 1 CHARS -
+    LOOP DROP ;
+
+ ( G: named ID -> 6 on stack )
+ : RESTORE-ID ( S: addr -- 6 items )
+    6 0 DO DUP C@ SWAP CHAR+ LOOP DROP ;

@@ -1,0 +1,54 @@
+ \ non-recursive shell-sort, employing a hibbard-sequence.
+ \ predictable stack-depth, independent of sort data.
+ \ non-reentrant, due to deferred sortswap and sortcompare
+
+ defer sortswap
+ defer sortcompare
+
+ : sorthelper  ( inc i -- xxx xxx )
+        begin
+           2dup + over sortswap
+           over -
+        dup 0<
+        0= while
+           2dup + over sortcompare
+           0= if
+              exit
+           endif
+        repeat  ;
+
+ : sort  ( compare swap u -- )
+        -rot
+        is sortswap
+        is sortcompare
+        dup 
+        begin
+           2/
+        dup while
+           1- 1 or
+           2dup -
+           ?dup if
+              0 do
+                 dup i +  
+                 i sortcompare
+                 if
+                    dup i sorthelper
+                    2drop
+                 endif
+              loop
+           endif
+        repeat 2drop ;
+
+ \ compare and swap are execution tokens of two words with stack effects:
+ \ ( u1 u2 -- flag )    compare sort element u1 with sort element u2,
+ \                      return flag according the desired sort condition
+ \ ( u1 u2 -- )         swap sort elements u1 and u2
+ \ u is the number of elements to sort.
+
+ \ this sort is called "generic" because it contains no knowledge of the
+ \ data to sort. this knowledge is coded into the compare and swap words.
+ \ for example, an indexed sort (by not rearranging the sort data,
+ \ but an index with pointer to sort elements) is just as possible as
+ \ a direct sort.
+ \ Sort data requires just to be addressable by index 0..elements-1,
+ \ such as array indici.

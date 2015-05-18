@@ -1,0 +1,7 @@
+Need a way to synchronise files between host and developer systems. We don't want to download everything everybody has uploaded. (Unless somebody does want that. It could be an option.)
+
+So somehow you must choose what you want to upload. And choose what you want to download.
+
+You must upload not only the files but also the links among these files and to other files. If, like a wiki, those links are embedded in the files, that isn't an extra step.
+
+Once that choice is made, it would work like a standard version control system except that when you update somebody else's file it becomes a branch, and you own the new branch. The FPO should be designed to allow users to use version control with a minimum of fuss. It should take what you give it, and give you what you ask for.

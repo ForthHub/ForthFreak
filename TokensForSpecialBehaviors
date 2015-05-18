@@ -1,0 +1,6 @@
+\ load names that match complex tokens in the right order.
+
+ T:
+   LLIT NEW-ADDRESS GET-ADDRESS L.( LS" LABORT" L." PCHAR L[CHAR]
+   [ ;L ] P:NONAME P: LNAME:
+ ;T

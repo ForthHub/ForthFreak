@@ -1,0 +1,41 @@
+==== Forth Computer Language for the 1st Forth Engine ====
+
+*In ten pages* of source code Chuck Moore created cmForth (named after 
+himself to distinguish this dialect from his FORTH, Inc.'s polyFORTH II).
+Completed in 1985 and run on the NOVIX 4000 gate NC-4000, cmForth was a
+single tasking minimalist development language booted from PROM into RAM
+and able to be recompiled by a two word (two lines of source code) Meta-
+Compiler which repointed the new program to another memory space so the
+programmer could jump back to the old version to modify code, recompile 
+and execute the new version w/ turn-around time of a second or so.  Three
+memory spaces supported by PROM and RAM on a printed circuit board provided
+Return Stack, Parameter Stack, Dictionary and a fourth memory space was
+dedicated to Input and Output.  This Forth engine's gates performed the
+Forth instruction set of some 31 instructions and bypassed the need for
+microcode - cmForth was the first high level language to run on a processor 
+designed to execute its instructions and my Forth Kit #1 ran at 4 MHz.
+Chuck said the optimising compiler could occasionally cause execution of
+four words in a single clock cycle.
+
+*The development environment* started out as polyFORTH on an PDP-11,
+floppy disk and serial terminal.  After the NOVIX Forth Engine was up and
+running cmForth, two I/O lines (+ ground) were bit-banged to talk and
+listen to the host '11.  
+
+*cmFORTH source code* was distributed w/ Computer Cowboys' Forth Kit on
+PROM in ASCII and with a printed listing.
+
+*Later a floppy disk driver* was added;  Ting published its source code 
+in the  "Steps In An Empty Valley"  series of some 20+ Offete Press 
+publications.
+
+*Other programmers in the community* modified this system and called
+it B-Forth ("B" for beta) and E-Forth ("E" for embedded) to run on Intel 
+chips.
+
+*My first public domain contribution* to the Forth Interest Group (fig) 
+community was the Shadow block documentation to cmForth's Source code - 
+distributed by Chuck's Computer Cowboys company and also published by Ting.
+- Jay Melvin     jMelvin AT infopath.com
+
+ForthSystems

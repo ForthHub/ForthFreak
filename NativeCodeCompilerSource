@@ -1,0 +1,2330 @@
+ \ ------------------------------------------------------------------
+ \ ----------------- rcs log and program header ---------------------
+ \ ------------------------------------------------------------------
+ \ C{{{
+ \ compiles forth source to stand-alone linux executable
+ \ $Log: compiler.f,v $
+ \ Revision 1.34  2003/10/19 00:35:47  l
+ \ extended assembler, checking proper nesting of flow control words, added bounds
+ \
+ \ Revision 1.23  2003/10/11 02:12:12  l
+ \ inlined variable, constant, create. as consequence, these can't be fwd-ref'd right now
+ \
+ \ Revision 1.22  2003/10/10 14:26:37  l
+ \ added  +loop
+ \
+ \ Revision 1.19  2003/10/09 01:00:12  l
+ \ fixed forward? which still returned true if a fws ref has been resolved already
+ \
+ \ Revision 1.18  2003/10/07 03:07:16  l
+ \ added asm words to allow implementing syscall (library)
+ \
+ \ Revision 1.17  2003/10/05 11:01:31  l
+ \ added execute, fixed exit for case primitive
+ \
+ \ Revision 1.16  2003/10/05 02:28:45  l
+ \ added 0 and 1
+ \
+ \ Revision 1.15  2003/10/05 00:00:36  l
+ \ initialized variable "stackeffect" correctly - first word compiled wrong linkage code
+ \
+ \ Revision 1.14  2003/10/04 20:26:14  l
+ \ fixed wrong opcode with bra, put program setup at end
+ \
+ \ Revision 1.13  2003/10/04 12:58:36  l
+ \ control generated linkage code with in/out and primitive
+ \
+ \ Revision 1.12  2003/10/04 04:17:46  l
+ \ factored resolvin oft short fwd out.
+ \
+ \ Revision 1.11  2003/10/04 01:02:45  l
+ \ better startup code
+ \
+ \ Revision 1.10  2003/10/03 16:02:52  l
+ \ added > < min max
+ \
+ \ Revision 1.9  2003/10/03 02:36:26  l
+ \ several bugfixes, made primitives from several lib words
+ \
+ \ Revision 1.8  2003/10/01 17:27:42  l
+ \ ." and s"  strings work.
+ \
+ \ Revision 1.7  2003/10/01 12:33:55  l
+ \ for next   several fixes and cleanups
+ \
+ \ Revision 1.5  2003/09/30 02:59:08  l
+ \ if then else,  sp@ sp! rp@ rp!
+ \
+ \ Revision 1.4  2003/09/29 22:17:21  l
+ \ cleaned lib a bit
+ \
+ \ C}}}
+
+
+ \ ------------------------------------------------------------------
+ \ ---                      general purpose                       ---
+ \ ------------------------------------------------------------------
+ \ C{{{
+ decimal
+
+ : w! ( w a -- )   over 8 rshift over 1+ c! c! ;
+
+ : kb  10 lshift  ;
+ : mb  20 lshift  ;
+
+ : pluck ( x1 x2 x3 -- x1 x2 x3 x1 )
+    2 pick  ;
+
+ : 3dup ( x1 x2 x3 -- x1 x2 x3 x1 x2 x3 )
+    pluck pluck pluck  ;
+
+ : exchange  ( x1 a -- x2 )
+    dup @ -rot !  ;
+
+ \ a1: data  a2: filename
+ : >file   ( a1 n1 a2 n2 -- )
+    r/w create-file throw
+    dup >r write-file  throw
+    r> close-file throw  ;
+
+
+ : >>file  ( a n filehandle -- )
+    r/w open-file if
+       r/w create-file throw
+    else
+       dup >r file-size throw
+       r@ reposition-file throw
+       r>
+    then
+    dup >r write-file  throw
+    r> close-file throw  ;
+
+
+ : bytesplit ( x -- byte0 byte1 byte2 byte3 )
+    dup 255 and swap 8 rshift
+    dup 255 and swap 8 rshift
+    dup 255 and swap 8 rshift
+        255 and
+ ;
+
+
+ : move$ ( a1 n a2 -- )
+    2dup c! 1+ swap move  ;
+
+
+ : ,$  ( a n -- )
+    dup c,
+    here over allot
+    swap move  ;
+
+
+ : cscrape  ( a n -- c1 c2 .. cn )
+      0 ?do
+         count swap
+      loop drop  ;
+
+
+ : cspread  ( c1 c2 .. cn a n -- )
+      tuck + swap
+      0 ?do
+         1- tuck c!
+      loop
+      drop  ;
+
+
+
+ : enum ( start n <stream> -- )
+   ' -rot
+   0 ?do
+      dup constant
+      over execute
+   loop
+   2drop
+ ;
+
+
+ 1 2 enum 1+    codesize executionspeed
+
+
+
+
+ \
+ \ ==========================================================================================
+
+
+ : nextword ( -- a n )
+      bl word count
+      dup 0= if
+         2drop refill >r
+         bl word count
+         r> and
+      then  ;
+
+
+ : .exception ( n -- )
+    ?dup if
+       only forth also definitions
+       dup -$2000 u<
+       if
+          cr cr ." ERROR: " count type  cr
+          throw \ bye  \ quit
+       else
+          throw
+       then
+    then  ;
+
+
+ : newexception
+    create  ,"
+    does> .exception ;
+
+
+ newexception compile-only USE ONLY DURING TARGET COMPILATION
+ newexception interpret-only DON'T USE DURING TARGET COMPILATION
+ newexception unresolved-references UNRESOLVED SYMBOLS
+ newexception notaprimitive WORD IS NOT A PRIMITIVE
+ newexception notfound WORD NOT FOUND
+ newexception stackerror STACK ERROR
+ newexception destinationoutofreach DESTINATION OUT OF REACH
+ newexception unpairedconditionals UNPAIRED CONDITIONALS
+
+ variable stack
+ : in  ( n -- ) depth - stack !  ;
+ : out ( n -- ) depth - stack @ -  ?dup if cr negate . stackerror then  ;
+
+
+
+
+ \ C}}}
+
+
+ \ ------------------------------------------------------------------
+ \ ---                     system specific                        ---
+ \ ------------------------------------------------------------------
+ \ C{{{
+ : searchword  ( a n -- 0 | cfa imm )   \ 1: immediate   -1: not immediate
+   find-name
+   dup IF
+      (name>comp)  \   (name>intn)
+   THEN ;
+
+
+ \ C}}}
+
+
+ \ ------------------------------------------------------------------
+ \ ------------------------------------------------------------------
+ \ ------------------------------------------------------------------
+ \ ---                       main program                         ---
+ \ ------------------------------------------------------------------
+ \ ------------------------------------------------------------------
+ \ ------------------------------------------------------------------
+
+
+ 1 mb constant maxcodesize  \ max code size of compiled program
+
+
+ \ ------------------------------------------------------------------
+
+
+
+ \                             vocabularies
+
+ \ --- compiler vocabularies ---
+
+
+ \ -- vocname --      -- scope --                    --add--
+ \ assembler          compile ( : , code )             no
+ \ words which, when executed, compile opcodes to target program space.
+ \
+ \ target             interpret
+ \ during interpretation
+
+ \  ...               compilable by call              yes
+
+
+ \ targetprimitives
+ \ vocabulary targetcompilable   \ target compile only. not populated yet
+
+
+
+
+
+
+
+ \ C{{{
+ vocabulary target             \ execute at target interpret time. currently
+                               \ also: compile call at hilevel compile time
+ vocabulary targetprimitives   \ execute at hilevel compile time.
+ vocabulary targetcompilable   \ compile call compile time. not populated yet
+ vocabulary assembler          \ execute during code assemble time
+
+
+
+ only forth definitions
+ create programsize  0 ,    \ compilation offset, 0-based
+ create programcode  0 ,    \ memory address of code
+ create codeoffset   0 ,    \ logical address of first byte
+
+
+ create optimizing 0 ,
+ : optimized ( strategy -- )      optimizing !  ;
+ : optimizing_for ( -- strategy ) optimizing @ = ;
+
+
+ create stackeffect 4 allot   ( first 3 bytes used: , for in, out, linkage)
+
+
+ : stackeffect? ( in out -- f )   stackeffect 2 cscrape d= ;
+
+ : linkage      ( -- a )          stackeffect 2 +  ;
+ : linkage?     ( type -- f )     linkage c@ =  ;
+ : linkage!     ( type -- )       linkage c! ;
+ : primitive?  ( -- f )           1 linkage?   ;
+ : fragment?  ( -- f )            2 linkage?   ;
+
+ : clear-stackeffect  ( -- )     -1 stackeffect !  ;
+ clear-stackeffect
+
+
+ : new  ( )
+    0 programsize !
+    0 codeoffset !
+    programcode @ 0= if
+       maxcodesize allocate  throw
+       programcode !
+    endif
+ ;
+
+ 4 constant tcell
+ 2 constant tword
+ 1 constant tbyte
+
+ : programsize+  ( n1 -- n2 )
+    programsize @ + ;
+
+ : db  ( c -- )
+    programcode @  programsize+ c!
+    tbyte programsize +!
+ ;
+
+ : dbs ( a n -- )
+    0 ?do
+       count db
+    loop drop
+ ;
+
+ : dw  ( w -- )
+    bytesplit 2drop
+    programcode @
+    programsize+
+    tuck 1+ c! c!
+    tword programsize +!
+ ;
+
+ : dd  ( d -- )
+    programcode @
+    programsize+
+    !
+    tcell programsize +!
+ ;
+
+ : $$ ( -- a )         programcode @  programsize+ ;
+ : l: ( <stream>  -- ) $$ constant ;
+ : $ ( -- a )          codeoffset  @ programsize+  ;
+
+ : org ( a -- )
+    codeoffset @
+    ?dup if
+       - programsize !
+    else
+       codeoffset !
+    then ;
+
+
+
+ \ C}}}
+ \ ------------------------------------------------------------------
+ \ ---                         assembler                          ---
+ \ ------------------------------------------------------------------
+
+ \ assembler definitions
+
+ \ use this command to display all supported assembly
+ \ instructions and combinations of addressing modes:
+ \   grep "\ form:" compiler.f | grep -v myself | cut -f 2- -d: | sort | uniq
+
+
+
+
+ \ C{{{
+ \ register use:
+ \ tos      eax  (top of stack)
+ \ tmp1     ebx  (return code for bye)
+ \ index    ecx  (innermost loop index, shift/rotate count)
+ \ tmp2     edx
+ \ ip       esi  (return address handling)
+ \ data     edi  (pointer to variable data)
+ \ rp       ebp  (return stack pointer)
+ \ sp       esp  (data stack pointer)
+
+
+ \ ----------------- registers / addressing modes -------------
+
+ also assembler definitions
+
+ \ eax ecx edx ebx esp ebp esi edi
+
+ \ operand types
+ 0 constant #
+ 1 3 enum 2* register32 register8 indirect offset
+
+
+
+
+
+
+
+ newexception illegaloperation ILLEGAL OR UNSUPPORTED COMBINATION OF ASSEMBLY INSTRUCTION AND OPERAND
+
+
+ : []   ( mode1 -- mode2 )
+    dup # =
+    over register32 = or
+    if  indirect +
+    else illegaloperation
+    then  ;
+
+ : [+reg]  ( mode1  -- mode2 )
+    dup register32 =
+    if offset + indirect +
+    else illegaloperation
+    then  ;
+
+
+
+ : register: ( -- )
+     create ,
+     does>   ( -- reg mode )
+        @ register32 ;
+
+ 0 register: tos                0 register: eax
+ 1 register: index              1 register: ecx
+ 2 register: tmp2               2 register: edx
+ 3 register: tmp1               3 register: ebx
+ 4 register: sp                 4 register: esp
+ 5 register: rp                 5 register: ebp
+ 6 register: ip                 6 register: esi
+ 7 register: data               7 register: edi
+
+
+ : [register]: ( -- )
+     create ,
+     does>  @ register32 []  ;
+
+ 0 [register]: [tos]            0 [register]: [eax]
+ 1 [register]: [index]          1 [register]: [ecx]
+ 2 [register]: [tmp2]           2 [register]: [edx]
+ 3 [register]: [tmp1]           3 [register]: [ebx]
+ 4 [register]: [sp]             4 [register]: [esp]
+ 5 [register]: [rp]             5 [register]: [ebp]
+ 6 [register]: [ip]             6 [register]: [esi]
+ 7 [register]: [data]           7 [register]: [edi]
+
+
+
+ : [+register]: ( -- )
+     create ,
+     does>  @ register32 [+reg] ;
+
+ 0 [+register]: [+tos]          0 [+register]: [+eax]
+ 1 [+register]: [+index]        1 [+register]: [+ecx]
+ 2 [+register]: [+tmp2]         2 [+register]: [+edx]
+ 3 [+register]: [+tmp1]         3 [+register]: [+ebx]
+ 4 [+register]: [+sp]           4 [+register]: [+esp]
+ 5 [+register]: [+rp]           5 [+register]: [+ebp]
+ 6 [+register]: [+ip]           6 [+register]: [+esi]
+ 7 [+register]: [+data]         7 [+register]: [+edi]
+
+
+
+
+
+ \ ------------------ push 'n pop --------------------
+
+ \ form: reg32 [] pop,
+ \ form: [reg32] pop,
+ : pop[reg]  ( reg -- ) $8f db
+    case
+       sp drop  of      $04 db  $24 db   endof
+       rp drop  of      $45 db  $00 db   endof
+     ( other regs )     dup db
+    endcase  ;
+
+
+ \ form: reg32 pop,
+ \ form: lit32 # [] pop,
+ \ form: lit32. [] pop,
+ : pop,  ( operand type -- )
+    case
+       register32          of   $58 + db  endof
+       register32 []       of   pop[reg]  endof
+       # []                of   $85 db  $05 db  dd  endof
+       illegaloperation
+    endcase  ;
+
+
+
+
+ \ form: reg32 [] push,
+ \ form: [reg32] push,
+ : push[reg]  ( reg -- )
+    case            $ff db
+       sp drop  of  $34 db  $24 db   endof
+       rp drop  of  $75 db  $00 db   endof
+     ( other regs ) dup $30 + db
+    endcase  ;
+
+
+ \ form: reg32 push,
+ \ form: lit32 # push,
+ \ form: lit32. push
+ \ form: lit32 # [] push,
+ \ form: lit32. [] push
+ : push,  ( operand type -- )
+    case
+       register32       of   $50 + db  endof
+       register32 []    of   push[reg] endof
+       #                of   $68 db  dd  endof
+       # []             of   $ff db  $35 db  dd
+                             cr ." # []" cr      endof
+       illegaloperation
+    endcase  ;
+
+
+
+
+ \ ------------------ monadic -------------------
+
+
+ : monadic_[reg]  ( reg monadicmode1 monadicmode2 -- )
+                     $f7 + db
+     >r
+    case
+       sp drop  of   $04 r@ + db  $24 db   endof
+       rp drop  of   $45 r@ + db  $00 db   endof
+     ( other regs )  dup r@ + db
+    endcase
+    rdrop ;
+
+
+
+ : monadic1:
+    create ,   ( monadicmode -- )
+    does>      ( reg mode -- )
+       @ >r
+       case
+          register32       of  $40 + r@ + db     endof
+          register32 []    of  r@ 8 monadic_[reg] endof
+          # []             of  $ff db  $05 r@ + db  dd endof
+          illegaloperation
+       endcase
+       rdrop
+     ;
+
+
+ \ form: reg32 inc,
+ \ form: reg32 [] inc,
+ \ form: [reg32] inc,
+ \ form: lit32 # [] inc,
+ \ lit32. [] inc,
+ $00 monadic1: inc,
+
+ \ form: reg32 dec,
+ \ form: reg32 [] dec,
+ \ form: [reg32] dec,
+ \ form: lit32 # [] dec,
+ \ lit32. [] dec,
+ $08 monadic1: dec,
+
+
+
+ : monadic2:   ( reg mode -- )
+    create ,
+    does>
+       @ >r
+       case
+          register32            of   $f7 db  $c0 r@ + + db  endof
+          register32 []         of   r@ 0 monadic_[reg] endof
+          # []                  of  $f7 db   $05 r@ + db  dd  endof
+          illegaloperation
+       endcase
+       rdrop ;
+
+
+ \ form: reg32 not,
+ \ form: reg32 [] not,
+ \ form: [reg32] not,
+ \ form: lit32. [] not,
+ \ form: lit32 # [] not,
+ $10 monadic2: not,
+
+ \ form: reg32 neg,
+ \ form: reg32 [] neg,
+ \ form: [reg32] neg,
+ \ form: lit32. [] neg,
+ \ form: lit32 # [] neg,
+ $18 monadic2: neg,
+
+ \ form: reg32 mul,
+ \ form: reg32 [] mul,
+ \ form: [reg32] mul,
+ \ form: lit32. [] mul,
+ \ form: lit32 # [] mul,
+ $20 monadic2: mul,
+
+ \ form: reg32 imul,
+ \ form: reg32 [] imul,
+ \ form: [reg32] imul,
+ \ form: lit32. [] imul,
+ \ form: lit32 # [] imul,
+ $28 monadic2: imul,
+
+ \ form: reg32 div,
+ \ form: reg32 [] div,
+ \ form: [reg32] div,
+ \ form: lit32. [] div,
+ \ form: lit32 # [] div,
+ $30 monadic2: div,
+
+ \ form: reg32 idiv,
+ \ form: reg32 [] idiv,
+ \ form: [reg32] idiv,
+ \ form: lit32. [] idiv,
+ \ form: lit32 # [] idiv,
+ $38 monadic2: idiv,
+
+
+
+
+
+ \ ---------------------- duadic arithmetic -----------------------
+
+
+ : arith_reg,[reg]   ( src dest arithmode -- )
+    >r
+    swap case  \ src reg is ...
+       sp drop of   $03 r@ + db    3 lshift $04 + db   $24 db   endof
+       rp drop of   $03 r@ + db    3 lshift $45 + db   $00 db   endof
+                    $3  r@ + db   swap 3 lshift + db
+    endcase
+    rdrop  ;
+
+
+
+ : arith_reg,#   ( src dest arithmode -- )
+ 3 in
+    >r
+    case \ dest register
+       tos drop of  $05 r@ +   db       dd    endof
+            $81 db  $c0 r@ + + db  dup  dd
+    endcase
+    rdrop
+ 0 out ;
+
+
+ : arith_reg,???   ( src mode dest arithmode -- )
+    >r
+    -rot case
+        register32          of  $01 r@ + db  3 lshift + $c0 + db  endof
+        #                 of  swap r@ arith_reg,#               endof
+        register32 []       of  swap r@ arith_reg,[reg]           endof
+        illegaloperation
+    endcase
+    rdrop  ;
+
+
+ :  arith_[reg],???   ( src mode dest arithmode -- )
+    4 in
+    >r
+    -rot case
+        register32 of   ( dest src )
+             swap case
+                rp drop of   $01 r@ + db  3 lshift  $45 + db  $00 db  endof
+                sp drop of   $01 r@ + db  3 lshift  $04 + db  $24 db  endof
+                             $01 r@ + db  over 3 lshift + db
+             endcase
+        endof
+        illegaloperation
+    endcase
+    rdrop
+    0 out ;
+
+
+
+ : arith:
+    create ,   ( arithmode-- )
+    does>      ( src mode dest mode -- )
+    @ >r
+    case \ dest mode is ...
+       register32         of  r@ arith_reg,???            endof
+       register32 []      of  r@ arith_[reg],???          endof
+       illegaloperation
+    endcase
+    rdrop  ;
+
+
+ \ form: lit32 # reg32 add,
+ \ form: reg32 reg32 add,
+ \ form: reg32 reg32 [] add,
+ \ form: reg32 [reg32] add,
+ \ form: reg32 [] reg32 add,
+ \ form: [reg32] reg32 add,
+ $00 arith: add,
+
+ \ form: lit32 # reg32 or,
+ \ form: reg32 reg32 or,
+ \ form: reg32 reg32 [] or,
+ \ form: reg32 [reg32] or,
+ \ form: reg32 [] reg32 or,
+ \ form: [reg32] reg32 or,
+ $08 arith: or,
+
+ \ form: lit32 # reg32 adc,
+ \ form: reg32 reg32 adc,
+ \ form: reg32 reg32 [] adc,
+ \ form: reg32 [reg32] adc,
+ \ form: reg32 [] reg32 adc,
+ \ form: [reg32] reg32 adc,
+ $10 arith: adc,
+
+ \ form: lit32 # reg32 sbb,
+ \ form: reg32 reg32 sbb,
+ \ form: reg32 reg32 [] sbb,
+ \ form: reg32 [reg32] sbb,
+ \ form: reg32 [] reg32 sbb,
+ \ form: [reg32] reg32 sbb,
+ $18 arith: sbb,
+
+ \ form: lit32 # reg32 and,
+ \ form: reg32 reg32 and,
+ \ form: reg32 reg32 [] and,
+ \ form: reg32 [reg32] and,
+ \ form: reg32 [] reg32 and,
+ \ form: [reg32] reg32 and,
+ $20 arith: and,
+
+ \ form: lit32 # reg32 sub,
+ \ form: reg32 reg32 sub,
+ \ form: reg32 reg32 [] sub,
+ \ form: reg32 [reg32] sub,
+ \ form: reg32 [] reg32 sub,
+ \ form: [reg32] reg32 sub,
+ $28 arith: sub,
+
+ \ form: lit32 # reg32 xor,
+ \ form: reg32 reg32 xor,
+ \ form: reg32 reg32 [] xor,
+ \ form: reg32 [reg32] xor,
+ \ form: reg32 [] reg32 xor,
+ \ form: [reg32] reg32 xor,
+ $30 arith: xor,
+
+ \ form: lit32 # reg32 cmp,
+ \ form: reg32 reg32 cmp,
+ \ form: reg32 reg32 [] cmp,
+ \ form: reg32 [reg32] cmp,
+ \ form: reg32 [] reg32 cmp,
+ \ form: [reg32] reg32 cmp,
+ $38 arith: cmp,
+
+
+
+
+
+
+
+
+
+ \ ---------------------- test --------------------
+
+
+ \ form: reg32 reg32 test,
+ : test_reg,???  ( src mode dest -- )
+    -rot case
+        register32 of   $85 db  3 lshift +  $c0 + db    endof
+        illegaloperation
+    endcase ;
+
+
+ : test,  ( src mode dest mode -- )
+    4 in
+    case
+        register32 of    test_reg,???       endof
+        illegaloperation
+    endcase
+    0 out
+ ;
+
+
+
+
+
+
+ \ ------------------------ moves ---------------------------
+
+ \ form: reg32 [] reg32 mov,
+ \ form: [reg32] reg32 mov,
+ : mov_reg,[reg]  ( src dest -- )
+       swap case
+         sp drop  of     $8b db  3 lshift $04 + db  $24 db   endof
+         rp drop  of     $8b db  3 lshift $45 + db  $00 db
+         endof
+       ( other regs )    $8b db  over 3 lshift +     db
+    endcase  ;
+
+
+
+ : mov_reg,[-1..1]  ( src dest -- )
+      dup register32 2dup xor,           \ mov reg32,0 -> xor reg32,reg32
+      over if
+         over 0< if
+            dup register32  dec,         \ move reg32,-1 -> dec reg32
+         else
+            dup register32  inc,         \ move reg32,1  -> inc reg32
+         then
+      then 2drop  ;
+
+
+
+ \ form: lit32 # reg32 mov,
+ \ form: lit32. reg32 mov,
+ : mov_reg,lit32  ( src dest -- )
+       over abs 2 u< if                   \ mov reg32,-1..1
+          mov_reg,[-1..1]
+       else
+          over $100 u<
+          over edx drop u<= and
+          if                              \ mov eax...edx,2..255
+             dup register32 2dup xor,
+             $b0 + db  db                 \ mov reg8,lit8
+          else
+             $b8 + db  dd                 \ mov reg32,lit32
+          then
+       then
+    ;
+
+
+ \ form: offs8 # [+reg32] reg32 mov,
+ \ form: offs8. [+reg32] reg32 mov,
+ \ form: offs32 # [+reg32] reg32 mov,
+ \ form: offs32. [+reg32] reg32 mov,
+ : mov_reg,[reg+???]  ( src1 mode1 src2 dest -- )
+    4 in
+    2swap case \ src1 mode is ...
+       # of  ( src2 dest src1 )
+           dup abs $80 u< if
+              >r
+              $8b db  3 lshift over + $40 + db
+              esp drop = if $24 db then
+              r> db
+           else
+              >r
+              $8b db  3 lshift over + $80 + db
+              esp drop = if $24 db then
+              r> dd
+           then
+       endof
+       illegaloperation
+    endcase
+    0 out  ;
+
+
+
+ \ form: reg32 reg32 mov,
+ : mov_reg,???  ( src mode dest -- )
+    -rot case \ source mode is ...
+        register32            of    $89 db  3 lshift + $c0 + db  endof
+        register32 []         of    swap mov_reg,[reg]           endof
+        #                     of    swap mov_reg,lit32           endof
+        register32 [+reg]     of    swap mov_reg,[reg+???]       endof
+        illegaloperation
+    endcase  ;
+
+
+ \ form: reg32 reg32 [] mov,
+ \ form: reg32 [reg32] mov,
+ : mov_[reg],reg  ( src dest -- )
+    case
+       sp drop  of     $89 db  3 lshift $04 +  db  $24 db   endof
+       rp drop  of     $89 db  3 lshift $45 +  db  $00 db   endof
+     ( other regs )    $89 db  over 3 lshift +     db
+    endcase
+   ;
+
+ \ form: lit32 # reg32 [] mov,
+ \ form: lit32 # [reg32] mov,
+ \ form: lit32. reg32 [] mov,
+ \ form: lit32. [reg32] mov,
+ : mov_[reg],# ( src dest -- )
+    case
+       sp drop  of     $c7 db  $04 db  $24 db  dd  endof
+       rp drop  of     $c7 db  $45 db  $00 db  dd  endof
+     ( other regs )    $c7 db  over db         dd
+    endcase  ;
+
+
+ : mov_[reg],??? ( src mode1 dest -- )
+    -rot case \ src mode is ...
+       register32      of  swap mov_[reg],reg   endof
+       #               of  swap mov_[reg],#     endof
+       illegaloperation
+    endcase  ;
+
+
+ : mov,   ( src mode1 dest mode2 -- )
+    case \ dest mode is ...
+       register32            of  mov_reg,???            endof
+       register32 []         of  mov_[reg],???          endof
+       illegaloperation
+    endcase  ;
+
+
+ \ ------------------------ lea -----------------------
+
+ \ form: lit8 # [+reg32] reg32 lea,
+ \ form: lit8. [+reg32] reg32 lea,
+ \ form: lit32 # [+reg32] reg32 lea,
+ \ form: lit32. [+reg32] reg32 lea,
+ \ form: reg32 [+reg32] reg32 lea,
+ : lea_reg32,[reg+???]  ( src1 mode1 src2 dest -- )
+    2swap case \ src1 mode = ...        ( src2 dest src1 )
+        # of
+           ?dup 0= if                      ( mov reg,reg )
+              >r register32 r> register32 mov,
+           else
+              pluck esp drop = if          ( lea reg,[esp+lit] )
+                 dup abs $80 u< if         ( lea reg,[esp+lit8] )
+                    $8d db  >r 3 lshift + $40 + db  $24 db  r> db
+                 else                      ( lea reg,[esp+lit32] )
+                    $8d db  >r 4 lshift + $80 + db  $24 db  r> dd
+                 then
+              else                         ( lea reg,[reg+lit] )
+                 dup abs $80 u< if         ( lea reg,[reg+lit8] )
+                    $8d db  >r 3 lshift + $40 + db  r> db
+                 else                      ( lea reg,[reg+lit32] )
+                    $8d db  >r 3 lshift + $80 + db  r> dd
+                 then
+              then
+           then
+        endof
+        register32 of  ( src2 dest src1 )
+           pluck ebp drop =  if
+              dup ebp drop = if illegaloperation
+              else swap rot
+              then
+           then
+           dup   esp drop =  if
+              pluck esp drop = if illegaloperation
+              else swap rot
+              then
+           then
+           $8d db  swap 3 lshift 4 + db  3 lshift + db
+        endof
+        illegaloperation
+    endcase  ;
+
+
+ : lea_reg32,???  ( src1 mode1 src2 mode2 dest -- )
+    swap case \ src2 mode = ...
+       register32 [+reg] of     lea_reg32,[reg+???]        endof
+       illegaloperation
+    endcase ;
+
+
+ : lea,  ( src1 mode1 src2 mode2 dest mode -- )
+    6 in
+    case  \ dest mode = ...
+       register32 of         lea_reg32,???           endof
+       illegaloperation
+    endcase
+    0 out  ;
+
+
+
+
+
+
+ \ ----------------------- exchange ------------------------
+
+
+ \ form: reg32 reg32 xchg,
+ : xchg_reg,reg  ( src dest -- )
+     2dup = if  2drop  $90 db  else
+     over tos drop = if swap then
+     dup  tos drop = if $90 + db else
+         $87 db  3 lshift + db
+     then then  ;
+
+
+ \ form: reg32 [] reg32 xchg,
+ \ form: [reg32] reg32 xchg,
+ : xchg_reg,[reg]  ( src dest -- )
+    swap case \ src is ...
+       sp drop   of   $87 db  3 lshift $04 + db  $24 db  endof
+       rp drop   of   $87 db  3 lshift $45 + db  $4d db  endof
+                      $87 db  swap 3 lshift + db
+    endcase  ;
+
+ : xchg_reg,???  ( src mode dest -- )
+    -rot case \ src mode is ...
+       register32     of    swap xchg_reg,reg       endof
+       register32 []  of    swap xchg_reg,[reg]     endof
+       illegaloperation
+    endcase  ;
+
+
+ : xchg_[reg],???  ( src mode dest -- )
+    -rot case  \ src mode is ...
+       register32    of     xchg_reg,[reg]          endof
+       illegaloperation
+    endcase  ;
+
+ : xchg,   ( src mode dest mode -- )
+    case \ dest mode is ...
+       register32    of       xchg_reg,???        endof
+       register32 [] of       xchg_[reg],???      endof
+       illegaloperation
+    endcase  ;
+
+
+
+
+
+
+
+
+ \ ------------------ shift -----------------
+
+ : shift:
+    create ,   ( shiftmode -- )
+    does> @    ( src mode src mode -- )
+    5 in
+    >r
+    case
+       register32 of
+          -rot case
+              #  of
+                 dup 1 = if
+                    $d1 db  swap r@ + db  drop
+                 else
+                    $c1 db  swap r@ + db  db
+                 then
+              endof
+              register32 of
+                 index drop = if
+                    $d3 db  r@ + db
+                 else
+                    illegaloperation
+                 then
+              endof
+              illegaloperation
+          endcase
+       endof
+       illegaloperation
+    endcase
+    r> drop
+    0 out ;
+
+ \ form: lit8 # reg32 rol,
+ \ form: lit8. reg32 rol,
+ \ form: index reg32 rol,
+ \ form: ecx reg32 rol,
+ $c0 shift: rol,
+
+ \ form: lit8 # reg32 ror,
+ \ form: lit8. reg32 ror,
+ \ form: index reg32 ror,
+ \ form: ecx reg32 ror,
+ $c8 shift: ror,
+
+ \ form: lit8 # reg32 rcl,
+ \ form: lit8. reg32 rcl,
+ \ form: index reg32 rcl,
+ \ form: ecx reg32 rcl,
+ $d0 shift: rcl,
+
+ \ form: lit8 # reg32 rcr,
+ \ form: lit8. reg32 rcr,
+ \ form: index reg32 rcr,
+ \ form: ecx reg32 rcr,
+ $d8 shift: rcr,
+
+ \ form: lit8 # reg32 shl,
+ \ form: lit8. reg32 shl,
+ \ form: index reg32 shl,
+ \ form: ecx reg32 shl,
+ $e0 shift: shl,
+
+ \ form: lit8 # reg32 shr,
+ \ form: lit8. reg32 shr,
+ \ form: index reg32 shr,
+ \ form: ecx reg32 shr,
+ $e8 shift: shr,
+
+ \ form: lit8 # reg32 sar,
+ \ form: lit8. reg32 sar,
+ \ form: index reg32 sar,
+ \ form: ecx reg32 sar,
+ $f8 shift: sar,
+
+
+
+
+
+
+ \ -- - - - - - - - - - - - -
+
+
+
+
+ \ form: lit8 # int,
+ \ form: lit8. int,
+ : int,  ( op mode -- )
+     case  \ mode
+       # of
+          dup 3 = if
+             $cc db drop
+          else
+             $cd db db
+          then
+       endof
+       illegaloperation
+    endcase  ;
+
+
+
+
+
+ : bxx, ( offset shortcode longcode -- )
+    pluck abs $80 u< if
+       drop db  2 - db
+    else
+       dw drop 6 - dd
+    then  ;
+
+ \ form: offs8 bne,
+ \ form: offs32 bne,
+ : bne,  ( offset -- )    $75 $850f bxx,  ;
+
+ \ form: offs8 beq,
+ \ form: offs32 beq,
+ : beq,  ( offset -- )    $74 $840f bxx,  ;
+
+ \ form: offs8 bmi,
+ \ form: offs32 bmi,
+ : bmi,  ( offset -- )    $78 $880f bxx,  ;
+
+ \ form: offs8 bpl,
+ \ form: offs32 bpl,
+ : bpl,  ( offset -- )    $79 $890f bxx,  ;
+
+ \ form: offs8 ble,
+ \ form: offs32 ble,
+ : ble,  ( offset -- )    $7e $8e0f bxx,   ;
+
+ \ form: offs8 bra,
+ \ form: offs32 bra,
+ : bra,  ( offset -- )    dup abs $80 u<
+    if   $eb db  2 - db
+    else $e9 db  5 - dd
+    then  ;
+
+
+ \ form: offs8 loop,
+ \ form: offs32 loop,
+ : loop, ( offs -- )
+      dup abs $80 <  if
+         $e2 db  2 - db
+      else
+         index dec,
+         bne,
+      then  ;
+
+
+
+
+ \ form: reg32 jmp,
+ \ form: reg32 [] jmp,
+ \ form: [reg32] jmp,
+ \ form: offs8 # jmp,
+ \ form: offs8. jmp,
+ \ form: offs32 # jmp,
+ \ form: offs32. jmp,
+ \ form: offs32 # [] jmp
+ \ form: offs32. [] jmp
+ : jmp,  ( dest mode -- )
+ 2 in
+    case
+       register32     of   $ff db  $e0 + db  endof
+       register32 []  of
+                        case
+                           esp drop of  $ff db  $24 db  $24 db  endof
+                           ebp drop of  $ff db  $65 db  $00 db  endof
+                                        $ff db  $20 +       db
+                        endcase
+                    endof
+       #            of
+                        dup abs $80 < if
+                           $eb db  db
+                        else
+                           $e9 db  dd
+                        then
+                    endof
+       # []         of    $ff db  $2d db  dd   endof
+       illegaloperation
+    endcase
+ 0 out   ;
+
+
+
+ \ form: reg32 call,
+ \ form: reg32 [] call,
+ \ form: [reg32] call,
+ \ form: offs32 # call,
+ \ form: offs32. call,
+ \ form: offs32 # [] call,
+ \ form: offs32. [] call,
+ : call,  ( dest mode -- )
+    case
+       register32     of   $ff db  $d0 + db  endof
+       register32 []  of
+                        case
+                           esp drop of  $ff db  $14 db  $24 db  endof
+                           ebp drop of  $ff db  $55 db  $00 db  endof
+                                        $ff db  $10 +       db
+                        endcase
+                    endof
+       #            of   $e8 db  dd                             endof
+       # []         of   $ff db  $15 db  dd                     endof
+       illegaloperation
+    endcase  ;
+
+
+
+
+
+
+ \ ---- nonadics ----
+
+ \ form: ret,
+ : ret, ( -- )           $c3 db  ;
+
+ \ form: stc,
+ : stc, ( -- )           $f9 db  ;
+
+ \ form: clc,
+ : clc, ( -- )           $f8 db  ;
+
+ previous definitions  also assembler
+
+
+
+
+
+
+
+
+
+
+
+
+ \ ----------------------------------------------------------
+ \ ----------    old assembler words below    ---------------
+ \ ----------------------------------------------------------
+
+ \   migrating to new assembler
+
+ \ ------------------------ moves ---------------------------
+
+ : mov_tos,[sp+tos*4]    $8B db  $04 db  $84 db  ;
+ : movzx_tos,[tos]       $0f db  $b6 db  $00 db  ;
+
+ : mov_[tos],tmp1:8      $1888 dw  ;
+
+ : sub_tmp1,[rp+c] ( c -- )  $5d2b dw db ;
+ : cmp_i,[rp+c]          $3b db  $4d db  db ;
+
+
+ previous
+
+ \ C}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ \ ------------------------------------------------------------------
+ \ ---                        compiler                            ---
+ \ ------------------------------------------------------------------
+ \ C{{{
+ variable programname
+ create dataregion 0 ,
+
+ create targetstate 0 ,
+
+ : t-header  ( -- )
+    create
+       $ ,                   \ xt
+       stackeffect @ ,
+    does>  @
+ ;
+
+
+ \ begin of chain through forward referenced words
+ create forwardreferences  0 ,
+
+
+ : targetcompiling  ( -- f) targetstate @ ;
+
+ \ ------------ forward references --------------
+
+
+
+
+ \ fwd refs are in a linked list with elements:
+ \    dd next_fwdref
+ \    dd start_of_linked_list_through_references
+ \    db length of name
+ \    db name
+
+ : forwardreferencedwordname ( a1 -- a2 n )
+    cell+ cell+ count  ;
+
+ : .forwardreferencedwordname ( a1 -- a2 n )
+    forwardreferencedwordname type space ;
+
+ : forwardreferencedchain    ( a1 -- a2 )
+    cell+ @  ;
+
+
+ : .symbols  ( -- )
+    forwardreferences
+    begin @
+    ?dup while
+       dup .forwardreferencedwordname
+    repeat
+  ;
+
+
+ : .unresolved  ( -- )
+    forwardreferences
+    begin @
+    ?dup while
+       dup forwardreferencedchain if
+          dup .forwardreferencedwordname
+       then
+    repeat
+  ;
+
+
+ : #forwardreferences  ( -- n )
+    0 forwardreferences
+    begin @
+    ?dup while
+       dup >r
+       forwardreferencedchain  0<> -
+       r>
+    repeat
+  ;
+
+
+ \ returns begin of link through forward references, if found.
+ : forward? ( a1 n -- a2 | 0 )
+    forwardreferences
+    begin @
+    dup while
+       3dup forwardreferencedwordname compare
+       0= if
+          nip nip cell+
+   dup @ 0<> and
+          exit
+       then
+    repeat
+    nip nip
+  ;
+
+
+ \ create fwdref with name a1 n2, referenced by addr a2
+ \ a2 is the address field, instruction to use address
+ \ after resolving must have been compiled already.
+ : createforwardref  ( a1 n1 a2 -- )
+    pluck pluck forward?            \ fwd ref already created ?
+    ?dup if                         \ a1 n1 a2 a3
+       over >r exchange r> !        \ append this reference too
+       2drop                        \ no need for name
+    else                            \ new forward ref:
+       >r
+       pad move$
+       pad count                    \ rescued string of allot
+       forwardreferences linked     \ append as new fwd ref
+       r> ,                         \ start new linked list through references
+       ,$                           \ save reference name in reference
+    then
+   ;
+
+
+ \ create a new forwards referenced word (hilevel or code)
+ : need ( a n -- )
+   [ also assembler ]  0. call, [ previous ]
+   $$ cell -  createforwardref  ;
+
+
+ : resolve ( -- )
+    last @ name>string forward?
+    ?dup if
+       0 swap exchange
+       lastxt execute >r
+       begin
+       ?dup while
+          r@                    ( destination address )
+          codeoffset @ -        ( destination is this number bytes behind code start )
+          over -
+          programcode @ +  ( patch address is that many bytes behind program start )
+          cell -                ( correct offset for length of call instruction )
+          swap exchange
+       repeat
+       rdrop
+    then
+ ;
+
+
+
+
+ \ -------------------- compiling this and that -------------------
+
+
+ also assembler
+ 5 constant sizeofcall
+
+ : compile_lit  ( n -- )
+      tos push,
+      # tos mov, ;
+
+
+ : compile_dlit ( d -- )
+      swap
+      compile_lit
+      compile_lit  ;
+
+
+ : compile_call  ( a -- )
+      execute
+      $ sizeofcall + -
+      # call,  ;
+
+
+ : squote ( a n -- )
+      tuck $$ sizeofcall + move$
+      s" (squote)" need
+      1+ programsize +!
+ ;
+
+
+ : dotquote  ( a n -- )
+      tuck $$ sizeofcall + move$
+      s" (dotquote)" need
+      1+ programsize +!
+ ;
+
+
+ previous
+
+ \ ------------------- interpret/compile numbers -------------------
+
+
+
+ : targetinterpretsinglenumber ( a n1 n2 -1 -- n | d )
+      drop nip nip
+      targetcompiling if
+         compile_lit
+      then  ;
+
+
+ : targetinterpretdoublenumber ( a n1 d n2 -- n | d )
+      dpl !
+      2swap 2drop
+      targetcompiling if
+         compile_dlit
+      then  ;
+
+
+ : targetinterpret1number ( a n1 n2 -1 | a n1 d n2 -- n | d )
+      dup 0< if
+         targetinterpretsinglenumber
+      else
+         targetinterpretdoublenumber
+      then  ;
+
+
+
+ \ ------------------ interpret/compile words -------------------
+
+
+ : targetinterpret1word  ( a f -- )  \ f=1: immediate,  -1=non-immediate
+      0< if
+         targetcompiling if
+            primitive? if notaprimitive then
+     \ if called word is 0 1 in/out, compile tos push,
+            compile_call
+     \ if called word is 1 0 in/out, compile tos pop,
+     \ 1 0 in/out should create no linkage
+     \ code on entry, and ret on exit
+     exit
+         then
+      then
+      execute  ;
+
+
+ \ --------------------- target interpreter ------------------------
+
+
+ : wordnotfound ( a n -- )
+      cr cr type ."  ???"  notfound   ;
+
+
+ : targetinterpret1 ( a n -- )
+      2dup searchword
+      ?dup if
+         2swap 2drop
+         targetinterpret1word
+      else
+         2dup snumber?
+         ?dup if
+            targetinterpret1number
+         else
+            targetcompiling if
+        primitive? if notaprimitive then
+               need
+            else
+               wordnotfound
+            then
+         then
+      then
+  ;
+
+
+ \ akin to forth interpreter, but implementing forward reference.
+ : targetinterpreter ( -- )
+      current @ >r
+      begin
+        current @ r@ =
+      while
+         nextword
+         dup if
+            targetinterpret1
+         else
+            2drop
+         then
+      repeat
+      rdrop ;
+
+
+
+
+
+
+
+
+
+ \  word in:           which is:      during:
+ \ -------------------------------------------------------------------
+
+ \  target            not immediate   interpretation    execute
+ \                                    compilation       compile call
+ \                        immediate   interpretation    execute
+ \                                    compilation       execute
+ \  targetprimitives  not immediate   interpretation    -
+ \                                    compilation       -
+ \                        immediate   interpretation    -
+ \                                    compilation       execute
+ \
+
+
+ : p:  ( <stream> -- )
+    current @
+    also targetprimitives definitions assembler
+    :  ;
+
+ : ;p
+    postpone ; immediate
+    current !
+ ;  immediate
+
+ \ C}}}
+
+
+ \ ------------------------------------------------------------------
+ \ ---                       target words                         ---
+ \ ------------------------------------------------------------------
+ \ C{{{
+ \ * words encountered at compile time, are searched in vocabulary "target"
+ \ * words can be set immediate, analog to the interpreter:
+ \    - state is used as indicator for "code generation" mode, and is "on"
+ \      when compiling both code- and hi-level words.
+ \    - for non-immediate words, calls are compiled.
+ \    - immediate words are executed.
+
+
+
+ also target definitions
+
+ \ words which can be found during target interpretation, as well as
+ \ during target compilation.
+
+ \ during interpretation, these will be executed
+
+
+ \ helps generating better word linkage code
+ : in/out  ( in out -- )  stackeffect 2 cspread  ;
+ : primitive  ( -- )      1 linkage!  ;
+ : fragment   ( -- )      2 linkage!  ;
+
+ : [need]   bl word count forward?  postpone [if] ;  immediate
+ : [if]     postpone [if] ; immediate
+ : [then]   postpone [then] ; immediate
+ : \        postpone \  ;   immediate
+ : (        postpone (  ;   immediate
+
+ : ]  ( -- )   targetstate on
+               only target
+               also targetprimitives ;
+
+ : db db ;
+
+ : (  postpone (   ;  immediate
+ : )  postpone )   ;  immediate
+
+
+ : mark8     ( -- a )     $$  ;
+ : resolve8  ( a -- )     $$ over -  swap 1-  c!  ;
+
+
+
+
+
+ p: [  ( -- )
+     targetstate off
+     only target  ;p
+
+
+
+
+
+ : unpaired  ( f -- )
+    if unpairedconditionals then ;
+
+
+ create innerloop  0 ,
+
+ p: do   ( -- fwds dest id )
+         \ --------------------------------------------------
+           0 innerloop exchange     \ begin of chain through
+                             \ loop exit points, like
+        \ compiled by ?do leave.
+        \ loop will resolve these.
+         \ --------------------------------------------------
+    codesize optimizing_for if
+            s" (do)" need
+    else
+    index   [rp]    mov,
+           -4 # [+rp]  rp  lea,     \  generated loop
+           tos     index   mov,     \  setup code
+                   [rp]    pop,     \
+                   tos     pop,
+           -4 # [+rp]  rp  lea,
+    then
+         \ --------------------------------------------------
+           $$   6                   \ loop back address.
+         \ --------------------------------------------------
+ ;p
+
+
+ p: ?do   ( -- fwds dest id )
+         \ --------------------------------------------------
+           0 innerloop exchange     \ begin of chain through
+                             \ loop exit points, like
+        \ compiled by ?do leave.
+        \ loop will resolve these.
+         \ --------------------------------------------------
+
+           tmp1 pop,
+           tmp1 tos cmp,
+    0 bne, mark8              \ branch to loop setup
+        tos pop,               \ skip loop: stack load
+       $7fffffff bra,         \ fix later to end of loop
+       $$ 4 -       \ address of branch address,
+       dup innerloop exchange \ last to fwd chain,
+       swap !                 \ linked to previous
+           resolve8
+
+    codesize optimizing_for if
+            s" (?do)" need
+    else
+           index      [rp]   mov,
+           -4 # [+rp]  rp    lea,     \  generated loop
+           tos        index  mov,     \  setup code
+           tmp1       [rp]   mov,
+                      tos    pop,
+           -4 # [+rp]  rp    lea,
+    then
+  \ --------------------------------------------------
+           $$   6                     \ loop back address.
+         \ --------------------------------------------------
+ ;p
+
+
+
+ p: leave ( fwds dest id -- fwds dest id )
+  \ -----------------------------------------------------
+           2 cells # [+rp] rp lea,   \ compile loop setdown code
+           [rp]  index mov,
+  \ -----------------------------------------------------
+           $7fffffff bra,            \ forward branch to behind
+         \ loop (could be shorter by
+         \ letting loop do the loop
+                \ setdown, but that would
+         \ destroy symmetry with ?do
+  \ -----------------------------------------------------
+    $$ 4 -       \ address of branch address,
+    dup innerloop exchange    \ last to fwd chain,
+    swap !                    \ linked to previous
+  \ -----------------------------------------------------
+  ;p
+
+
+ p: ?leave ( fwds dest id -- fwds dest id ) ( runtime: f -- )
+  \ -----------------------------------------------------
+  tos tos test,
+  tos pop,
+  0 beq,  mark8
+         2 cells # [+rp] rp lea,   \ compile loop setdown code
+         [rp]  index mov,
+         $7fffffff bra,            \ forward branch to behind
+       \ loop (could be shorter by
+       \ letting loop do the loop
+              \ setdown, but that would
+       \ destroy symmetry with ?do
+  resolve8
+  \ -----------------------------------------------------
+  $$ 4 -             \ address of branch address,
+  dup innerloop exchange    \ last to fwd chain,
+  swap !                    \ linked to previous
+  \ -----------------------------------------------------
+
+
+          ;p
+
+
+
+
+ p: loop  ( fwdschain dest id -- )
+  6 <> unpaired
+         \ -----------------------------------------------------
+    index inc,                \ compile code to increment
+           cell cmp_i,[rp+c]         \ loop index and limit test
+           $$ - bne,                 \ cond.branch to loop begin
+  \ -----------------------------------------------------
+           2 cells # [+rp] rp lea,   \ loop setdown code
+           [rp]  index mov,
+  \ -----------------------------------------------------
+           innerloop exchange        \ restore fwd chain of other loop
+    begin
+    ?dup while                \ another ref to loop exit point
+              dup @ >r               \ previous unresolved loop exit
+       $$ over 4 + -          \ offset to loop exit
+       swap !                 \ store at branch
+              r>                     \ proceed with next another ref
+    repeat
+  \ -----------------------------------------------------
+         ;p
+
+
+
+ p: +loop  ( fwdschain dest id -- )   ( run time: n -- )
+  \ -----------------------------------------------------
+  6 <> unpaired
+  cell # [+rp] tmp2  mov,     \ tmp2=limit
+  tmp2 neg,                   \ tmp2=-limit
+         index [+tmp2] tmp1 lea,     \ tmp1=index+tmp2
+  tos index add,              \ i=i+inc
+  index tmp2 add,             \ tmp2=i+inc-limit
+         tos pop,
+  tmp2 tmp1 xor,
+         $$ - bpl,                   \ cond.branch to loop begin
+  \ -----------------------------------------------------
+         2 cells # [+rp] rp lea,     \ loop setdown code
+         [rp]  index mov,
+  \ -----------------------------------------------------
+         innerloop exchange          \ restore fwd chain of other loop
+  begin
+  ?dup while                  \ another ref to loop exit point
+            dup @ >r                 \ previous unresolved loop exit
+     $$ over 4 + -            \ offset to loop exit
+     swap !                   \ store at branch
+            r>                       \ proceed with next another ref
+  repeat
+  \ -----------------------------------------------------
+         ;p
+
+
+
+
+
+ p: begin  ( -- a id )   ( runtime: -- )
+  $$  3 ;p
+
+ p: until  ( a id -- )   ( runtime: f -- )
+  3 <> unpaired
+  tos tos test,
+         tos pop,
+         $$ - beq,   ;p
+
+ p: while  ( id -- a id ) ( runtime: f -- )
+  3 <> unpaired
+  tos tos test,
+         tos pop,
+         $7fffff beq,
+         $$  4  ;p
+
+ p: repeat  ( a1 a2 id -- )  ( runtime: -- )
+  4 <> unpaired
+  swap
+         $$ - bra,
+         >r $$ r@ -
+         r>  4 -  !  ;p
+
+ p: again  ( a id -- )   ( runtime: -- )
+  3 <> unpaired
+  $$ - bra,   ;p
+
+
+
+
+
+
+ p: if   ( -- a id )  ( runtime:  f -- )
+  tos tos test,
+         tos pop,
+         $7fffff beq,
+         $$  1 ;p
+
+ p: else ( a1 id1 -- a2 id2 )  ( runtime : -- )
+  1 <> unpaired
+  $7fffff bra,
+         >r $$ r@ -
+         r> 4 -  !
+         $$  2      ;p
+
+ p: then ( a id -- )  ( runtime: -- )
+         dup 1 <> swap 2 <> and unpaired
+  >r $$ r@ -
+         r> 4 -  !  ;p
+
+
+
+
+
+
+ p: ?for   ( -- fwds dest id )
+  \ --------------------------------------------------
+           0 innerloop exchange       \ begin of chain through
+                               \ loop exit points, like
+          \ compiled by ?do leave.
+          \ loop will resolve these.
+         \ --------------------------------------------------
+  tos tos test,
+    0 bne, mark8               \ branch to loop setup
+        tos pop,                \ skip loop: stack load
+       $7fffffff bra,          \ fix later to end of loop
+       $$ 4 -         \ address of branch address,
+       dup innerloop exchange  \ last to fwd chain,
+       swap !                  \ linked to previous
+           resolve8
+
+ codesize optimizing_for if
+            s" (for)" need            \ call (for) runtime from library
+      else
+    index [rp] mov,           \ inline compile (for) runtime
+           -4 # [+rp]  rp  lea,
+    index [rp] mov,           \ make compatible with j, k
+           -4 # [+rp]  rp  lea,
+    tos index mov,
+           tos pop,
+      then $$  5  ;p
+
+
+ p: for   ( -- fwds dest id )
+  \ --------------------------------------------------
+           0 innerloop exchange       \ begin of chain through
+                               \ loop exit points, like
+          \ compiled by ?do leave.
+          \ loop will resolve these.
+         \ --------------------------------------------------
+
+ codesize optimizing_for if
+            s" (for)" need            \ call (for) runtime from library
+      else
+    index [rp] mov,           \ inline compile (for) runtime
+           -4 # [+rp]  rp  lea,
+    index [rp] mov,           \ make compatible with j, k
+           -4 # [+rp]  rp  lea,
+    tos index mov,
+           tos pop,
+      then $$  5  ;p
+
+
+ p: next  ( fwdschain dest id -- )
+  5 <> unpaired
+  $$ - loop,
+         2 cells #  [+rp]  rp lea,
+         [rp] index mov,
+  \ -----------------------------------------------------
+         innerloop exchange        \ restore fwd chain of other loop
+  begin
+  ?dup while                \ another ref to loop exit point
+            dup @ >r               \ previous unresolved loop exit
+     $$ over 4 + -          \ offset to loop exit
+     swap !                 \ store at branch
+            r>                     \ proceed with next another ref
+  repeat
+  \ -----------------------------------------------------
+         ;p
+
+
+
+
+
+
+ target definitions
+
+ create t-dp 0 ,
+
+ : t-here    ( -- n )  t-dp @  ;
+ : t-allot   ( n -- )  t-dp +! ;
+
+ : t-,  cr ." comma " dup u. ." at " hex $ u. $$ u.
+    here dataregion linked
+    t-here ,
+    cell ,
+    ,   ;
+
+
+ \ varinit t-here !
+ \ nextdata  destination  size data .....
+
+
+
+ : createprimitive ( -- )
+    current @ also
+    targetprimitives definitions
+    create immediate
+    previous current !  ;
+
+
+
+ : create ( <stream> -- )
+    createprimitive
+    t-here ,
+    does>
+        tos push,
+        @ # [+data] tos lea,
+ ;
+
+
+ : variable ( <stream> -- )
+      create  cell t-allot
+ ;
+
+
+
+ : constant
+    createprimitive ,
+    does>
+       tos push,
+       @ # tos mov,
+    ;
+
+
+ \ ------------------ in-line compiling primitives ------------------
+
+
+ p: dup       tos push,                                           ;p
+ p: drop      tos pop,                                            ;p
+ p: nip       tmp1 pop,                                           ;p
+ p: swap      [sp] tos xchg,                                      ;p
+ p: over      tos push,      cell # [+sp] tos mov,                ;p
+ p: pluck     tos push,      2 cells # [+sp] tos mov,             ;p
+ p: ?dup      tos tos or,    0 beq, mark8   tos push,  resolve8   ;p
+ p: 2dup      tmp1 pop,      tmp1 push,   tos  push,   tmp1 push, ;p
+ p: 2drop     tos pop,       tos pop,                             ;p
+ p: tuck      tmp1 pop,      tos  push,    tmp1 push,             ;p
+ p: pick      mov_tos,[sp+tos*4]                                  ;p
+
+ p: sp@       tos push,      sp tos mov,                          ;p
+ p: rp@       tos push,      rp tos mov,                          ;p
+ p: sp!       tos sp mov,    tos pop,                             ;p
+ p: rp!       tos rp mov,    tos pop,                             ;p
+
+ p: >r        tos [rp] mov,  -4 # [+rp] rp lea,     tos pop,      ;p
+ p: r>        cell # [+rp] rp lea,    tos push,   [rp] tos mov,   ;p
+ p: r@        tos push,      cell # [+rp] tos mov,                ;p
+ p: rdrop     cell # [+rp] rp lea,                                ;p
+
+ p: i    ( -- n ) tos push,            index tos mov,             ;p
+ p: i'   ( -- n ) tos push,    cell  # [+rp] tos mov,             ;p
+ p: j    ( -- n ) tos push,  2 cells # [+rp] tos mov,             ;p
+ p: j'   ( -- n ) tos push,  3 cells # [+rp] tos mov,             ;p
+ p: k    ( -- n ) tos push,  4 cells # [+rp] tos mov,             ;p
+ p: k'   ( -- n ) tos push,  5 cells # [+rp] tos mov,             ;p
+
+ p: and       tmp1 pop,      tmp1 tos and,                        ;p
+ p: or        tmp1 pop,      tmp1 tos or,                         ;p
+ p: xor       tmp1 pop,      tmp1 tos xor,                        ;p
+ p: invert    tos not,                                            ;p
+
+ p: 1+        tos inc,                                            ;p
+ p: 1-        tos dec,                                            ;p
+ p: 2*        1. tos shl,                                         ;p
+ p: 2/        1. tos sar,                                         ;p
+ p: u2/       1. tos shr,                                         ;p
+ p: cells     2. tos shl,                                         ;p
+ p: cell+     cell # [+tos] tos lea,                              ;p
+ p: cell-     -4 # [+tos] tos lea,                                ;p
+ p: negate    tos neg,                                            ;p
+ p: +         tmp1 pop,      tmp1 tos add,                        ;p
+ p: -         tos [sp] sub,  tos pop,                             ;p
+ p: *         tmp1 pop,      tmp1 imul,                           ;p
+ p: abs       tos tos test,  0 bpl, mark8   tos neg,   resolve8   ;p
+ p: bounds    [sp] tos add,  [sp] tos xchg,                       ;p
+
+ p: @         [tos] tos mov,                                      ;p
+ p: !         [tos] pop,     tos pop,                             ;p
+ p: +!        tmp1 pop,      tmp1 [tos] add,      tos pop,        ;p
+ p: off       0. [tos] mov,  tos pop,                             ;p
+ p: on        -1 # [tos] mov,  tos pop,                           ;p
+ p: exchange  [tos] tmp1 mov,   [tos] pop,     tmp1 tos mov,      ;p
+
+ p: 0=        1. tos sub,    tos tos sbb,                         ;p
+ p: 0<>       -1 # tos add,  tos tos sbb,                         ;p
+ p: 0<        1. tos shl,    tos tos sbb,                         ;p
+ p: execute   tos tmp1 mov,     tos pop,       tmp1 call,         ;p
+
+ p: return    tos ebx mov,   eax eax xor,   eax inc,   $80. int,  ;p
+ p: bye       ebx ebx xor,   eax eax xor,   eax inc,   $80. int,  ;p
+
+
+ p: rot    tmp1 pop,
+           tmp2 pop,
+           tmp1 push,
+           tos  push,
+           tmp2 tos mov, ;p
+
+ p: -rot   tmp2 pop,
+           tmp1 pop,
+           tos  push,
+           tmp1 push,
+           tmp2 tos mov,  ;p
+
+ p: =      tmp1 pop,
+           tmp1 tos sub,
+           1 # tos sub,
+           tos tos sbb,  ;p
+
+ p: <>     tmp1 pop,
+           tmp1 tos sub,
+           -1 # tos add,
+           tos tos sbb,  ;p
+
+ p: u<     tmp1 pop,
+           tos tmp1 sub,
+           tos tos sbb,  ;p
+
+ p: u>     tmp1 pop,
+           tmp1 tos sub,
+           tos tos sbb,  ;p
+
+ p: >      tmp2 pop,
+           tos tmp1 mov,
+           tos tos xor,
+           tmp1 tmp2 cmp,
+           0 ble, mark8
+              tos not,
+           resolve8  ;p
+
+ p: <      tmp1 pop,
+           tos tmp2 mov,
+           tos tos xor,
+           tmp1 tmp2 cmp,
+           0 ble, mark8
+              tos not,
+           resolve8     ;p
+
+ p: u*/mod tos tmp1 mov,
+           tos pop,
+           [sp] mul,
+           tmp1 div,
+           tmp2 [sp] mov,  ;p
+
+ p: lshift index tmp1 mov,
+           tos index mov,
+           tos pop,
+           index tos shl,
+           tmp1 index mov, ;p
+
+ p: rshift index tmp1 mov,
+           tos index mov,
+           tos pop,
+           index tos shr,
+           tmp1 index mov, ;p
+
+ p: c@     movzx_tos,[tos] ;p
+
+ p: c!     tmp1 pop,
+           mov_[tos],tmp1:8
+           tos pop,   ;p
+
+ p: count  tos inc,
+           tos push,
+           tos dec,
+           movzx_tos,[tos] ;p
+
+ p: ram+   data tos add,   ;p
+ p: s" ( <stream> -- )  '" word count squote   ;p
+ p: ." ( <stream> -- )  '" word count dotquote ;p
+
+
+ forth
+
+ : ;code  ( -- )
+         fragment? 0= if
+            0 0 stackeffect?
+            1 1 stackeffect? or
+            if   ret,
+     else ip jmp,
+     then
+         then
+         clear-stackeffect
+  only target  ;
+
+
+ \ linkage code generation:
+ \ fragment  :         ...
+ \ 0 0 in/out:         ... ret
+ \ 1 1 in/out:         ... ret
+ \ other     :  pop ip ... jmp ip
+ : code  ( <stream> -- )
+         t-header
+         only target   also targetprimitives  also assembler
+         fragment?  0 0 stackeffect?  or  1 1 stackeffect?  or
+            0= if  ip pop,
+         then
+         resolve ;
+
+
+ p: exit ( -- )
+         0 0 stackeffect?
+         1 1 stackeffect? or
+         if ret,
+  else
+     primitive?
+     if
+        ip jmp,
+     else
+       cell # [+rp]  rp lea,
+              [rp] jmp,
+     then
+         then   ;p
+
+
+ p: [']  ( -- )  ( runtime: -- a )
+      tos push,
+      ' execute # tos mov,  ;p
+
+
+ : : ( <stream> -- )
+  t-header
+
+         targetstate on
+         only target also targetprimitives
+
+  0 0 stackeffect?
+         1 1 stackeffect?  or
+         0= if
+     primitive?
+     if
+        ip pop,
+     else
+               [rp] pop,
+              -4 # [+rp]  rp  lea,
+     then
+         then
+         resolve   ;
+
+ p: ;  ( -- )
+         0 0 stackeffect?
+         1 1 stackeffect? or
+         if ret,
+  else
+     primitive?
+     if
+        ip jmp,
+     else
+       cell # [+rp] rp lea,
+              [rp] jmp,
+     then
+         then
+         clear-stackeffect
+         targetstate off
+         only target  ;p
+
+
+
+
+ \ C}}}
+
+
+ \ ------------------------------------------------------------------
+ \ ---          invoke compiler, write executable to file         ---
+ \ ------------------------------------------------------------------
+ \ C{{{
+
+ only forth also definitions
+ : (program")   ( <stream> -- )
+     here programname ! ,"       \ set program name
+     only target definitions     \ limit search scope to compiler words
+     s" init" need
+     s" main" need
+     also targetprimitives
+     s" bye" searchword targetinterpret1word
+     previous
+     targetinterpreter
+ ;
+
+
+ : program"   ( <stream> -- )
+    only target definitions
+    ['] (program")
+    catch .exception
+  ;
+
+
+ \ still not much consideration put into improving generated code
+ \ these mainly added for comparison purposes
+
+ : smallprogram" ( <stream> -- )         codesize optimized program" ;
+ : fastprogram"  ( <stream> -- )   executionspeed optimized program" ;
+
+
+
+ \ C}}}
+
+
+
+ \ ------------------------------------------------------------------
+ \ ---                    ELF header construction                 ---
+ \ ------------------------------------------------------------------
+ \ C{{{
+ new
+ $08048000 org
+ l: programstart     $7f db  s" ELF" dbs
+                       1 db         \ 32 bit objects
+                       1 db         \ LSB encoding
+                       1 db         \ version
+                       3 db         \ System V  (3=linux)
+                       0 dd  0 dd   \ version, reserved
+                       2 dw         \ elf-type executable file
+                       3 dw         \ elf-machine i386
+                       1 dd         \ elf-version
+ l: codestart          0 dd         \ program entry address (gets patched)
+ l: p_hdr_offset       0 dd         \ program header offset
+                       0 dd         \ section header offset
+                       0 dd         \ flags
+                     $34 dw         \ elf header size
+ l: p_hdr_size       $20 dw         \ program header entry size
+                       1 dw         \ program header count
+                     $28 dw         \ section header entry size
+                       0 dw         \ section header count
+                       0 dw         \ section header strtab section index
+ \ ----------------------- program header entry ------------------------
+ $                     1 dd         \ type   (load)
+                       0 dd         \ offset
+            codeoffset @ dd         \ virtual address
+            codeoffset @ dd         \ physical address
+ l: p_filesz           0 dd         \ in file size
+ l: p_memsz            0 dd         \ in memory size
+                       5 dd         \ flags   (rwx)
+ $$ p_hdr_offset - p_hdr_offset !
+                   $1000 dd         \ alignment
+ $ swap -    p_hdr_size w!
+ $ codestart !
+
+
+
+
+ target definitions             \ must be found in compiler voc
+ forth
+
+
+ : end        ( -- )            \ end search scope limiting
+ \    s" compiler.lib" included
+
+     $$ programstart -
+     dup  p_filesz !
+     dup  p_memsz  !
+
+     only forth definitions
+
+     programcode @  swap  programname @ count >file
+     #forwardreferences if
+        cr ." UNRESOLVED SYMBOLS:"
+        cr .unresolved
+        unresolved-references
+     else
+       cr ." RESOLVED FORWARD REFERENCES:"
+       cr .symbols
+     then
+     cr bye
+ ;
+
+ \ C}}}
+
+ \ ----------------------- main program ------------------------
+
+              2 kb                  \ return stack space
+              4 mb                  \ alloted ram (data and stack)
+
+ also assembler \ program entry
+            sp rp mov,                   \ rp at end of mem
+            dup negate # [+rp] sp lea,   \ space between here and sp@
+            tos push,                    \ make mem writable
+            sp data mov,                 \ set begin of ram pointer
+           - negate # [+data] sp lea,    \ allocate data and return stack
+
+ previous
+ cr order cr
+ include main.f

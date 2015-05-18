@@ -1,0 +1,148 @@
+If you have a sorted array (sorted according to some sort of comparison, any comparison that lets you say that any two items are < = or > ) then you can do a binary search on it that's faster than searching it from one end to the other.
+
+If the main point of the array is to search it, you might do better with something other than an array. A data structure that's designed to search might give you faster searches. And if you have to keep adding items, arrays don't scale well -- on average you have to move half the items to insert one extra.
+
+If you won't add items (or the array is small) and the point is searching, then you can get a faster search by arranging the items in heap order. Think of the search as a tree. Put the top item first, the two items of the second layer second and third, the four items of the third layer fourth through seventh, and so on. You can search it quickly and simply, but you may have a lot of rearrangement to do if you add items.
+
+So, a sorted array.
+
+----
+
+ \ provide a way to compare two items of the array.
+ \ For example, x1 could be the address of a counted string,
+ \ x2 could be the address of another counted string, and
+ \ the operation could be    swap count rot count compare
+
+ defer comparison ( x1 x2 -- -1|0|1 ) \ -1 if x1 precedes x2
+
+
+ : get-center-node ( left-node #nodes -- middle-node )
+    2/ cells + ;
+
+ : split-address ( left-node #nodes -1|1 -- start-node' )
+    0< if 2/ 1+ cells + dup then drop ;
+
+ : split-length ( #nodes -1|1 -- #nodes' )
+    0 min + 2/ ;
+
+ : split-tree ( left-node #nodes -1|1 -- left-node' #nodes' )
+    2dup split-length >r split-address r>  ;
+
+ : search-done? ( flag #nodes -- flag' )
+   2* over + 5 <  \ last node to check? 
+                       \  2 -1 done, 2 1 not, 1 1 done, 3 -1 not
+   swap 0=             \ item found? 
+   or ;
+
+ : search-tree ( item left-node #nodes -- no-match-node -1|1 | match-node 0 )
+   begin 
+     2dup 2>r get-center-node @ over comparison 
+     dup r@ search-done? if
+       nip 2r> get-center-node swap exit 
+     then 2r> rot split-tree
+   again ;
+
+ \ If the search item is not found, you may get back one of two addresses,
+ \ either the one that contains the next smaller item or the next larger one. 
+ \ If it's the next larger item the flag will be a 1  
+ \ If it's the next smaller item the flag will be a -1
+
+
+ \ trivial example
+
+ : minus ( x1 x2 -- -1|0|1 )
+   - -1 max 1 min ;
+
+ ' minus is comparison
+
+ create tree 0 , 2 , 4 , 6 , 8 , 10 , 12 , 14 , 16 , 18 , 20 , 22 , 
+     24 , 26 , 28 , 30 ,
+
+ 3 tree 16 search-tree . dup @ . ( -1 -- not found.  2 -- next lower address.)
+ 4 tree 16 search-tree . dup @ . (  0 -- found.      4 -- right address.)
+ 5 tree 16 search-tree . dup @ . (  1 -- not found.  6 -- next higher address.) 
+
+----
+Here is a second version that does something similar, written by "humptydumpty", ouatubi@gmail.com
+
+ \ NOT REENTRANT
+
+ \ ------------------------------------------- < PRELIMINARIES
+ REQUIRE DEFER	( -- UNCOMMENT THIS LINE FOR CIFORTHS ! -- )
+ : -ROT   ROT ROT ;	\  just in case!
+ : NIP  SWAP DROP ;	\  idem
+ \ --------------------------------------------  PRELIMINARIES >
+
+ \ ------------------------------------------- < CORE OF BSEARCH
+ DEFER  COMPARE   ( a  a' --  -1|0|+1 ) 
+
+ \  ACT-TABLE contain 3 xt's of words
+ \ that have stack effects ( n1 n2 -- n3 n4 )
+ \
+ \ ATENTION !
+ \    n1 <= n2 and n3 <= n4 ,  assumed by algorithm
+ \   (n2-n1) >= (n4-n3)         , needed to obtain convergence
+ \
+ CREATE  ACT-TABLE
+ ' NOOP ,  \ for -1 flag: ACT to obtain LOW RANGE
+ ' NOOP ,  \ for  0  flag: ACT to obtain  MID RANGE  :)
+ ' NOOP ,  \ for +1 flag: ACT to obtain HIGH RANGE 
+
+ : TO-OFFS   ( f -- offs)   1 + CELLS ;
+
+ : CONVERGE    ( n1 n2 -- n3  n4 )
+    2DUP COMPARE  TO-OFFS ACT-TABLE + @ EXECUTE ;
+
+ : (BSEARCH)    ( n1  n2 -- n3 )
+    BEGIN  CONVERGE  2DUP = UNTIL  (  n3 n3)  CONVERGE  DROP ;
+ \ ------------------------------------------- CORE OF BSEARCH >
+
+ \ ------------------------------------------ < SHELL OF BSEARCH
+ : HALF 	\ a1  a2 --  (a1+a2)/2
+    + 1 CELLS / 2/ 1 CELLS * ;		\  ;  address obtained must be aligned !
+
+ : LOW    ( a1  a2 --  a1   HALF-cell )
+    OVER HALF
+    2DUP <> IF 1 CELLS - THEN ;		\ ; condition to preserve boundaries
+
+ : MID  ( FAIL a1 a2  -- HALF HALF HALF )
+    HALF  NIP  DUP DUP ;
+
+ : HIGH   ( a1 a2 --  HALF+cell   a2 )
+    SWAP OVER HALF
+    2DUP  <> IF 1 CELLS + THEN  		\ ; condition to preserve boundaries
+    SWAP ;
+
+ ' LOW  	ACT-TABLE  0 CELLS  +  !		\ ; fill ACT-TABLE
+ ' MID	ACT-TABLE  1 CELLS  +  !
+ ' HIGH	ACT-TABLE  2 CELLS  +  !
+
+ VARIABLE  X
+ : INT-CMP  ( a1  a2 --  -1|0|+1 )
+    HALF @  X @  SWAP  - -1 MAX 1 MIN ;
+
+ ' INT-CMP  IS  COMPARE
+
+ : BSEARCH  ( a1 a2  n -- a' )
+    X !  0 -ROT            \  0  a1  a2    ; 0 IS mark of FAILURE
+    (BSEARCH) 	( 0|a'  a3 )
+    DROP ;
+
+
+ CR CR
+ S" Test for 'binary search of sorted arrays':"   TYPE  CR
+ CREATE  SORTED
+   0 ,  2 ,   4 ,  6 ,  8 ,  10 ,  12 ,  14 ,  16 ,  18 ,  20 ,  22 ,
+ 24 ,  26 ,  28 ,  30 ,
+ 16  CONSTANT  #SORTED
+
+ SORTED   DUP #SORTED 1- CELLS +
+
+ 2DUP -99 BSEARCH   CR .
+ 2DUP   0   BSEARCH   CR  DUP ? .
+ 2DUP   1   BSEARCH   CR  .
+ 2DUP   8   BSEARCH   CR  DUP ? .
+ 2DUP  29  BSEARCH   CR .
+ 2DUP  30  BSEARCH   CR  DUP ? .
+       99  BSEARCH  CR . CR
+----

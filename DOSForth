@@ -1,0 +1,30 @@
+back to ForthSystems
+* Freely redistributable
+** Meta Compiler
+*** MetaStic
+*** [F83] Perry/Laxen F83
+*** [ftp://ftp.taygeta.com/pub/Forth/Compilers/native/dos/FPC/fpc36.zip F-PC by Tom Zimmer]
+*** [http://www.forth.hccnet.nl/pr-chf.htm CHForth 1.2.5 by Coos Haak]
+*** [http://volksforth.sf.net volksForth by german Forth Gesellschaft e.V.]
+** Written in Assembly
+*** [figForth]
+*** [mina] ([ciforth] for DOS)
+*** [eForth]
+*** [Pygmy]
+** Other/Unknown
+*** [GP-Forth] (free for non-commercial use, source)
+*** [SMAL32] (free for non-commercial use, no source)
+*** [4IM] public domain Forth and metacompiler, also runs standalone
+*** [ForthCMP] compiler
+*** [HForth] MS-DOS
+*** [Holon-lite]
+*** [strongForth]
+*** [QBFORTH] (simple Forth system written in QBASIC, with source-codes)
+* Commercial
+** CamelForth
+** [PCForth] LMI MS-DOS
+** [HS-Forth] Harvard Softworks 8086 Forth 
+** [http://www.amresearch.com/v3/166_v3_105.zip AMR 80c166 umbilical Forth, metacompiler]
+** [http://www.amresearch.com/v3/8051_v3_401.zip AMR 8051 umbilical Forth, metacompiler]
+** [http://www.amresearch.com/v3/6811_v3_125.zip AMR 6811 umbilical Forth, metacompiler]
+check out MultiPlatformForth for more systems which may run under DOS

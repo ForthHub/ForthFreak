@@ -1,0 +1,13 @@
+QBFORTH is simple Forth system written in QBASIC.
+
+Features:
+* Hexadecimal numbers are written by $ at the beginning, rather than the HEX mode to set base
+* Simple definitions of IF THEN etc.
+* Use for whatever you want to use it for. But don't patent it or similar things like that
+* Includes GOTO command
+* If you put filenames on command-line, it will read them in order, compile to DIC.MEM EXEC.MEM MISC.MEM and then execute QBFORTH without filenames to execute the MAIN word
+* It has a few differences from other Forth, but some of these differences are only because I didn't know much about Forth when I invented QBFORTH. But some other differences are just because I think it is better that way (such as using $ for hexadecimal numbers instead of HEX mode)
+
+http://zzo38computer.cjb.net/chrono/zzo38/1219635920
+
+ForthSystems

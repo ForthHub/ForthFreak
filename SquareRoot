@@ -1,0 +1,91 @@
+ \ slow but short
+ : sqrt  ( u1 -- u2 ) 
+      0 tuck ?do
+        1+ 
+        dup 2* 1+  
+      +loop ; 
+
+----
+ : sqrt ( n -- r )
+   0 swap
+   0 15 do
+     over  1 i lshift +  i lshift
+     2dup >= if
+       -  swap 2 i lshift or swap
+     else drop then
+   -1 +loop
+   drop 2/ ;
+
+----
+These are from Wil Baden:
+
+ : sqrt  0 0  16 0 do
+     >R D2* D2* R>
+     2* 2dup 2* U> if
+       dup >R 2* - 1- R> 1+
+     then
+   loop nip nip ;
+
+ \ slow for large roots
+ : sqrt  -1 TUCK DO  2 +  DUP +LOOP  2/ ;
+
+ \ only approximate; starts to diverge above 25000
+ : rt    2DUP / + 2/ ;
+ : SQRT  127 rt rt rt rt rt rt rt rt rt rt NIP ; 
+
+----
+
+Double precision version similar to the one above.  Implementation details are found in the [http://sourceforge.net/p/fkt/code/2/tree/trunk/misc.fs?force=True libfkt misc.fs] source this comes from.
+
+ 8 CELLS CONSTANT #bits/cell
+
+ : disqrt  ( ud1 -- u2 u3 )  \ double precision square root 
+   \ u3 is the square root, u2 is remainder
+   0.						( s: u2=ud1²  2Bu3=0 )
+   [ 0 1 #bits/cell 2 - LSHIFT ] 2LITERAL	( s: u2=ud1²  2Bu3=0  B )
+   BEGIN
+      2>R					( s: u2=ud1² 2Bu3=0   r: B )
+      2OVER 2OVER 2R@ D+ 2TUCK DU>= IF		\ ud1²-u3² >= 2Bu3+B² ?
+         2ROT 2SWAP D-				\ -> adjust u2:=u2-2Bu3-B²
+         2SWAP D2/ 2R@ D+			\ -> set bit B in u3,
+      ELSE 2DROP D2/ THEN			\ else, just 2Bu3 shifted
+      2R> D2/ D2/
+   2DUP D0= UNTIL
+   2DROP
+   DROP NIP ;			
+
+----
+
+ \ Here's my version of sqrt. This is as simple as I could make the Newton Method
+ \ for finding the square root. It gives great results for any input > 0
+ 
+ \ It uses my favorite control construct 0; which exits the word if TOS is zero.
+ \ Consumes TOS only if it is zero.
+
+ \ I couldn't find a standard word for tail-recursion, so I'm using regular
+ \ "recurse" below. That should work OK since I tested many inputs up to 2
+ \ billion, and didn't see one that recursed more than 20 times.
+
+ : 0; dup 0= if drop rdrop then ;
+
+ : sqrt-closer 2dup / over - 2 / ;
+ : sqrt-loop sqrt-closer 0; + recurse ;
+ : sqrt 1 sqrt-loop nip ;
+
+
+ \ Here's the stack comments:
+ \
+ \ sqrt-closer ( square root-guess -- square root-guess change )
+ \ sqrt-loop ( square root-guess -- square root )
+ \ sqrt ( square -- root )
+ \ 0; ( 0 -- ) or ( n -- n )
+
+
+ \ I guess in ANS forth it makes more sense to write it this way:
+
+ : sqrt-closer 2dup / over - 2 / ;
+ : sqrt 1 begin sqrt-closer dup while + repeat drop nip ;
+
+
+
+enjoy, JasonWoofenden

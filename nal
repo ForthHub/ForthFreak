@@ -1,0 +1,100 @@
+NAL - Not a Language
+
+[Mudry] and [Speuler]'s new pet languge tool.
+built from NABs (not a bug) and NAFs (not a feature) 
+
+We are trying to unite Mutley with FORTH.
+It's an experiment on creating a self-modifying programming language or tool.
+
+Goals:
+
+0 self-modifying: being able to rewrite any part of it runtime 
+0 minimal: to be able to compile and interpret the most simplistic way, leaving everything for the library that can be left
+0 complete: being able to implement all high-level language features
+
+Optional goals:
+
+0 quality: to be able to add all modern optimalization features
+0 friendly: to be able to support all modern programming concepts
+
+----
+
+Concepts:
+* Self-Modification: The ability to reprogram itself, effectively extending/altering itself. This applies both to the compiler/interpreter as an application and to the language as wel l as to resulting programs. A self modifiable application can be fed with instructions to turn itself into any other sort of application, or it can remove any functionality from itself, including the ability of self-modification.
+* Reflectiveness: The ability for the code to query information about itself. Like an app can fetch a machine readable list of its types, objects, classes, variables, functions, etc.
+
+----
+
+Features:
+
+* meta compiler: system has the ability to recompile itself, preferrably through core functionality, rather than by extension?
+* universal objects: all (internal and other) objects can be linked together to from some unversal objects
+* muliple code formats: will use various code formats (plugins?)
+* mutley call protocol: will use separate call and argument (code and data) stacks
+
+Portability:
+
+
+
+----
+
+Plans:
+
+* Mudry: sort of instant, or continous compilation
+* Mudry: editor and compiler are integrated
+* Mudry: all sorts of libraries
+* Mudry: nifty IDE too :)
+* Speuler: being able to "redirect" code to pre-compiled libaries in the object code pane would be nice, for test trampolines for example
+* Speuler: the ability to handle code aspects not only on the source level
+* Speuler: the library would need some integration 
+* Speuler: a clean interface between all involved code modules is important
+* Mudry: to get rid of lots of FORTH things which imho prevented FORTH from being what C is today
+* Mudry: parsing is transforming source into the tree, compilation steps are tree transformations, and emitting code is just copying out the instructions 
+
+----
+
+Architecture:
+
+0 core: An architecture dependent implementation of minimalistic 'bootstrap' interpreter/compiler.
+0 corelib: provides compatibility for upper layers. Also provides middle level functionality, and all sorts of conveninence stuff.
+0 kernel layer: provides basic language functionality
+0 language layer: provides language specific features
+0 library layer
+0 application layer
+
+The core could be written in any langugae and it does not need to adhere to any strict specifications, sice it only has to compatible with corelib wich is for that reason is closely coupled with the core.
+
+The core in itself is able to understand and execute low level code designed for it, but due to its simplicity its very low preformance and lacks functionality. More importantly it is self-modifying and thus can be reprogrammed using more advanced implementations of the same functionality.
+
+Core design:
+
+A core interpreter implemented in pure C:
+* small memory and log management
+* universal objects
+* threaded code (the right flavor)
+* simple dictionaries
+* initial definitions of DO, COMPILE, etc
+* an initial tokenizer
+
+Kernel contains:
+
+* Stack management
+* Smart symbol tables
+* Dynamic parser
+* Generic assembler
+* Garbage collection
+* Objects, classes, inheritance
+* build system
+* basic optimization passes
+* threading support
+
+The language layer is used to implement various languages. At the first run we will try to implement a subset of some of the following languages:
+* basic
+* lisp
+
+The library layer will contain all the usual libraries like
+* IO abstraction
+* File formats
+* Sound and graphics abstraction
+* GUI abstraction
+* etc

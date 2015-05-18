@@ -1,0 +1,61 @@
+4tH is a Forth compiler with a little difference. Instead of the standard Forth engine it features a conventional compiler. 4tH is a very small compiler that can create bytecode, C-embeddable bytecode, standalone executables, but also works fine as a scripting language. It supports about 95% of the ANS Forth CORE wordset and features conditional compilation, pipes, files, assertions, forward declarations, enumerations, structures, suspended execution, recursion, include files, etc. It comes with an RPN calculator, preprocessor, line editor, compiler, decompiler, C-source generators, and a virtual machine.
+
+Author:
+J.L. Bezemer
+
+Homepage:
+http://www.xs4all.nl/~thebeez/4tH/
+
+There is an extensive [http://www.xs4all.nl/~thebeez/4tH/4tHmanual.pdf 4tH manual], including a substantial tutorial.
+
+A screenshot of the IDE under Linux, DOS and Windows:
+http://www.xs4all.nl/~thebeez/4tH/small3OS.jpg
+
+----
+
+Probably the most interesting design decision in 4tH is that it is a separate compiler and bytecode interpreter.  It compiles your source code to a bytecode image, and then interprets the image as a separate step.  So basically 4tH is what you get if you remove the ability to extend the syntax of the language.  It provides some limited preprocessor abilities, and the usual Forth defining words like CREATE and VARIABLE and so on, but no user words are actually executed while compiling.  But any code which is not in a definition is strung together and run when you execute the image, so in many cases you don't miss the lack of the interpreter.  The limitation is that things like the following aren't valid 4tH code:
+
+ : K ( n -- n' )  1024 * ;
+ 4 K array foo
+
+ : CONSTANT CREATE , DOES> @ ;
+
+Note that there are preprocessor arithmetic words, so you can do this:
+
+ 4 1024 [*] array foo
+
+But I'm not sure there's any way to define a symbolic constant and use it at compile time.
+
+At any rate, it's well worth a look.  You may decide that you prefer the extra flexibility that Forth provides, but it's interesting to see how far you can get with a static language.
+
+--JoshGrams
+
+----
+
+Yes, you can define a symbolic constant and use it at compile time. Simply because it compiles the constant as a literal. So this works:
+
+ 1024 constant K
+ 4 K [*] array foo
+
+You can also translate the CONSTANT definition to 4tH. The only thing is that you have to write the compilation semantics in full:
+
+ CREATE foo 1024 ,
+ :THIS foo DOES> @C ;
+
+This kind of "constant" will behave as expected, although you cannot use it like a native constant e.g. within a declaration. Newer versions of 4tH include a preprocessor which allows you to write code like this:
+
+ :macro constant @1@ , create #1# :this #1# does> cell- @c #;# ;
+ 5 constant five
+ five . cr
+
+And this:
+
+ :macro K 1024 [*] ;
+ 4 K array foo
+
+Which largely compensates for the lack of defining your own words.
+
+--Hans Bezemer
+
+----
+ForthSystems

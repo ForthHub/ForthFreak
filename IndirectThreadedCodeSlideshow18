@@ -1,0 +1,9 @@
+IndirectThreadedCodeSlideshow17 IndirectThreadedCodeSlideshow19
+
+http://www.forthfreak.net/slides/slide26.jpg
+
+W points to UNNEST now (because that's what was under IP before). IP, after
+being incremented, points now into the limbo behind the end of HILEVEL2. But
+that is ok, because we won't read or write anything there.
+The first address in UNNEST points to the second address in UNNEST, which is
+where program counter will be set to now.
